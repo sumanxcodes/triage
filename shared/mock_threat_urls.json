@@ -1,0 +1,26 @@
+[
+  {
+    "url": "https://auspost-track-verify.xyz/update",
+    "domain": "auspost-track-verify.xyz",
+    "threat_type": "phishing",
+    "target_brand": "Australia Post",
+    "sha256": "4b5d27d501d2a1b94bbfb16ce036ca6d2b9921601737be708f51a8775f0a6729",
+    "confidence_score": 0.99
+  },
+  {
+    "url": "http://bit.ly/cba-secure-verify",
+    "domain": "bit.ly",
+    "threat_type": "phishing",
+    "target_brand": "Commonwealth Bank",
+    "sha256": "8a3e746533dc2774db37a8fb735f479f64bf1d02c84288b88d89e52df5eb12da",
+    "confidence_score": 0.98
+  },
+  {
+    "url": "https://apple-id-security-auth.top/login",
+    "domain": "apple-id-security-auth.top",
+    "threat_type": "credential_harvesting",
+    "target_brand": "Apple",
+    "sha256": "0915668ef8f80470e9a4448202d609de99a4e320f04ca48eb038b341f2382cf8",
+    "confidence_score": 0.95
+  }
+]

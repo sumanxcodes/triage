@@ -1,0 +1,16 @@
+{
+  "manifest_version": 3,
+  "name": "Triage Web Phishing Blocker",
+  "version": "1.0.0",
+  "description": "Intercepts zero-day phishing links before page rendering.",
+  "permissions": [
+    "nativeMessaging"
+  ],
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["content.js"],
+      "run_at": "document_start"
+    }
+  ]
+}
