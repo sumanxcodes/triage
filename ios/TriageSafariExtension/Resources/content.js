@@ -1,10 +1,11 @@
 // Triage Safari Extension Content Script - Executed at document_start
 (function () {
   const currentUrl = window.location.href;
+  const api = typeof browser !== "undefined" ? browser : chrome;
 
   // Intercept before DOM finishes rendering
-  if (typeof browser !== "undefined" && browser.runtime && browser.runtime.sendNativeMessage) {
-    browser.runtime.sendNativeMessage("application.id", { url: currentUrl }, function (response) {
+  if (api && api.runtime && api.runtime.sendMessage) {
+    api.runtime.sendMessage({ action: "checkUrl", url: currentUrl }, function (response) {
       if (response && response.action === "block") {
         // Halt page rendering immediately and replace with warning screen
         window.stop();
@@ -30,40 +31,47 @@
                 text-align: center;
               }
               .card {
-                background: rgba(0, 0, 0, 0.4);
-                border-radius: 16px;
-                padding: 32px;
-                max-width: 480px;
-                box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+                background: rgba(0, 0, 0, 0.45);
+                border-radius: 20px;
+                padding: 32px 24px;
+                max-width: 440px;
+                box-shadow: 0 10px 30px rgba(0,0,0,0.6);
               }
-              h1 { font-size: 24px; margin-bottom: 12px; }
-              p { font-size: 16px; line-height: 1.5; color: #fca5a5; }
+              .shield-icon {
+                font-size: 54px;
+                margin-bottom: 12px;
+              }
+              h1 { font-size: 24px; margin-bottom: 10px; font-weight: 700; }
+              p { font-size: 15px; line-height: 1.5; color: #fca5a5; margin: 0 0 16px 0; }
               .url-box {
                 background: #450a0a;
-                padding: 10px;
-                border-radius: 8px;
-                font-family: monospace;
-                font-size: 13px;
+                padding: 12px;
+                border-radius: 10px;
+                font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+                font-size: 12px;
                 word-break: break-all;
                 margin: 16px 0;
+                border: 1px solid rgba(239, 68, 68, 0.3);
               }
               button {
                 background: #ef4444;
                 color: white;
                 border: none;
-                border-radius: 8px;
-                padding: 12px 24px;
+                border-radius: 12px;
+                padding: 14px 28px;
                 font-size: 16px;
                 font-weight: 600;
                 cursor: pointer;
-                margin-top: 16px;
+                margin-top: 12px;
+                width: 100%;
               }
             </style>
           </head>
           <body>
             <div class="card">
-              <h1>⚠️ Malicious Link Blocked</h1>
-              <p>Triage detected this webpage as a dangerous smishing or phishing site attempting to steal your credentials.</p>
+              <div class="shield-icon">🛡️</div>
+              <h1>Malicious Link Blocked</h1>
+              <p>Triage detected this link as a dangerous smishing or phishing site attempting to steal your credentials.</p>
               <div class="url-box">${escapeHtml(currentUrl)}</div>
               <button onclick="window.history.back()">Go Back Safely</button>
             </div>

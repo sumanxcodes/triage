@@ -125,6 +125,18 @@ public final class ThreatSyncManager {
                 category: "credential_harvesting",
                 targetBrand: "Apple",
                 createdAt: Date()
+            ),
+            ThreatRecord(
+                urlHash: "80b58df99eba2a737040b73475199ef85441a98cdf77b22081057d11df28d621",
+                category: "phishing_test",
+                targetBrand: "Example Test",
+                createdAt: Date()
+            ),
+            ThreatRecord(
+                urlHash: "5a2474b3a617c332f113a5ea8ca1be85fe299636dce3b0217e400c6c97136359",
+                category: "phishing_test",
+                targetBrand: "HttpBin Test",
+                createdAt: Date()
             )
         ]
 
