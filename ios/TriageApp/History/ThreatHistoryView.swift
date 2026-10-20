@@ -44,7 +44,7 @@ public struct ThreatHistoryView: View {
                             }
                             .onDelete(perform: deleteEvents)
                         } header: {
-                            Text("\(filteredEvents.count) Blocked Threats")
+                            Text("\(filteredEvents.count) Blocked Threat\(filteredEvents.count == 1 ? "" : "s")")
                                 .font(.caption)
                                 .foregroundColor(.secondary)
                         }
@@ -129,7 +129,7 @@ public struct ThreatHistoryView: View {
     }
 
     private func eventRow(for event: ThreatEventRecord) -> some View {
-        HStack(alignment: .top, spacing: 14) {
+        HStack(alignment: .center, spacing: 12) {
             // Source Icon Badge
             ZStack {
                 RoundedRectangle(cornerRadius: 10)
@@ -140,7 +140,6 @@ public struct ThreatHistoryView: View {
                     .font(.system(size: 17))
                     .foregroundColor(event.source == "sms" ? .green : .blue)
             }
-            .padding(.top, 2)
 
             // Content
             VStack(alignment: .leading, spacing: 3) {
@@ -183,6 +182,12 @@ public struct ThreatHistoryView: View {
                 }
                 .padding(.top, 2)
             }
+
+            // Subtle disclosure indicator
+            Image(systemName: "chevron.right")
+                .font(.system(size: 13, weight: .semibold))
+                .foregroundColor(Color(.tertiaryLabel))
+                .padding(.leading, 2)
         }
         .padding(.vertical, 2)
     }
@@ -226,10 +231,15 @@ public struct ThreatHistoryView: View {
     }
 
     private func title(for event: ThreatEventRecord) -> String {
-        if let brand = event.targetBrand, !brand.isEmpty {
-            return "\(brand) Phishing"
+        if let brand = event.targetBrand, !brand.isEmpty, !brand.contains("://") {
+            let cleanBrand = brand
+                .replacingOccurrences(of: " (Domain Test)", with: "")
+                .replacingOccurrences(of: " (URL Test)", with: "")
+            return "\(cleanBrand) Phishing"
+        } else if let url = URL(string: event.target), let host = url.host, !host.isEmpty {
+            return host
         } else {
-            return event.source == "sms" ? "Suspicious SMS Blocked" : "Malicious URL Blocked"
+            return event.source == "sms" ? "Suspicious SMS" : "Malicious Website"
         }
     }
 

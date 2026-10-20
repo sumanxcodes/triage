@@ -223,4 +223,20 @@ public final class ThreatDatabase {
             return 0
         }
     }
+
+    /// Returns the number of intercepted threat events recorded after the specified date.
+    public func unreadEventsCount(since: Date?) -> Int {
+        guard let since = since else {
+            return eventsCount()
+        }
+        do {
+            return try dbQueue.read { db in
+                try ThreatEventRecord
+                    .filter(Column("timestamp") > since)
+                    .fetchCount(db)
+            }
+        } catch {
+            return 0
+        }
+    }
 }
