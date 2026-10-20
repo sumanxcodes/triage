@@ -10,21 +10,26 @@
 		029A2C53137A4847FF78A417 /* TriageMessageFilter.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = E6B1D1968114693CEDB547DE /* TriageMessageFilter.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		0FA75DA4FFBC5FA3CED9E028 /* content.js in Resources */ = {isa = PBXBuildFile; fileRef = F13643C92E27663F6D258F28 /* content.js */; };
 		11FB48072235D9B766A6AB32 /* TriageSafariExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 34162F2F28C88443643945A9 /* TriageSafariExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		19C73E8761298203A45879BB /* SubscriptionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBC3AA8B44A0489D26DF2D30 /* SubscriptionManager.swift */; };
 		24DF2C9117B9E5A7C1784D09 /* ThreatRecord.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E3C316134F10DDA84685E75 /* ThreatRecord.swift */; };
 		26109AC0AFC96AB3744D9B98 /* OnboardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6231CE7E75C226A69AA58BE6 /* OnboardingView.swift */; };
 		2A1DC005C525849C35805DF7 /* URLHasher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5547E80149780CA309100B35 /* URLHasher.swift */; };
 		2E93389AC900C45E4FA4FA44 /* IdentityLookup.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CE4D15E70FED13C60AA023B0 /* IdentityLookup.framework */; };
+		3028C043A7E174E865CBD938 /* Triage.storekit in Resources */ = {isa = PBXBuildFile; fileRef = B3EF1832BA40C06C911679FC /* Triage.storekit */; };
 		372D670ED075D6C98755D35F /* SafariWebExtensionHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9CA2D0F147D858DA14863FA6 /* SafariWebExtensionHandler.swift */; };
 		49EE0D2E7ABA935B4C60275C /* GRDB in Frameworks */ = {isa = PBXBuildFile; productRef = AB2A149F5A2A973E5E639B22 /* GRDB */; };
 		5068F059DE4BE01097654E9B /* URLHasher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5547E80149780CA309100B35 /* URLHasher.swift */; };
+		5B03E04DD2B73463A550282F /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 01A850AE71E7237FD35EE64B /* StoreKit.framework */; };
 		62F245E0044479EA2CFA0450 /* ThreatDatabase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92A7D0D806AD793BCC7E5E28 /* ThreatDatabase.swift */; };
 		801D2F935E3F90077B6220E5 /* URLHasher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5547E80149780CA309100B35 /* URLHasher.swift */; };
 		84E0AD67F731DEEDAD5FE290 /* ThreatSyncManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2CD2343696754EACAF98C20 /* ThreatSyncManager.swift */; };
 		8B03B79D6D43675A93A51E1B /* SafariServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 59D32BD60406C2AB87F64FBE /* SafariServices.framework */; };
 		8B57FCDC90B0ECA8F97ED44D /* TriageApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E0C11F55FC0F7B2363DFA22 /* TriageApp.swift */; };
 		8E5978B8516CFAFE25AFE7E7 /* AppGroup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D6718A1EB1F39E1522C6316 /* AppGroup.swift */; };
+		9294AF2DEFF5FBC7C88F364B /* PaywallView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D884BD5FC508B9767C49DDFB /* PaywallView.swift */; };
 		96087F9BD7785147C69F0080 /* GRDB in Frameworks */ = {isa = PBXBuildFile; productRef = 29B28512974777103A6C5B79 /* GRDB */; };
 		976C4A1F530264007133E72B /* MessageFilterExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C8F49D314B973279AB6DD24 /* MessageFilterExtension.swift */; };
+		9D68493918B8B629B6BC9AAA /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 9557448EEDA86B541F70E6DD /* PrivacyInfo.xcprivacy */; };
 		B0B75EA9480A64BFD0576F88 /* ThreatRecord.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E3C316134F10DDA84685E75 /* ThreatRecord.swift */; };
 		B89B5E3B6806A845367282E4 /* GRDB in Frameworks */ = {isa = PBXBuildFile; productRef = 6CC8233E319BEF59CE18EAF4 /* GRDB */; };
 		C2CF39C1895D15CAEC45BE7F /* ThreatSyncManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2CD2343696754EACAF98C20 /* ThreatSyncManager.swift */; };
@@ -71,6 +76,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		01A850AE71E7237FD35EE64B /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
 		0C8F49D314B973279AB6DD24 /* MessageFilterExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageFilterExtension.swift; sourceTree = "<group>"; };
 		335EA5B6891283B2521982C8 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		34162F2F28C88443643945A9 /* TriageSafariExtension.appex */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = "wrapper.app-extension"; path = TriageSafariExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -84,12 +90,16 @@
 		8E0C11F55FC0F7B2363DFA22 /* TriageApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TriageApp.swift; sourceTree = "<group>"; };
 		8E3C316134F10DDA84685E75 /* ThreatRecord.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThreatRecord.swift; sourceTree = "<group>"; };
 		92A7D0D806AD793BCC7E5E28 /* ThreatDatabase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThreatDatabase.swift; sourceTree = "<group>"; };
+		9557448EEDA86B541F70E6DD /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		9CA2D0F147D858DA14863FA6 /* SafariWebExtensionHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SafariWebExtensionHandler.swift; sourceTree = "<group>"; };
 		9D6718A1EB1F39E1522C6316 /* AppGroup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppGroup.swift; sourceTree = "<group>"; };
+		B3EF1832BA40C06C911679FC /* Triage.storekit */ = {isa = PBXFileReference; path = Triage.storekit; sourceTree = "<group>"; };
 		B684FD730DEBCD1BDB64795E /* TriageMessageFilter.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = TriageMessageFilter.entitlements; sourceTree = "<group>"; };
 		C9ACDDD2CA82C16BB7C8F189 /* TriageApp.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = TriageApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		CE4D15E70FED13C60AA023B0 /* IdentityLookup.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IdentityLookup.framework; path = System/Library/Frameworks/IdentityLookup.framework; sourceTree = SDKROOT; };
 		D2CD2343696754EACAF98C20 /* ThreatSyncManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThreatSyncManager.swift; sourceTree = "<group>"; };
+		D884BD5FC508B9767C49DDFB /* PaywallView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaywallView.swift; sourceTree = "<group>"; };
+		DBC3AA8B44A0489D26DF2D30 /* SubscriptionManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubscriptionManager.swift; sourceTree = "<group>"; };
 		E6B1D1968114693CEDB547DE /* TriageMessageFilter.appex */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = "wrapper.app-extension"; path = TriageMessageFilter.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		F13643C92E27663F6D258F28 /* content.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = content.js; sourceTree = "<group>"; };
 		FF1E59A10EBC6B5CA5788E27 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -101,6 +111,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				96087F9BD7785147C69F0080 /* GRDB in Frameworks */,
+				5B03E04DD2B73463A550282F /* StoreKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -186,6 +197,7 @@
 			children = (
 				CE4D15E70FED13C60AA023B0 /* IdentityLookup.framework */,
 				59D32BD60406C2AB87F64FBE /* SafariServices.framework */,
+				01A850AE71E7237FD35EE64B /* StoreKit.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -196,8 +208,10 @@
 				FF1E59A10EBC6B5CA5788E27 /* ContentView.swift */,
 				58E01A2461F8138369AA1C50 /* Info.plist */,
 				6231CE7E75C226A69AA58BE6 /* OnboardingView.swift */,
+				9557448EEDA86B541F70E6DD /* PrivacyInfo.xcprivacy */,
 				7301D38DBB832A95F1059712 /* TriageApp.entitlements */,
 				8E0C11F55FC0F7B2363DFA22 /* TriageApp.swift */,
+				E01C9EF1435D898A1A9D87B1 /* StoreKit */,
 			);
 			path = TriageApp;
 			sourceTree = "<group>";
@@ -219,6 +233,16 @@
 				34162F2F28C88443643945A9 /* TriageSafariExtension.appex */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		E01C9EF1435D898A1A9D87B1 /* StoreKit */ = {
+			isa = PBXGroup;
+			children = (
+				D884BD5FC508B9767C49DDFB /* PaywallView.swift */,
+				DBC3AA8B44A0489D26DF2D30 /* SubscriptionManager.swift */,
+				B3EF1832BA40C06C911679FC /* Triage.storekit */,
+			);
+			path = StoreKit;
 			sourceTree = "<group>";
 		};
 		E7A2DC762E8E207708F9F98F = {
@@ -260,6 +284,7 @@
 			buildConfigurationList = FC97AD62414F2EF634356D92 /* Build configuration list for PBXNativeTarget "TriageApp" */;
 			buildPhases = (
 				413B284290DC52E0CF5274BC /* Sources */,
+				E5CD5ECD3F13CE79CBCEB0D5 /* Resources */,
 				1714BE0761E445E43850C2B9 /* Frameworks */,
 				0B596FBAF39B53B2D8C0B287 /* Embed Foundation Extensions */,
 			);
@@ -333,6 +358,15 @@
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		E5CD5ECD3F13CE79CBCEB0D5 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				9D68493918B8B629B6BC9AAA /* PrivacyInfo.xcprivacy in Resources */,
+				3028C043A7E174E865CBD938 /* Triage.storekit in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		F6D2E531F8A251B87ACB6C49 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -352,6 +386,8 @@
 				DB139EFD310BE572F8DF279B /* AppGroup.swift in Sources */,
 				EB5D3ACD7203AD8BDACBE472 /* ContentView.swift in Sources */,
 				26109AC0AFC96AB3744D9B98 /* OnboardingView.swift in Sources */,
+				9294AF2DEFF5FBC7C88F364B /* PaywallView.swift in Sources */,
+				19C73E8761298203A45879BB /* SubscriptionManager.swift in Sources */,
 				62F245E0044479EA2CFA0450 /* ThreatDatabase.swift in Sources */,
 				B0B75EA9480A64BFD0576F88 /* ThreatRecord.swift in Sources */,
 				D85979D64AF0A3658DD81714 /* ThreatSyncManager.swift in Sources */,
