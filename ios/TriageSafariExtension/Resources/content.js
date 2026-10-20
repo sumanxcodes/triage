@@ -3,12 +3,39 @@
   const currentUrl = window.location.href;
   const api = typeof browser !== "undefined" ? browser : chrome;
 
-  // Intercept before DOM finishes rendering
+  // 1. ZERO-EXPOSURE SHIELD:
+  // Synchronously prevent WebKit from painting malicious phishing DOM, logos, or input fields
+  // before the asynchronous threat check completes.
+  const guardStyle = document.createElement("style");
+  guardStyle.id = "triage-pre-scan-shield";
+  guardStyle.textContent = `
+    html {
+      visibility: hidden !important;
+      opacity: 0 !important;
+      pointer-events: none !important;
+      background-color: #0f172a !important;
+    }
+  `;
+  (document.head || document.documentElement).appendChild(guardStyle);
+
+  function unguard() {
+    const el = document.getElementById("triage-pre-scan-shield");
+    if (el) el.remove();
+  }
+
+  // Fallback safety: If native check ever hangs, unguard after 400ms to preserve browser performance
+  const safetyTimer = setTimeout(unguard, 400);
+
+  // 2. Intercept and evaluate with native on-device threat intelligence
   if (api && api.runtime && api.runtime.sendMessage) {
     api.runtime.sendMessage({ action: "checkUrl", url: currentUrl }, function (response) {
+      clearTimeout(safetyTimer);
+
       if (response && response.action === "block") {
-        // Halt page rendering immediately and replace with warning screen
+        // Abort all pending script executions, image downloads, and network sockets
         window.stop();
+
+        // Render the blocking interstitial
         document.documentElement.innerHTML = `
           <!DOCTYPE html>
           <html>
@@ -16,11 +43,16 @@
             <meta name="viewport" content="width=device-width, initial-scale=1.0">
             <title>Triage - Malicious Link Blocked</title>
             <style>
+              html, body {
+                visibility: visible !important;
+                opacity: 1 !important;
+                pointer-events: auto !important;
+                background-color: #7f1d1d !important;
+              }
               body {
                 margin: 0;
                 padding: 32px 20px;
                 font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-                background-color: #7f1d1d;
                 color: #ffffff;
                 display: flex;
                 flex-direction: column;
@@ -98,7 +130,7 @@
           </html>
         `;
 
-        // Attach event listeners programmatically (bypasses CSP restrictions)
+        // Programmatic click listeners bypass CSP restrictions
         const backBtn = document.getElementById("triage-back-btn");
         if (backBtn) {
           backBtn.addEventListener("click", function () {
@@ -116,8 +148,13 @@
             window.location.replace("about:blank");
           });
         }
+      } else {
+        // Safe website: immediately unguard to reveal page
+        unguard();
       }
     });
+  } else {
+    unguard();
   }
 
   function escapeHtml(string) {
