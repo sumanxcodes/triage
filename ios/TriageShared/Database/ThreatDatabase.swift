@@ -58,6 +58,20 @@ public final class ThreatDatabase {
         }
     }
 
+    /// Fast O(1) multi-hash check across candidate keys (exact URL, domain, hostname).
+    public func isThreat(candidateHashes: [String]) -> Bool {
+        guard !candidateHashes.isEmpty else { return false }
+        do {
+            return try dbQueue.read { db in
+                try ThreatRecord
+                    .filter(candidateHashes.contains(Column("urlHash")))
+                    .fetchCount(db) > 0
+            }
+        } catch {
+            return false
+        }
+    }
+
     /// Insert or update threat records during sync.
     public func save(threats: [ThreatRecord]) throws {
         try dbQueue.write { db in
