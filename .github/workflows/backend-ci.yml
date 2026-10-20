@@ -59,7 +59,7 @@ jobs:
       - name: Run Mypy Type Checker
         run: |
           cd backend
-          mypy app
+          mypy app worker
 
       - name: Run Pytest Suite
         run: |

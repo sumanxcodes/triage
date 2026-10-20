@@ -14,7 +14,7 @@ test-backend:
 	cd backend && .venv/bin/pytest -v
 
 lint-backend:
-	cd backend && .venv/bin/flake8 . && .venv/bin/mypy app
+	cd backend && .venv/bin/flake8 . && .venv/bin/mypy app worker
 
 dev-backend:
 	cd backend && .venv/bin/uvicorn app.main:app --reload --port 8000

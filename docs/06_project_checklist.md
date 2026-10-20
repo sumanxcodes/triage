@@ -13,8 +13,8 @@
 | **M2: CI/CD Pipelines** | Path-filtered GitHub Actions (Linux for backend, macOS/Xcode 16.2 for iOS) | ✅ Completed |
 | **M3: Flow B — SMS Threat Engine** | Anti-obfuscation normalizer, sub-second shortlink resolver, Redis cache pipeline | ✅ Completed |
 | **M4: Native iOS Multi-Target** | Declarative XcodeGen, App Group GRDB SQLite DB, IdentityLookup & Safari extensions | ✅ Completed |
-| **M5: Flow C — Zero-Day AI Pipeline** | Playwright headless browser scraper, Google Gemini multimodal prompt evaluation | ⏳ Next Up |
-| **M6: Flow A — Offline Sync & DB** | PostgreSQL Alembic models, `/api/v1/threats/delta`, iOS `BGTaskScheduler` sync | 📋 Planned |
+| **M5: Flow C — Zero-Day AI Pipeline** | Playwright headless browser scraper, Google Gemini multimodal prompt evaluation | ✅ Completed |
+| **M6: Flow A — Offline Sync & DB** | PostgreSQL Alembic models, `/api/v1/threats/delta`, iOS `BGTaskScheduler` sync | ⏳ Next Up |
 | **M7: App Store & TestFlight** | StoreKit 2 subscriptions, Fastlane Match & Pilot, privacy manifests | 📋 Planned |
 
 ---
@@ -92,28 +92,37 @@
 
 ---
 
-## ⏳ Next Up: Flow C — Zero-Day AI Pipeline
-
-- [ ] **Playwright Headless Scraper (`backend/worker/tasks.py`):**
-  - Implement full Chromium headless navigation to incoming suspicious URLs.
-  - Extract DOM structure, forms, inputs (password/credit card fields), page title, and external asset origins.
-  - Capture rendered page screenshot for visual comparison.
-- [ ] **Google Gemini API Evaluation:**
-  - Design prompt evaluating DOM heuristic signals + screenshot for brand imitation.
-  - Output structured JSON: `{ "is_phishing": bool, "target_brand": str, "confidence": float, "reasons": [] }`.
-- [ ] **Threat Publishing:**
-  - Auto-publish confirmed phishing URLs to Redis (`threat:url:<hash>`) and PostgreSQL so the entire user base is protected within seconds.
-- [ ] **Safari Extension Polling / WebSocket Interstitial:**
-  - Connect iOS Safari interstitial to stream live analysis status while the AI worker evaluates zero-day links.
+### 5. Flow C: Zero-Day AI Pipeline (`backend/worker/`)
+- [x] Built **Playwright Headless Scraper** ([`backend/worker/scraper.py`](../backend/worker/scraper.py)):
+  - Headless Chromium rendering under containerized sandboxes (`--no-sandbox`, `--disable-dev-shm-usage`).
+  - Emulates Mobile Safari / iPhone 15 user agent to trigger mobile-targeted smishing pages.
+  - Extracts final redirected URL, title, body text snippet, form action endpoints, external script domains.
+  - Inspects password and credit card input fields for credential harvesting signals.
+  - Captures rendered viewport screenshot (JPEG) for multimodal visual inspection.
+- [x] Built **Google Gemini AI Analyzer & Heuristic Fallback** ([`backend/worker/analyzer.py`](../backend/worker/analyzer.py)):
+  - Evaluates DOM heuristics and visual screenshot with `gemini-2.5-flash` using structured JSON schema output (`PhishingAnalysisResult`).
+  - Built-in heuristic rule-based classifier fallback when `GEMINI_API_KEY` is not present (e.g. offline dev/testing).
+  - Classifies threat category, target brand, confidence score, and specific technical indicators.
+- [x] Built **Celery Task Worker** ([`backend/worker/tasks.py`](../backend/worker/tasks.py)):
+  - Orchestrates headless scraping $\to$ AI evaluation $\to$ immediate Redis threat publishing (`threat:url:<hash>`, `threat:domain:<hash>`).
+  - Caches 24-hour analysis verdicts under `analysis:url:<hash>`.
+- [x] Enhanced **Safari Extension Scan API** ([`backend/app/api/v1/safari.py`](../backend/app/api/v1/safari.py)):
+  - `POST /api/v1/safari/scan`: Checks Redis threat cache first; if unknown, dispatches Celery task and returns `task_id`.
+  - `GET /api/v1/safari/status/{task_id}`: Allows Safari extension interstitial to poll live background AI progress.
+- [x] Added unit & integration test coverage ([`backend/tests/test_ai_pipeline.py`](../backend/tests/test_ai_pipeline.py)) with 20 passing tests in 0.07s.
 
 ---
 
-## 📋 Future Milestones
+## ⏳ Next Up: Flow A — Offline Sync & Database
 
-### Flow A: Offline Sync & PostgreSQL Threat Store
-- [ ] Design PostgreSQL threat table schema with Alembic migrations.
-- [ ] Implement `GET /api/v1/threats/delta` with incremental timestamp pagination.
-- [ ] Implement iOS `BGTaskScheduler` background worker to sync deltas into GRDB SQLite.
+- [ ] **PostgreSQL Threat Store & Alembic Migrations:**
+  - Define master threat table schema in SQLAlchemy / SQLModel.
+  - Create Alembic initial migration.
+- [ ] **Delta Sync API (`GET /api/v1/threats/delta`):**
+  - Implement incremental delta queries based on `updated_at > since` timestamp.
+- [ ] **iOS Background Sync Worker:**
+  - Implement `BGTaskScheduler` task in `TriageApp` to trigger daily background threat pulls.
+  - Batch insert delta records into local `GRDB.swift` SQLite database via App Group.
 
 ### App Store Readiness & Polish
 - [ ] StoreKit 2 paywall implementation (subscription plans & receipt validation).
