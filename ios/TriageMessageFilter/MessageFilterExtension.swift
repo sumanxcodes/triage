@@ -21,6 +21,15 @@ extension MessageFilterExtension: ILMessageFilterQueryHandling {
         for url in urls {
             let candidateHashes = URLHasher.candidateHashes(for: url)
             if ThreatDatabase.shared.isThreat(candidateHashes: candidateHashes) {
+                let match = ThreatDatabase.shared.findThreat(candidateHashes: candidateHashes)
+                ThreatDatabase.shared.recordEvent(
+                    source: "sms",
+                    target: url.absoluteString,
+                    sender: queryRequest.sender,
+                    category: match?.category ?? "smishing",
+                    targetBrand: match?.targetBrand,
+                    actionTaken: "filtered_to_junk"
+                )
                 response.action = .junk
                 completion(response)
                 return
@@ -36,6 +45,15 @@ extension MessageFilterExtension: ILMessageFilterQueryHandling {
                     switch actionString.lowercased() {
                     case "filter", "junk":
                         response.action = .junk
+                        if let firstUrl = urls.first {
+                            ThreatDatabase.shared.recordEvent(
+                                source: "sms",
+                                target: firstUrl.absoluteString,
+                                sender: queryRequest.sender,
+                                category: "cloud_verified_threat",
+                                actionTaken: "filtered_to_junk"
+                            )
+                        }
                     case "promotion":
                         response.action = .promotion
                     case "transaction":

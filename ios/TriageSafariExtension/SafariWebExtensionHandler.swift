@@ -22,6 +22,25 @@ final class SafariWebExtensionHandler: NSObject, NSExtensionRequestHandling {
 
         NSLog("[Triage Safari] Evaluating URL: %@ -> Result: %@", urlString, isBlocked ? "BLOCK" : "ALLOW")
 
+        if isBlocked {
+            var category = "phishing"
+            var targetBrand: String?
+            if let url = URL(string: urlString) {
+                let candidateHashes = URLHasher.candidateHashes(for: url)
+                if let match = ThreatDatabase.shared.findThreat(candidateHashes: candidateHashes) {
+                    category = match.category
+                    targetBrand = match.targetBrand
+                }
+            }
+            ThreatDatabase.shared.recordEvent(
+                source: "safari",
+                target: urlString,
+                category: category,
+                targetBrand: targetBrand,
+                actionTaken: "blocked"
+            )
+        }
+
         let response = NSExtensionItem()
         response.userInfo = [
             SFExtensionMessageKey: [
