@@ -6,113 +6,121 @@ struct OnboardingView: View {
     var body: some View {
         NavigationStack {
             ScrollView {
-                VStack(alignment: .leading, spacing: 24) {
-                    VStack(alignment: .leading, spacing: 8) {
+                VStack(alignment: .leading, spacing: 20) {
+                    // Header
+                    VStack(alignment: .leading, spacing: 6) {
                         Text("Enable Protection")
-                            .font(.largeTitle)
-                            .fontWeight(.bold)
-                        Text("Follow these two steps to activate Triage on your iPhone.")
+                            .font(.system(.title, design: .rounded, weight: .bold))
+
+                        Text("Complete these two steps in iOS Settings to activate real-time threat interception.")
+                            .font(.subheadline)
                             .foregroundColor(.secondary)
                     }
+                    .padding(.top, 4)
 
-                    // Step 1: SMS Filter Extension
+                    // Step 1: SMS Filter Extension Card
                     VStack(alignment: .leading, spacing: 14) {
-                        HStack {
-                            Image(systemName: "message.badge.filled.fill")
-                                .font(.title2)
-                                .foregroundColor(.green)
-                            Text("Step 1: Enable SMS Filtering")
-                                .font(.headline)
+                        HStack(spacing: 12) {
+                            ZStack {
+                                RoundedRectangle(cornerRadius: 10, style: .continuous)
+                                    .fill(Color.green.opacity(0.15))
+                                    .frame(width: 40, height: 40)
+
+                                Image(systemName: "message.badge.filled.fill")
+                                    .font(.system(size: 18, weight: .semibold))
+                                    .foregroundColor(.green)
+                            }
+
+                            VStack(alignment: .leading, spacing: 2) {
+                                Text("1. SMS Threat Filter")
+                                    .font(.headline)
+                                Text("Filter smishing and spam messages")
+                                    .font(.caption)
+                                    .foregroundColor(.secondary)
+                            }
                         }
 
-                        VStack(alignment: .leading, spacing: 8) {
-                            guideStep(
-                                number: "1",
-                                text: "Open **Settings** (on iOS 18, tap **Apps** then **Messages**; or search for **Messages**)."
-                            )
-                            guideStep(
-                                number: "2",
-                                text: "Scroll down to the **Message Filtering** section."
-                            )
-                            guideStep(
-                                number: "3",
-                                text: "Turn **ON** the **Filter Unknown Senders** toggle."
-                            )
-                            guideStep(
-                                number: "4",
-                                text: "Tap **Unknown & Spam** (or **SMS Filtering**) right below it."
-                            )
-                            guideStep(
-                                number: "5",
-                                text: "Under SMS Filtering, select **Triage** and tap **Enable**."
-                            )
+                        Divider()
+
+                        VStack(alignment: .leading, spacing: 10) {
+                            stepRow(number: "1", text: "Open **Settings** > **Apps** > **Messages**")
+                            stepRow(number: "2", text: "Tap **Unknown & Spam**")
+                            stepRow(number: "3", text: "Turn ON **Filter Unknown Senders**")
+                            stepRow(number: "4", text: "Under SMS Filtering, select **Triage** and tap **Enable**")
                         }
 
-                        // Physical device notice
+                        // Simulator caveat banner
                         HStack(alignment: .top, spacing: 8) {
                             Image(systemName: "info.circle.fill")
                                 .foregroundColor(.blue)
-                                .font(.subheadline)
-                            Text("**Note for Simulator:** Apple disables the cellular SMS filtering menu on iOS Simulators without cellular hardware. Test on a physical iPhone to activate.")
+                                .font(.footnote)
+                                .padding(.top, 1)
+
+                            Text("**Simulator Note:** Cellular SMS filtering is disabled on iOS Simulators without cellular hardware. Test on a physical iPhone to activate.")
                                 .font(.caption)
                                 .foregroundColor(.secondary)
                         }
                         .padding(10)
                         .background(Color.blue.opacity(0.08))
-                        .cornerRadius(8)
+                        .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
                     }
-                    .padding()
+                    .padding(16)
                     .background(Color(.secondarySystemBackground))
-                    .cornerRadius(14)
+                    .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
 
-                    // Step 2: Safari Web Extension
+                    // Step 2: Safari Web Extension Card
                     VStack(alignment: .leading, spacing: 14) {
-                        HStack {
-                            Image(systemName: "safari.fill")
-                                .font(.title2)
-                                .foregroundColor(.blue)
-                            Text("Step 2: Enable Safari Extension")
-                                .font(.headline)
+                        HStack(spacing: 12) {
+                            ZStack {
+                                RoundedRectangle(cornerRadius: 10, style: .continuous)
+                                    .fill(Color.blue.opacity(0.15))
+                                    .frame(width: 40, height: 40)
+
+                                Image(systemName: "safari.fill")
+                                    .font(.system(size: 18, weight: .semibold))
+                                    .foregroundColor(.blue)
+                            }
+
+                            VStack(alignment: .leading, spacing: 2) {
+                                Text("2. Safari Web Shield")
+                                    .font(.headline)
+                                Text("Block deceptive links in real time")
+                                    .font(.caption)
+                                    .foregroundColor(.secondary)
+                            }
                         }
 
-                        VStack(alignment: .leading, spacing: 8) {
-                            guideStep(
-                                number: "1",
-                                text: "Open **Settings** -> **Safari** (or **Apps -> Safari**)."
-                            )
-                            guideStep(
-                                number: "2",
-                                text: "Tap **Extensions**."
-                            )
-                            guideStep(
-                                number: "3",
-                                text: "Toggle **ON** **Triage Security**."
-                            )
-                            guideStep(
-                                number: "4",
-                                text: "Under Permissions, select **All Websites** -> **Always Allow**."
-                            )
+                        Divider()
+
+                        VStack(alignment: .leading, spacing: 10) {
+                            stepRow(number: "1", text: "Open **Settings** > **Safari** (or **Apps** > **Safari**)")
+                            stepRow(number: "2", text: "Tap **Extensions**")
+                            stepRow(number: "3", text: "Turn ON **Triage Security**")
+                            stepRow(number: "4", text: "Under Permissions, select **All Websites** > **Always Allow**")
                         }
                     }
-                    .padding()
+                    .padding(16)
                     .background(Color(.secondarySystemBackground))
-                    .cornerRadius(14)
+                    .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
 
-                    // Settings shortcut button
+                    // Open Settings Shortcut Button
                     Button(action: openSettings) {
-                        HStack {
+                        HStack(spacing: 8) {
                             Image(systemName: "gear")
+                                .font(.body.weight(.semibold))
                             Text("Open iOS Settings")
+                                .fontWeight(.semibold)
                         }
                         .frame(maxWidth: .infinity)
-                        .padding()
-                        .background(Color.blue)
-                        .foregroundColor(.white)
-                        .cornerRadius(12)
+                        .frame(minHeight: 24)
                     }
+                    .buttonStyle(.borderedProminent)
+                    .controlSize(.large)
+                    .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
                     .padding(.top, 4)
                 }
-                .padding()
+                .padding(.horizontal, 16)
+                .padding(.vertical, 12)
             }
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
@@ -120,27 +128,30 @@ struct OnboardingView: View {
                     Button("Done") {
                         dismiss()
                     }
+                    .fontWeight(.semibold)
                 }
             }
         }
     }
 
-    private func guideStep(number: String, text: LocalizedStringKey) -> some View {
-        HStack(alignment: .top, spacing: 10) {
+    private func stepRow(number: String, text: LocalizedStringKey) -> some View {
+        HStack(alignment: .center, spacing: 10) {
             Text(number)
-                .font(.caption)
-                .fontWeight(.bold)
-                .frame(width: 20, height: 20)
-                .background(Color.secondary.opacity(0.2))
+                .font(.caption2.bold())
+                .foregroundColor(.secondary)
+                .frame(width: 22, height: 22)
+                .background(Color(.systemFill))
                 .clipShape(Circle())
 
             Text(text)
                 .font(.subheadline)
-                .foregroundColor(.secondary)
+                .foregroundColor(.primary)
+                .fixedSize(horizontal: false, vertical: true)
         }
     }
 
     private func openSettings() {
+        UIImpactFeedbackGenerator(style: .medium).impactOccurred()
         if let url = URL(string: UIApplication.openSettingsURLString) {
             UIApplication.shared.open(url)
         }

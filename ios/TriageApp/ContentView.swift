@@ -11,7 +11,7 @@ struct ContentView: View {
     var body: some View {
         NavigationStack {
             ScrollView {
-                VStack(spacing: 20) {
+                VStack(spacing: 18) {
                     // MARK: - Hero Protection Status
                     VStack(spacing: 12) {
                         ZStack {
@@ -19,16 +19,15 @@ struct ContentView: View {
                                 .fill(subscriptionManager.isProUser ?
                                       LinearGradient(colors: [.purple, .indigo], startPoint: .topLeading, endPoint: .bottomTrailing) :
                                       LinearGradient(colors: [.blue, .cyan], startPoint: .topLeading, endPoint: .bottomTrailing))
-                                .frame(width: 84, height: 84)
-                                .shadow(color: (subscriptionManager.isProUser ? Color.purple : Color.blue).opacity(0.3), radius: 10, y: 5)
+                                .frame(width: 80, height: 80)
 
                             Image(systemName: subscriptionManager.isProUser ? "shield.checkered" : "shield.lefthalf.filled.badge.checkmark")
                                 .resizable()
                                 .scaledToFit()
-                                .frame(width: 44, height: 44)
+                                .frame(width: 42, height: 42)
                                 .foregroundColor(.white)
                         }
-                        .padding(.top, 8)
+                        .padding(.top, 4)
 
                         VStack(spacing: 4) {
                             HStack(spacing: 6) {
@@ -52,7 +51,7 @@ struct ContentView: View {
                                 .foregroundColor(.secondary)
                         }
                     }
-                    .padding(.bottom, 4)
+                    .padding(.bottom, 2)
 
                     // MARK: - Active Modules Section
                     VStack(spacing: 0) {
@@ -76,7 +75,7 @@ struct ContentView: View {
                         )
                     }
                     .background(Color(.secondarySystemBackground))
-                    .cornerRadius(14)
+                    .cornerRadius(16)
                     .padding(.horizontal, 16)
 
                     // MARK: - Threat Intelligence Card
@@ -113,29 +112,24 @@ struct ContentView: View {
                             Spacer()
 
                             Button(action: triggerSync) {
-                                HStack(spacing: 6) {
+                                HStack(spacing: 5) {
                                     if isSyncing {
                                         ProgressView()
-                                            .tint(.white)
                                             .scaleEffect(0.8)
                                     } else {
                                         Image(systemName: "arrow.triangle.2.circlepath")
-                                        Text("Sync Now")
+                                        Text("Sync")
                                     }
                                 }
-                                .font(.subheadline)
-                                .fontWeight(.semibold)
-                                .padding(.horizontal, 14)
-                                .padding(.vertical, 8)
-                                .background(Color.blue)
-                                .foregroundColor(.white)
-                                .cornerRadius(10)
+                                .font(.subheadline.weight(.semibold))
                             }
+                            .buttonStyle(.bordered)
+                            .buttonBorderShape(.capsule)
                             .disabled(isSyncing)
                         }
 
                         if let msg = syncStatusMessage {
-                            HStack {
+                            HStack(spacing: 6) {
                                 Image(systemName: "checkmark.circle.fill")
                                     .foregroundColor(.green)
                                     .font(.caption)
@@ -149,7 +143,7 @@ struct ContentView: View {
                     }
                     .padding(16)
                     .background(Color(.secondarySystemBackground))
-                    .cornerRadius(14)
+                    .cornerRadius(16)
                     .padding(.horizontal, 16)
 
                     // MARK: - Triage Pro Banner (if Free) or Pro Active Card (if Pro)
@@ -159,7 +153,7 @@ struct ContentView: View {
                                 ZStack {
                                     Circle()
                                         .fill(Color.white.opacity(0.2))
-                                        .frame(width: 42, height: 42)
+                                        .frame(width: 40, height: 40)
                                     Image(systemName: "sparkles")
                                         .font(.title3)
                                         .foregroundColor(.white)
@@ -188,8 +182,7 @@ struct ContentView: View {
                                     endPoint: .trailing
                                 )
                             )
-                            .cornerRadius(14)
-                            .shadow(color: .indigo.opacity(0.25), radius: 6, y: 3)
+                            .cornerRadius(16)
                         }
                         .padding(.horizontal, 16)
                     } else {
@@ -210,26 +203,14 @@ struct ContentView: View {
                         }
                         .padding(14)
                         .background(Color(.secondarySystemBackground))
-                        .cornerRadius(14)
+                        .cornerRadius(16)
                         .padding(.horizontal, 16)
                     }
-
-                    // MARK: - Setup Guide Link
-                    Button(action: { showingOnboarding = true }) {
-                        HStack(spacing: 8) {
-                            Image(systemName: "questionmark.circle")
-                            Text("Extension Setup & Help Guide")
-                                .font(.subheadline)
-                                .fontWeight(.medium)
-                        }
-                        .foregroundColor(.secondary)
-                        .padding(.vertical, 8)
-                    }
-                    .padding(.bottom, 16)
                 }
                 .padding(.top, 8)
+                .padding(.bottom, 16)
             }
-            .navigationTitle("Triage Security")
+            .navigationTitle("Triage")
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
                     Button(action: { showingOnboarding = true }) {
@@ -275,7 +256,7 @@ struct ContentView: View {
                 HStack(spacing: 4) {
                     Circle()
                         .fill(Color.green)
-                        .frame(width: 8, height: 8)
+                        .frame(width: 7, height: 7)
                     Text(status)
                         .font(.caption)
                         .fontWeight(.medium)
@@ -283,7 +264,7 @@ struct ContentView: View {
                 }
                 .padding(.horizontal, 8)
                 .padding(.vertical, 4)
-                .background(Color.green.opacity(0.1))
+                .background(Color.green.opacity(0.12))
                 .cornerRadius(6)
 
                 Image(systemName: "chevron.right")
@@ -305,11 +286,13 @@ struct ContentView: View {
                     threatCount = ThreatDatabase.shared.count()
                     syncStatusMessage = "Sync complete: +\(result.added) added, -\(result.removed) removed"
                     isSyncing = false
+                    UINotificationFeedbackGenerator().notificationOccurred(.success)
                 }
             } catch {
                 await MainActor.run {
                     syncStatusMessage = "Sync failed: \(error.localizedDescription)"
                     isSyncing = false
+                    UINotificationFeedbackGenerator().notificationOccurred(.error)
                 }
             }
         }

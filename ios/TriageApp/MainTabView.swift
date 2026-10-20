@@ -2,6 +2,7 @@ import SwiftUI
 
 public struct MainTabView: View {
     @State private var selectedTab: Int = 0
+    @State private var eventCount: Int = ThreatDatabase.shared.eventsCount()
 
     public init() {}
 
@@ -17,7 +18,18 @@ public struct MainTabView: View {
                 .tabItem {
                     Label("History", systemImage: "clock.arrow.circlepath")
                 }
+                .badge(eventCount > 0 ? eventCount : 0)
                 .tag(1)
         }
+        .onAppear {
+            refreshBadge()
+        }
+        .onChange(of: selectedTab) {
+            refreshBadge()
+        }
+    }
+
+    private func refreshBadge() {
+        eventCount = ThreatDatabase.shared.eventsCount()
     }
 }

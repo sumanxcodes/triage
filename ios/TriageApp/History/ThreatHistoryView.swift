@@ -44,7 +44,7 @@ public struct ThreatHistoryView: View {
                             }
                             .onDelete(perform: deleteEvents)
                         } header: {
-                            Text("\(filteredEvents.count) Blocked Events")
+                            Text("\(filteredEvents.count) Blocked Threats")
                                 .font(.caption)
                                 .foregroundColor(.secondary)
                         }
@@ -75,6 +75,7 @@ public struct ThreatHistoryView: View {
                 Button("Clear All Threat History", role: .destructive) {
                     ThreatDatabase.shared.clearAllEvents()
                     loadEvents()
+                    UINotificationFeedbackGenerator().notificationOccurred(.success)
                 }
                 Button("Cancel", role: .cancel) {}
             } message: {
@@ -98,12 +99,12 @@ public struct ThreatHistoryView: View {
             ZStack {
                 Circle()
                     .fill(Color.green.opacity(0.12))
-                    .frame(width: 88, height: 88)
+                    .frame(width: 80, height: 80)
 
                 Image(systemName: "checkmark.shield.fill")
                     .resizable()
                     .scaledToFit()
-                    .frame(width: 44, height: 44)
+                    .frame(width: 40, height: 40)
                     .foregroundColor(.green)
             }
 
@@ -133,16 +134,16 @@ public struct ThreatHistoryView: View {
             ZStack {
                 RoundedRectangle(cornerRadius: 10)
                     .fill((event.source == "sms" ? Color.green : Color.blue).opacity(0.15))
-                    .frame(width: 40, height: 40)
+                    .frame(width: 38, height: 38)
 
                 Image(systemName: event.source == "sms" ? "message.badge.filled.fill" : "safari.fill")
-                    .font(.system(size: 18))
+                    .font(.system(size: 17))
                     .foregroundColor(event.source == "sms" ? .green : .blue)
             }
             .padding(.top, 2)
 
             // Content
-            VStack(alignment: .leading, spacing: 4) {
+            VStack(alignment: .leading, spacing: 3) {
                 HStack {
                     Text(title(for: event))
                         .font(.subheadline)
@@ -153,12 +154,12 @@ public struct ThreatHistoryView: View {
                     Spacer()
 
                     Text(badgeTitle(for: event))
-                        .font(.system(size: 10, weight: .bold))
+                        .font(.caption2.bold())
                         .padding(.horizontal, 6)
                         .padding(.vertical, 2)
-                        .background(Color.red.opacity(0.15))
+                        .background(Color.red.opacity(0.12))
                         .foregroundColor(.red)
-                        .cornerRadius(4)
+                        .clipShape(Capsule())
                 }
 
                 if let sender = event.sender, !sender.isEmpty {
@@ -183,7 +184,7 @@ public struct ThreatHistoryView: View {
                 .padding(.top, 2)
             }
         }
-        .padding(.vertical, 4)
+        .padding(.vertical, 2)
     }
 
     // MARK: - Helpers
@@ -220,6 +221,7 @@ public struct ThreatHistoryView: View {
         for item in itemsToDelete {
             ThreatDatabase.shared.deleteEvent(id: item.id)
         }
+        UIImpactFeedbackGenerator(style: .medium).impactOccurred()
         loadEvents()
     }
 
