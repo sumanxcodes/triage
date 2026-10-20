@@ -17,10 +17,10 @@ extension MessageFilterExtension: ILMessageFilterQueryHandling {
         // 2. Extract URLs from SMS
         let urls = URLHasher.extractURLs(from: messageBody)
 
-        // 3. Fast O(1) Local SQLite lookup using GRDB.swift
+        // 3. Fast O(1) Local SQLite lookup using GRDB.swift with canonical & domain hashes
         for url in urls {
-            let hash = URLHasher.sha256(url.absoluteString)
-            if ThreatDatabase.shared.isThreat(urlHash: hash) {
+            let candidateHashes = URLHasher.candidateHashes(for: url)
+            if ThreatDatabase.shared.isThreat(candidateHashes: candidateHashes) {
                 response.action = .junk
                 completion(response)
                 return

@@ -9,9 +9,36 @@
     "expected_action": "filter"
   },
   {
-    "description": "Smishing SMS imitating Bank Account suspension",
+    "description": "Evasion attack: AusPost phishing with tracking query parameters appended",
+    "sender": "+61412345679",
+    "messageBody": "AusPost Notice: Re-schedule delivery now: https://auspost-track-verify.xyz/update?utm_source=sms&utm_medium=smish&fbclid=abc123",
+    "extracted_urls": [
+      "https://auspost-track-verify.xyz/update?utm_source=sms&utm_medium=smish&fbclid=abc123"
+    ],
+    "expected_action": "filter"
+  },
+  {
+    "description": "Domain-level match: Attacker uses newly generated path on already blocked domain",
+    "sender": "+61412345680",
+    "messageBody": "Action required regarding parcel: https://subdomain.auspost-track-verify.xyz/track/order-99881",
+    "extracted_urls": [
+      "https://subdomain.auspost-track-verify.xyz/track/order-99881"
+    ],
+    "expected_action": "filter"
+  },
+  {
+    "description": "Punycode IDN homoglyph spoofing Apple",
+    "sender": "APPLE-ALERT",
+    "messageBody": "Your Apple ID has been suspended. Verify identity immediately: https://xn--pple-43d.com/login",
+    "extracted_urls": [
+      "https://xn--pple-43d.com/login"
+    ],
+    "expected_action": "filter"
+  },
+  {
+    "description": "Smishing SMS using bit.ly shortlink",
     "sender": "+61487654321",
-    "messageBody": "ALERT: Your CommBank NetBank access has been locked due to suspicious activity. Unlock immediately: http://bit.ly/cba-secure-verify",
+    "messageBody": "ALERT: Your CommBank NetBank access has been locked. Unlock immediately: http://bit.ly/cba-secure-verify",
     "extracted_urls": [
       "http://bit.ly/cba-secure-verify"
     ],

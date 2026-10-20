@@ -8,12 +8,20 @@
     "confidence_score": 0.99
   },
   {
-    "url": "http://bit.ly/cba-secure-verify",
-    "domain": "bit.ly",
-    "threat_type": "phishing",
+    "url": "https://cba-netbank-auth.com/login",
+    "domain": "cba-netbank-auth.com",
+    "threat_type": "credential_harvesting",
     "target_brand": "Commonwealth Bank",
-    "sha256": "8a3e746533dc2774db37a8fb735f479f64bf1d02c84288b88d89e52df5eb12da",
+    "sha256": "495447a16149495b23d91cf30b65f3a07ce11e4bfbe15b8109bfcf9ef0528e12",
     "confidence_score": 0.98
+  },
+  {
+    "url": "https://xn--pple-43d.com/login",
+    "domain": "xn--pple-43d.com",
+    "threat_type": "homoglyph_phishing",
+    "target_brand": "Apple",
+    "sha256": "3eb33c2a11c817293a525d6bfe38a536968038ae11ec5a676a6e556e9c1dbfa2",
+    "confidence_score": 0.97
   },
   {
     "url": "https://apple-id-security-auth.top/login",
