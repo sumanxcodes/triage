@@ -1,0 +1,687 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		029A2C53137A4847FF78A417 /* TriageMessageFilter.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = E6B1D1968114693CEDB547DE /* TriageMessageFilter.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		0FA75DA4FFBC5FA3CED9E028 /* content.js in Resources */ = {isa = PBXBuildFile; fileRef = F13643C92E27663F6D258F28 /* content.js */; };
+		11FB48072235D9B766A6AB32 /* TriageSafariExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 34162F2F28C88443643945A9 /* TriageSafariExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		24DF2C9117B9E5A7C1784D09 /* ThreatRecord.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E3C316134F10DDA84685E75 /* ThreatRecord.swift */; };
+		26109AC0AFC96AB3744D9B98 /* OnboardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6231CE7E75C226A69AA58BE6 /* OnboardingView.swift */; };
+		2A1DC005C525849C35805DF7 /* URLHasher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5547E80149780CA309100B35 /* URLHasher.swift */; };
+		2E93389AC900C45E4FA4FA44 /* IdentityLookup.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CE4D15E70FED13C60AA023B0 /* IdentityLookup.framework */; };
+		372D670ED075D6C98755D35F /* SafariWebExtensionHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9CA2D0F147D858DA14863FA6 /* SafariWebExtensionHandler.swift */; };
+		49EE0D2E7ABA935B4C60275C /* GRDB in Frameworks */ = {isa = PBXBuildFile; productRef = AB2A149F5A2A973E5E639B22 /* GRDB */; };
+		5068F059DE4BE01097654E9B /* URLHasher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5547E80149780CA309100B35 /* URLHasher.swift */; };
+		62F245E0044479EA2CFA0450 /* ThreatDatabase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92A7D0D806AD793BCC7E5E28 /* ThreatDatabase.swift */; };
+		801D2F935E3F90077B6220E5 /* URLHasher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5547E80149780CA309100B35 /* URLHasher.swift */; };
+		8B03B79D6D43675A93A51E1B /* SafariServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 59D32BD60406C2AB87F64FBE /* SafariServices.framework */; };
+		8B57FCDC90B0ECA8F97ED44D /* TriageApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E0C11F55FC0F7B2363DFA22 /* TriageApp.swift */; };
+		8E5978B8516CFAFE25AFE7E7 /* AppGroup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D6718A1EB1F39E1522C6316 /* AppGroup.swift */; };
+		96087F9BD7785147C69F0080 /* GRDB in Frameworks */ = {isa = PBXBuildFile; productRef = 29B28512974777103A6C5B79 /* GRDB */; };
+		976C4A1F530264007133E72B /* MessageFilterExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C8F49D314B973279AB6DD24 /* MessageFilterExtension.swift */; };
+		B0B75EA9480A64BFD0576F88 /* ThreatRecord.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E3C316134F10DDA84685E75 /* ThreatRecord.swift */; };
+		B89B5E3B6806A845367282E4 /* GRDB in Frameworks */ = {isa = PBXBuildFile; productRef = 6CC8233E319BEF59CE18EAF4 /* GRDB */; };
+		C824A52BA523134AA8651AE4 /* ThreatRecord.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E3C316134F10DDA84685E75 /* ThreatRecord.swift */; };
+		DB139EFD310BE572F8DF279B /* AppGroup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D6718A1EB1F39E1522C6316 /* AppGroup.swift */; };
+		E3C8B7659F54484A942E81AF /* ThreatDatabase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92A7D0D806AD793BCC7E5E28 /* ThreatDatabase.swift */; };
+		EB5D3ACD7203AD8BDACBE472 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF1E59A10EBC6B5CA5788E27 /* ContentView.swift */; };
+		F77F0893E82EA4F1C615F5A1 /* ThreatDatabase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92A7D0D806AD793BCC7E5E28 /* ThreatDatabase.swift */; };
+		F804372AC4EE4B7BC9E73753 /* manifest.json in Resources */ = {isa = PBXBuildFile; fileRef = 45F733B7A9614B0F5E4B6E47 /* manifest.json */; };
+		FFDE3A060AF451AED0E1B2A5 /* AppGroup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D6718A1EB1F39E1522C6316 /* AppGroup.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		85D250A772062AC34DBC569E /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = FEB5A19E7FAEE77CAC1D0551 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 35C1E636144AF4F0A56392E7;
+			remoteInfo = TriageMessageFilter;
+		};
+		FB04FB39A13B17A3C0316BF3 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = FEB5A19E7FAEE77CAC1D0551 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 9A6D09682818DD827A7764CF;
+			remoteInfo = TriageSafariExtension;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		0B596FBAF39B53B2D8C0B287 /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				029A2C53137A4847FF78A417 /* TriageMessageFilter.appex in Embed Foundation Extensions */,
+				11FB48072235D9B766A6AB32 /* TriageSafariExtension.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		0C8F49D314B973279AB6DD24 /* MessageFilterExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageFilterExtension.swift; sourceTree = "<group>"; };
+		335EA5B6891283B2521982C8 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		34162F2F28C88443643945A9 /* TriageSafariExtension.appex */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = "wrapper.app-extension"; path = TriageSafariExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		45F733B7A9614B0F5E4B6E47 /* manifest.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = manifest.json; sourceTree = "<group>"; };
+		5547E80149780CA309100B35 /* URLHasher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = URLHasher.swift; sourceTree = "<group>"; };
+		58E01A2461F8138369AA1C50 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		59D32BD60406C2AB87F64FBE /* SafariServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SafariServices.framework; path = System/Library/Frameworks/SafariServices.framework; sourceTree = SDKROOT; };
+		6231CE7E75C226A69AA58BE6 /* OnboardingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingView.swift; sourceTree = "<group>"; };
+		6B0457141B59F799EEE8B4FF /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		7301D38DBB832A95F1059712 /* TriageApp.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = TriageApp.entitlements; sourceTree = "<group>"; };
+		8E0C11F55FC0F7B2363DFA22 /* TriageApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TriageApp.swift; sourceTree = "<group>"; };
+		8E3C316134F10DDA84685E75 /* ThreatRecord.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThreatRecord.swift; sourceTree = "<group>"; };
+		92A7D0D806AD793BCC7E5E28 /* ThreatDatabase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThreatDatabase.swift; sourceTree = "<group>"; };
+		9CA2D0F147D858DA14863FA6 /* SafariWebExtensionHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SafariWebExtensionHandler.swift; sourceTree = "<group>"; };
+		9D6718A1EB1F39E1522C6316 /* AppGroup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppGroup.swift; sourceTree = "<group>"; };
+		B684FD730DEBCD1BDB64795E /* TriageMessageFilter.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = TriageMessageFilter.entitlements; sourceTree = "<group>"; };
+		C9ACDDD2CA82C16BB7C8F189 /* TriageApp.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = TriageApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		CE4D15E70FED13C60AA023B0 /* IdentityLookup.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IdentityLookup.framework; path = System/Library/Frameworks/IdentityLookup.framework; sourceTree = SDKROOT; };
+		E6B1D1968114693CEDB547DE /* TriageMessageFilter.appex */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = "wrapper.app-extension"; path = TriageMessageFilter.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		F13643C92E27663F6D258F28 /* content.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = content.js; sourceTree = "<group>"; };
+		FF1E59A10EBC6B5CA5788E27 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		1714BE0761E445E43850C2B9 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				96087F9BD7785147C69F0080 /* GRDB in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		25FFF32CA3582339B61E012B /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B89B5E3B6806A845367282E4 /* GRDB in Frameworks */,
+				2E93389AC900C45E4FA4FA44 /* IdentityLookup.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		99084AF3E98E717FE9684205 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				49EE0D2E7ABA935B4C60275C /* GRDB in Frameworks */,
+				8B03B79D6D43675A93A51E1B /* SafariServices.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		0E2D4BBF1FEEDD91FC33C94B /* TriageShared */ = {
+			isa = PBXGroup;
+			children = (
+				BD0093F171B78A19ABD8F7CA /* Database */,
+				2D8CAFA720ED1CA148FFCB58 /* Utils */,
+			);
+			path = TriageShared;
+			sourceTree = "<group>";
+		};
+		10BB8FD6E1C2CDF120487A76 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				F13643C92E27663F6D258F28 /* content.js */,
+				45F733B7A9614B0F5E4B6E47 /* manifest.json */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		2D8CAFA720ED1CA148FFCB58 /* Utils */ = {
+			isa = PBXGroup;
+			children = (
+				9D6718A1EB1F39E1522C6316 /* AppGroup.swift */,
+				5547E80149780CA309100B35 /* URLHasher.swift */,
+			);
+			path = Utils;
+			sourceTree = "<group>";
+		};
+		2E31A1650452D1472EB8E5C6 /* TriageMessageFilter */ = {
+			isa = PBXGroup;
+			children = (
+				335EA5B6891283B2521982C8 /* Info.plist */,
+				0C8F49D314B973279AB6DD24 /* MessageFilterExtension.swift */,
+				B684FD730DEBCD1BDB64795E /* TriageMessageFilter.entitlements */,
+			);
+			path = TriageMessageFilter;
+			sourceTree = "<group>";
+		};
+		760635236CB154975D8D7B03 /* TriageSafariExtension */ = {
+			isa = PBXGroup;
+			children = (
+				6B0457141B59F799EEE8B4FF /* Info.plist */,
+				9CA2D0F147D858DA14863FA6 /* SafariWebExtensionHandler.swift */,
+				10BB8FD6E1C2CDF120487A76 /* Resources */,
+			);
+			path = TriageSafariExtension;
+			sourceTree = "<group>";
+		};
+		B629658E7463A345E7A24C81 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				CE4D15E70FED13C60AA023B0 /* IdentityLookup.framework */,
+				59D32BD60406C2AB87F64FBE /* SafariServices.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		B9168303CDD28FED421BC401 /* TriageApp */ = {
+			isa = PBXGroup;
+			children = (
+				FF1E59A10EBC6B5CA5788E27 /* ContentView.swift */,
+				58E01A2461F8138369AA1C50 /* Info.plist */,
+				6231CE7E75C226A69AA58BE6 /* OnboardingView.swift */,
+				7301D38DBB832A95F1059712 /* TriageApp.entitlements */,
+				8E0C11F55FC0F7B2363DFA22 /* TriageApp.swift */,
+			);
+			path = TriageApp;
+			sourceTree = "<group>";
+		};
+		BD0093F171B78A19ABD8F7CA /* Database */ = {
+			isa = PBXGroup;
+			children = (
+				92A7D0D806AD793BCC7E5E28 /* ThreatDatabase.swift */,
+				8E3C316134F10DDA84685E75 /* ThreatRecord.swift */,
+			);
+			path = Database;
+			sourceTree = "<group>";
+		};
+		C02D11886386D6206049C072 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				C9ACDDD2CA82C16BB7C8F189 /* TriageApp.app */,
+				E6B1D1968114693CEDB547DE /* TriageMessageFilter.appex */,
+				34162F2F28C88443643945A9 /* TriageSafariExtension.appex */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		E7A2DC762E8E207708F9F98F = {
+			isa = PBXGroup;
+			children = (
+				B9168303CDD28FED421BC401 /* TriageApp */,
+				2E31A1650452D1472EB8E5C6 /* TriageMessageFilter */,
+				760635236CB154975D8D7B03 /* TriageSafariExtension */,
+				0E2D4BBF1FEEDD91FC33C94B /* TriageShared */,
+				B629658E7463A345E7A24C81 /* Frameworks */,
+				C02D11886386D6206049C072 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		35C1E636144AF4F0A56392E7 /* TriageMessageFilter */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 4BD4C4C4D8CB2353884DFC47 /* Build configuration list for PBXNativeTarget "TriageMessageFilter" */;
+			buildPhases = (
+				B49D22BFAD79F26D72343EDF /* Sources */,
+				25FFF32CA3582339B61E012B /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = TriageMessageFilter;
+			packageProductDependencies = (
+				6CC8233E319BEF59CE18EAF4 /* GRDB */,
+			);
+			productName = TriageMessageFilter;
+			productReference = E6B1D1968114693CEDB547DE /* TriageMessageFilter.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
+		6238B11FBF556165A35C9661 /* TriageApp */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = FC97AD62414F2EF634356D92 /* Build configuration list for PBXNativeTarget "TriageApp" */;
+			buildPhases = (
+				413B284290DC52E0CF5274BC /* Sources */,
+				1714BE0761E445E43850C2B9 /* Frameworks */,
+				0B596FBAF39B53B2D8C0B287 /* Embed Foundation Extensions */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				17910FADACF1B7DC1FEE28C2 /* PBXTargetDependency */,
+				B415127C897D5D5E6C0B0A01 /* PBXTargetDependency */,
+			);
+			name = TriageApp;
+			packageProductDependencies = (
+				29B28512974777103A6C5B79 /* GRDB */,
+			);
+			productName = TriageApp;
+			productReference = C9ACDDD2CA82C16BB7C8F189 /* TriageApp.app */;
+			productType = "com.apple.product-type.application";
+		};
+		9A6D09682818DD827A7764CF /* TriageSafariExtension */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = A5F85F4046235335944EF0FF /* Build configuration list for PBXNativeTarget "TriageSafariExtension" */;
+			buildPhases = (
+				D9CFA65FB0D1FA7B6405EF95 /* Sources */,
+				F6D2E531F8A251B87ACB6C49 /* Resources */,
+				99084AF3E98E717FE9684205 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = TriageSafariExtension;
+			packageProductDependencies = (
+				AB2A149F5A2A973E5E639B22 /* GRDB */,
+			);
+			productName = TriageSafariExtension;
+			productReference = 34162F2F28C88443643945A9 /* TriageSafariExtension.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		FEB5A19E7FAEE77CAC1D0551 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 1430;
+				TargetAttributes = {
+				};
+			};
+			buildConfigurationList = 308B2C4FA9D023DFA14A4507 /* Build configuration list for PBXProject "Triage" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				Base,
+				en,
+			);
+			mainGroup = E7A2DC762E8E207708F9F98F;
+			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				D7B7578006A2E9F54BF5FC23 /* XCRemoteSwiftPackageReference "GRDB.swift" */,
+			);
+			preferredProjectObjectVersion = 77;
+			productRefGroup = C02D11886386D6206049C072 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				6238B11FBF556165A35C9661 /* TriageApp */,
+				35C1E636144AF4F0A56392E7 /* TriageMessageFilter */,
+				9A6D09682818DD827A7764CF /* TriageSafariExtension */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		F6D2E531F8A251B87ACB6C49 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				0FA75DA4FFBC5FA3CED9E028 /* content.js in Resources */,
+				F804372AC4EE4B7BC9E73753 /* manifest.json in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		413B284290DC52E0CF5274BC /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				DB139EFD310BE572F8DF279B /* AppGroup.swift in Sources */,
+				EB5D3ACD7203AD8BDACBE472 /* ContentView.swift in Sources */,
+				26109AC0AFC96AB3744D9B98 /* OnboardingView.swift in Sources */,
+				62F245E0044479EA2CFA0450 /* ThreatDatabase.swift in Sources */,
+				B0B75EA9480A64BFD0576F88 /* ThreatRecord.swift in Sources */,
+				8B57FCDC90B0ECA8F97ED44D /* TriageApp.swift in Sources */,
+				5068F059DE4BE01097654E9B /* URLHasher.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B49D22BFAD79F26D72343EDF /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				FFDE3A060AF451AED0E1B2A5 /* AppGroup.swift in Sources */,
+				976C4A1F530264007133E72B /* MessageFilterExtension.swift in Sources */,
+				F77F0893E82EA4F1C615F5A1 /* ThreatDatabase.swift in Sources */,
+				C824A52BA523134AA8651AE4 /* ThreatRecord.swift in Sources */,
+				801D2F935E3F90077B6220E5 /* URLHasher.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D9CFA65FB0D1FA7B6405EF95 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				8E5978B8516CFAFE25AFE7E7 /* AppGroup.swift in Sources */,
+				372D670ED075D6C98755D35F /* SafariWebExtensionHandler.swift in Sources */,
+				E3C8B7659F54484A942E81AF /* ThreatDatabase.swift in Sources */,
+				24DF2C9117B9E5A7C1784D09 /* ThreatRecord.swift in Sources */,
+				2A1DC005C525849C35805DF7 /* URLHasher.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		17910FADACF1B7DC1FEE28C2 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 35C1E636144AF4F0A56392E7 /* TriageMessageFilter */;
+			targetProxy = 85D250A772062AC34DBC569E /* PBXContainerItemProxy */;
+		};
+		B415127C897D5D5E6C0B0A01 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 9A6D09682818DD827A7764CF /* TriageSafariExtension */;
+			targetProxy = FB04FB39A13B17A3C0316BF3 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		03BE5FBC9E4FADB17B11A2D0 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+		28D4B3031EAD6C5F8A740853 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = TriageApp/TriageApp.entitlements;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = TriageApp/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.sumanxcodes.triage;
+				SDKROOT = iphoneos;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		2F1948641CA73FD305420948 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = TriageMessageFilter/TriageMessageFilter.entitlements;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = TriageMessageFilter/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.sumanxcodes.triage.MessageFilter;
+				SDKROOT = iphoneos;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		3B0E7F90D25B9980E15662A8 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"DEBUG=1",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		45D81DE473B195CCC44875A4 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = TriageSafariExtension/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.sumanxcodes.triage.SafariExtension;
+				SDKROOT = iphoneos;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		56BCF49B945F2F52530C62F3 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = TriageSafariExtension/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.sumanxcodes.triage.SafariExtension;
+				SDKROOT = iphoneos;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		B67726397E8BBF0D8B55F4C6 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = TriageMessageFilter/TriageMessageFilter.entitlements;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = TriageMessageFilter/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.sumanxcodes.triage.MessageFilter;
+				SDKROOT = iphoneos;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		FE1BD46BFF07ED50EC28BB5B /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = TriageApp/TriageApp.entitlements;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = TriageApp/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.sumanxcodes.triage;
+				SDKROOT = iphoneos;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		308B2C4FA9D023DFA14A4507 /* Build configuration list for PBXProject "Triage" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				3B0E7F90D25B9980E15662A8 /* Debug */,
+				03BE5FBC9E4FADB17B11A2D0 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		4BD4C4C4D8CB2353884DFC47 /* Build configuration list for PBXNativeTarget "TriageMessageFilter" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B67726397E8BBF0D8B55F4C6 /* Debug */,
+				2F1948641CA73FD305420948 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		A5F85F4046235335944EF0FF /* Build configuration list for PBXNativeTarget "TriageSafariExtension" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				56BCF49B945F2F52530C62F3 /* Debug */,
+				45D81DE473B195CCC44875A4 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		FC97AD62414F2EF634356D92 /* Build configuration list for PBXNativeTarget "TriageApp" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				FE1BD46BFF07ED50EC28BB5B /* Debug */,
+				28D4B3031EAD6C5F8A740853 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		D7B7578006A2E9F54BF5FC23 /* XCRemoteSwiftPackageReference "GRDB.swift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/groue/GRDB.swift.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 6.29.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		29B28512974777103A6C5B79 /* GRDB */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = D7B7578006A2E9F54BF5FC23 /* XCRemoteSwiftPackageReference "GRDB.swift" */;
+			productName = GRDB;
+		};
+		6CC8233E319BEF59CE18EAF4 /* GRDB */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = D7B7578006A2E9F54BF5FC23 /* XCRemoteSwiftPackageReference "GRDB.swift" */;
+			productName = GRDB;
+		};
+		AB2A149F5A2A973E5E639B22 /* GRDB */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = D7B7578006A2E9F54BF5FC23 /* XCRemoteSwiftPackageReference "GRDB.swift" */;
+			productName = GRDB;
+		};
+/* End XCSwiftPackageProductDependency section */
+	};
+	rootObject = FEB5A19E7FAEE77CAC1D0551 /* Project object */;
+}

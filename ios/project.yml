@@ -1,0 +1,59 @@
+name: Triage
+options:
+  bundleIdPrefix: com.sumanxcodes
+  deploymentTarget:
+    iOS: "17.0"
+
+packages:
+  GRDB:
+    url: https://github.com/groue/GRDB.swift.git
+    from: "6.29.0"
+
+targets:
+  TriageApp:
+    type: application
+    platform: iOS
+    sources:
+      - path: TriageApp
+      - path: TriageShared
+    dependencies:
+      - package: GRDB
+      - target: TriageMessageFilter
+      - target: TriageSafariExtension
+    settings:
+      PRODUCT_BUNDLE_IDENTIFIER: com.sumanxcodes.triage
+      CODE_SIGN_ENTITLEMENTS: TriageApp/TriageApp.entitlements
+      INFOPLIST_FILE: TriageApp/Info.plist
+      GENERATE_INFOPLIST_FILE: false
+      SWIFT_VERSION: "5.0"
+
+  TriageMessageFilter:
+    type: app-extension
+    platform: iOS
+    sources:
+      - path: TriageMessageFilter
+      - path: TriageShared
+    dependencies:
+      - package: GRDB
+      - sdk: IdentityLookup.framework
+    settings:
+      PRODUCT_BUNDLE_IDENTIFIER: com.sumanxcodes.triage.MessageFilter
+      CODE_SIGN_ENTITLEMENTS: TriageMessageFilter/TriageMessageFilter.entitlements
+      INFOPLIST_FILE: TriageMessageFilter/Info.plist
+      GENERATE_INFOPLIST_FILE: false
+      SWIFT_VERSION: "5.0"
+
+  TriageSafariExtension:
+    type: app-extension
+    platform: iOS
+    sources:
+      - path: TriageSafariExtension
+      - path: TriageShared
+    dependencies:
+      - package: GRDB
+      - sdk: SafariServices.framework
+    settings:
+      PRODUCT_BUNDLE_IDENTIFIER: com.sumanxcodes.triage.SafariExtension
+      INFOPLIST_FILE: TriageSafariExtension/Info.plist
+      GENERATE_INFOPLIST_FILE: false
+      SWIFT_VERSION: "5.0"

@@ -1,0 +1,36 @@
+[
+  {
+    "description": "Phishing SMS imitating Australian Post / Delivery failure",
+    "sender": "+61412345678",
+    "messageBody": "Your parcel #AU89218 has an incorrect delivery address. Please verify your details within 24h: https://auspost-track-verify.xyz/update",
+    "extracted_urls": [
+      "https://auspost-track-verify.xyz/update"
+    ],
+    "expected_action": "filter"
+  },
+  {
+    "description": "Smishing SMS imitating Bank Account suspension",
+    "sender": "+61487654321",
+    "messageBody": "ALERT: Your CommBank NetBank access has been locked due to suspicious activity. Unlock immediately: http://bit.ly/cba-secure-verify",
+    "extracted_urls": [
+      "http://bit.ly/cba-secure-verify"
+    ],
+    "expected_action": "filter"
+  },
+  {
+    "description": "Legitimate transactional OTP without link",
+    "sender": "+61499999999",
+    "messageBody": "Your verification code is 482910. Do not share this with anyone.",
+    "extracted_urls": [],
+    "expected_action": "none"
+  },
+  {
+    "description": "Legitimate business notification with trusted link",
+    "sender": "UBER",
+    "messageBody": "Your Uber ride is arriving now with Toyota Camry. Receipt: https://uber.com/receipt/12345",
+    "extracted_urls": [
+      "https://uber.com/receipt/12345"
+    ],
+    "expected_action": "none"
+  }
+]
