@@ -1,3 +1,4 @@
+import asyncio
 import json
 import logging
 from typing import Any, Dict, List
@@ -5,7 +6,7 @@ import redis
 
 from app.core.config import settings
 from app.core.normalizer import canonicalize_url, generate_threat_lookup_keys
-from worker.analyzer import evaluate_with_gemini
+from worker.analyzer import PhishingAnalysisResult, evaluate_with_gemini
 from worker.celery_app import celery_app
 from worker.scraper import scrape_url_headless
 
@@ -15,6 +16,35 @@ logger = logging.getLogger(__name__)
 def get_sync_redis() -> redis.Redis:
     """Synchronous Redis client for Celery tasks."""
     return redis.Redis.from_url(settings.REDIS_URL, decode_responses=True)
+
+
+async def async_save_threat_record(
+    canonical: str,
+    verdict: PhishingAnalysisResult,
+    keys: List[tuple],
+) -> None:
+    """Persists a confirmed threat record to PostgreSQL asynchronously."""
+    try:
+        from app.db.models import ThreatRecordModel
+        from app.db.session import async_session_factory
+
+        url_hash = keys[0][1]
+        domain_hash = keys[1][1] if len(keys) > 1 else url_hash
+
+        async with async_session_factory() as session:
+            record = ThreatRecordModel(
+                url_hash=url_hash,
+                domain_hash=domain_hash,
+                canonical_url=canonical,
+                threat_type=verdict.threat_category,
+                target_brand=verdict.target_brand,
+                confidence_score=verdict.confidence_score,
+                is_active=True,
+            )
+            session.add(record)
+            await session.commit()
+    except Exception as e:
+        logger.warning(f"Could not persist threat to PostgreSQL: {e}")
 
 
 @celery_app.task(name="analyze_urls_zero_day", bind=True)
@@ -77,6 +107,12 @@ def analyze_urls_zero_day(self, urls: List[str]) -> Dict[str, Any]:
                 url_hash = keys[0][1]
                 pipe.setex(f"analysis:url:{url_hash}", 86400, json.dumps(result_payload))
                 pipe.execute()
+
+                # Persist to PostgreSQL master database for client delta synchronization
+                try:
+                    asyncio.run(async_save_threat_record(canonical, verdict, keys))
+                except Exception as db_err:
+                    logger.warning(f"Failed to persist threat to database: {db_err}")
 
                 logger.info(f"Published confirmed zero-day threat: {canonical} ({verdict.target_brand})")
             except Exception as e:

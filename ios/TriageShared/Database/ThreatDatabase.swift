@@ -80,4 +80,25 @@ public final class ThreatDatabase {
             }
         }
     }
+
+    /// Delete threat records by urlHash when revoked by backend.
+    public func delete(urlHashes: [String]) throws {
+        guard !urlHashes.isEmpty else { return }
+        try dbQueue.write { db in
+            try ThreatRecord
+                .filter(urlHashes.contains(Column("urlHash")))
+                .deleteAll(db)
+        }
+    }
+
+    /// Total count of active threats stored in local SQLite cache.
+    public func count() -> Int {
+        do {
+            return try dbQueue.read { db in
+                try ThreatRecord.fetchCount(db)
+            }
+        } catch {
+            return 0
+        }
+    }
 }
