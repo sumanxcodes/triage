@@ -14,8 +14,8 @@
 | **M3: Flow B — SMS Threat Engine** | Anti-obfuscation normalizer, sub-second shortlink resolver, Redis cache pipeline | ✅ Completed |
 | **M4: Native iOS Multi-Target** | Declarative XcodeGen, App Group GRDB SQLite DB, IdentityLookup & Safari extensions | ✅ Completed |
 | **M5: Flow C — Zero-Day AI Pipeline** | Playwright headless browser scraper, Google Gemini multimodal prompt evaluation | ✅ Completed |
-| **M6: Flow A — Offline Sync & DB** | PostgreSQL Alembic models, `/api/v1/threats/delta`, iOS `BGTaskScheduler` sync | ⏳ Next Up |
-| **M7: App Store & TestFlight** | StoreKit 2 subscriptions, Fastlane Match & Pilot, privacy manifests | 📋 Planned |
+| **M6: Flow A — Offline Sync & DB** | PostgreSQL models, `/api/v1/threats/delta`, iOS `ThreatSyncManager` BG sync | ✅ Completed |
+| **M7: App Store & TestFlight** | StoreKit 2 subscriptions, Fastlane Match & Pilot, privacy manifests | ⏳ Next Up |
 
 ---
 
@@ -113,18 +113,32 @@
 
 ---
 
-## ⏳ Next Up: Flow A — Offline Sync & Database
+### 6. Flow A: Offline Sync & PostgreSQL Threat Store
+- [x] Built **PostgreSQL Database Models & Session** ([`backend/app/db/`](../backend/app/db/)):
+  - SQLAlchemy 2.0 async engine and session factory (`session.py`).
+  - Master threat model ([`models.py`](../backend/app/db/models.py)) with indexes on `url_hash`, `domain_hash`, and `updated_at`.
+- [x] Built **Incremental Delta Sync API** ([`backend/app/api/v1/threats.py`](../backend/app/api/v1/threats.py)):
+  - `GET /api/v1/threats/delta?since=<iso8601>`: Queries threats updated since client's last sync.
+  - Automatically splits into `added_hashes` (active threats) and `removed_hashes` (revoked/false-positive threats).
+  - Supports initial full bootstrap sync when `since` is omitted.
+- [x] Connected **Zero-Day Pipeline to Master DB** ([`backend/worker/tasks.py`](../backend/worker/tasks.py)):
+  - Confirmed phishing threats are saved to PostgreSQL in addition to Redis cache.
+- [x] Built **iOS Client Sync Engine** ([`ios/TriageShared/Sync/ThreatSyncManager.swift`](../ios/TriageShared/Sync/ThreatSyncManager.swift)):
+  - Network client querying `/api/v1/threats/delta` with App Group last sync timestamp.
+  - Batch inserts new records and deletes revoked records in `ThreatDatabase.shared` (`GRDB.swift`).
+  - Configured `BGAppRefreshTask` registration for periodic background sync (`com.sumanxcodes.triage.threatsync`).
+- [x] Enhanced **SwiftUI Security Dashboard** ([`ios/TriageApp/ContentView.swift`](../ios/TriageApp/ContentView.swift)):
+  - Live offline threat count, relative time since last sync, and manual "Sync Now" button with progress spinner.
+- [x] Added unit tests for delta sync ([`backend/tests/test_threats_delta.py`](../backend/tests/test_threats_delta.py)) with 22 total passing tests in 0.10s.
 
-- [ ] **PostgreSQL Threat Store & Alembic Migrations:**
-  - Define master threat table schema in SQLAlchemy / SQLModel.
-  - Create Alembic initial migration.
-- [ ] **Delta Sync API (`GET /api/v1/threats/delta`):**
-  - Implement incremental delta queries based on `updated_at > since` timestamp.
-- [ ] **iOS Background Sync Worker:**
-  - Implement `BGTaskScheduler` task in `TriageApp` to trigger daily background threat pulls.
-  - Batch insert delta records into local `GRDB.swift` SQLite database via App Group.
+---
 
-### App Store Readiness & Polish
-- [ ] StoreKit 2 paywall implementation (subscription plans & receipt validation).
-- [ ] Apple Privacy Manifests (`PrivacyInfo.xcprivacy`) for extensions and main app.
-- [ ] TestFlight CI/CD automation via Fastlane Match.
+## ⏳ Next Up: Milestone 7 — App Store Readiness & Polish
+
+- [ ] **StoreKit 2 Paywall & Subscription Management (`ios/TriageApp/StoreKit/`):**
+  - Define in-app purchase products (`monthly.pro`, `annual.pro`).
+  - SwiftUI paywall view and StoreKit 2 transaction verification listener.
+- [ ] **Apple Privacy Manifest (`PrivacyInfo.xcprivacy`):**
+  - Required by Apple App Store review for apps using networking and user defaults.
+- [ ] **Fastlane Pilot TestFlight Automation:**
+  - Fastlane Match certificates and automated `.xcarchive` TestFlight uploads.

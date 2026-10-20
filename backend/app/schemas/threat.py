@@ -4,8 +4,10 @@ from pydantic import BaseModel, Field
 
 
 class ThreatHashItem(BaseModel):
-    hash: str = Field(description="SHA-256 hash of the malicious URL")
+    hash: str = Field(description="SHA-256 hash of the malicious canonical URL")
+    domain_hash: Optional[str] = Field(default=None, description="SHA-256 hash of the registered domain")
     category: str = Field(default="phishing", description="Threat classification")
+    target_brand: Optional[str] = Field(default=None, description="Target brand")
     created_at: datetime = Field(default_factory=datetime.utcnow)
 
 
