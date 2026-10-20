@@ -133,6 +133,24 @@ public final class ThreatSyncManager {
                 createdAt: Date()
             ),
             ThreatRecord(
+                urlHash: "a379a6f6eeafb9a55e378c118034e2751e682fab9f2d30ab13d2125586ce1947",
+                category: "phishing_test",
+                targetBrand: "example.com (Domain Test)",
+                createdAt: Date()
+            ),
+            ThreatRecord(
+                urlHash: "100680ad546ce6a577f42f52df33b4cfdca756859e664b8d7de329b150d09ce9",
+                category: "phishing_test",
+                targetBrand: "https://example.com (URL Test)",
+                createdAt: Date()
+            ),
+            ThreatRecord(
+                urlHash: "0f115db062b7c0dd030b16878c99dea5c354b49dc37b38eb8846179c7783e9d7",
+                category: "phishing_test",
+                targetBrand: "https://example.com/ (URL Test)",
+                createdAt: Date()
+            ),
+            ThreatRecord(
                 urlHash: "5a2474b3a617c332f113a5ea8ca1be85fe299636dce3b0217e400c6c97136359",
                 category: "phishing_test",
                 targetBrand: "HttpBin Test",

@@ -20,6 +20,8 @@ final class SafariWebExtensionHandler: NSObject, NSExtensionRequestHandling {
             isBlocked = ThreatDatabase.shared.isThreat(urlHash: hash)
         }
 
+        NSLog("[Triage Safari] Evaluating URL: %@ -> Result: %@", urlString, isBlocked ? "BLOCK" : "ALLOW")
+
         let response = NSExtensionItem()
         response.userInfo = [
             SFExtensionMessageKey: [

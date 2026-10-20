@@ -55,6 +55,7 @@ targets:
       - sdk: SafariServices.framework
     settings:
       PRODUCT_BUNDLE_IDENTIFIER: com.sumanxcodes.triage.SafariExtension
+      CODE_SIGN_ENTITLEMENTS: TriageSafariExtension/TriageSafariExtension.entitlements
       INFOPLIST_FILE: TriageSafariExtension/Info.plist
       GENERATE_INFOPLIST_FILE: false
       SWIFT_VERSION: "5.0"

@@ -82,6 +82,7 @@
 		159F9070191CE4E47B0D1D35 /* background.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = background.js; sourceTree = "<group>"; };
 		335EA5B6891283B2521982C8 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		34162F2F28C88443643945A9 /* TriageSafariExtension.appex */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = "wrapper.app-extension"; path = TriageSafariExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		36302D64EEC2FF6AB9A69CAC /* TriageSafariExtension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = TriageSafariExtension.entitlements; sourceTree = "<group>"; };
 		45F733B7A9614B0F5E4B6E47 /* manifest.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = manifest.json; sourceTree = "<group>"; };
 		5547E80149780CA309100B35 /* URLHasher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = URLHasher.swift; sourceTree = "<group>"; };
 		58E01A2461F8138369AA1C50 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
@@ -190,6 +191,7 @@
 			children = (
 				6B0457141B59F799EEE8B4FF /* Info.plist */,
 				9CA2D0F147D858DA14863FA6 /* SafariWebExtensionHandler.swift */,
+				36302D64EEC2FF6AB9A69CAC /* TriageSafariExtension.entitlements */,
 				10BB8FD6E1C2CDF120487A76 /* Resources */,
 			);
 			path = TriageSafariExtension;
@@ -601,6 +603,7 @@
 		45D81DE473B195CCC44875A4 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = TriageSafariExtension/TriageSafariExtension.entitlements;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = TriageSafariExtension/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -618,6 +621,7 @@
 		56BCF49B945F2F52530C62F3 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = TriageSafariExtension/TriageSafariExtension.entitlements;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = TriageSafariExtension/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
