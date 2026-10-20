@@ -16,6 +16,7 @@
 		2A1DC005C525849C35805DF7 /* URLHasher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5547E80149780CA309100B35 /* URLHasher.swift */; };
 		2E93389AC900C45E4FA4FA44 /* IdentityLookup.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CE4D15E70FED13C60AA023B0 /* IdentityLookup.framework */; };
 		3028C043A7E174E865CBD938 /* Triage.storekit in Resources */ = {isa = PBXBuildFile; fileRef = B3EF1832BA40C06C911679FC /* Triage.storekit */; };
+		305DC2FCA657790FD06D98F1 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F45D764DB1A395F74585E666 /* Assets.xcassets */; };
 		372D670ED075D6C98755D35F /* SafariWebExtensionHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9CA2D0F147D858DA14863FA6 /* SafariWebExtensionHandler.swift */; };
 		49EE0D2E7ABA935B4C60275C /* GRDB in Frameworks */ = {isa = PBXBuildFile; productRef = AB2A149F5A2A973E5E639B22 /* GRDB */; };
 		5068F059DE4BE01097654E9B /* URLHasher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5547E80149780CA309100B35 /* URLHasher.swift */; };
@@ -81,7 +82,7 @@
 		0C8F49D314B973279AB6DD24 /* MessageFilterExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageFilterExtension.swift; sourceTree = "<group>"; };
 		159F9070191CE4E47B0D1D35 /* background.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = background.js; sourceTree = "<group>"; };
 		335EA5B6891283B2521982C8 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
-		34162F2F28C88443643945A9 /* TriageSafariExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = TriageSafariExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		34162F2F28C88443643945A9 /* TriageSafariExtension.appex */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = "wrapper.app-extension"; path = TriageSafariExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		36302D64EEC2FF6AB9A69CAC /* TriageSafariExtension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = TriageSafariExtension.entitlements; sourceTree = "<group>"; };
 		45F733B7A9614B0F5E4B6E47 /* manifest.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = manifest.json; sourceTree = "<group>"; };
 		5547E80149780CA309100B35 /* URLHasher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = URLHasher.swift; sourceTree = "<group>"; };
@@ -93,18 +94,19 @@
 		8E0C11F55FC0F7B2363DFA22 /* TriageApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TriageApp.swift; sourceTree = "<group>"; };
 		8E3C316134F10DDA84685E75 /* ThreatRecord.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThreatRecord.swift; sourceTree = "<group>"; };
 		92A7D0D806AD793BCC7E5E28 /* ThreatDatabase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThreatDatabase.swift; sourceTree = "<group>"; };
-		9557448EEDA86B541F70E6DD /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
+		9557448EEDA86B541F70E6DD /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		9CA2D0F147D858DA14863FA6 /* SafariWebExtensionHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SafariWebExtensionHandler.swift; sourceTree = "<group>"; };
 		9D6718A1EB1F39E1522C6316 /* AppGroup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppGroup.swift; sourceTree = "<group>"; };
-		B3EF1832BA40C06C911679FC /* Triage.storekit */ = {isa = PBXFileReference; lastKnownFileType = text; path = Triage.storekit; sourceTree = "<group>"; };
+		B3EF1832BA40C06C911679FC /* Triage.storekit */ = {isa = PBXFileReference; path = Triage.storekit; sourceTree = "<group>"; };
 		B684FD730DEBCD1BDB64795E /* TriageMessageFilter.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = TriageMessageFilter.entitlements; sourceTree = "<group>"; };
-		C9ACDDD2CA82C16BB7C8F189 /* TriageApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TriageApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		C9ACDDD2CA82C16BB7C8F189 /* TriageApp.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = TriageApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		CE4D15E70FED13C60AA023B0 /* IdentityLookup.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IdentityLookup.framework; path = System/Library/Frameworks/IdentityLookup.framework; sourceTree = SDKROOT; };
 		D2CD2343696754EACAF98C20 /* ThreatSyncManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThreatSyncManager.swift; sourceTree = "<group>"; };
 		D884BD5FC508B9767C49DDFB /* PaywallView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaywallView.swift; sourceTree = "<group>"; };
 		DBC3AA8B44A0489D26DF2D30 /* SubscriptionManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubscriptionManager.swift; sourceTree = "<group>"; };
-		E6B1D1968114693CEDB547DE /* TriageMessageFilter.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = TriageMessageFilter.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		E6B1D1968114693CEDB547DE /* TriageMessageFilter.appex */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = "wrapper.app-extension"; path = TriageMessageFilter.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		F13643C92E27663F6D258F28 /* content.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = content.js; sourceTree = "<group>"; };
+		F45D764DB1A395F74585E666 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		FF1E59A10EBC6B5CA5788E27 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -210,6 +212,7 @@
 		B9168303CDD28FED421BC401 /* TriageApp */ = {
 			isa = PBXGroup;
 			children = (
+				F45D764DB1A395F74585E666 /* Assets.xcassets */,
 				FF1E59A10EBC6B5CA5788E27 /* ContentView.swift */,
 				58E01A2461F8138369AA1C50 /* Info.plist */,
 				6231CE7E75C226A69AA58BE6 /* OnboardingView.swift */,
@@ -335,6 +338,8 @@
 			attributes = {
 				BuildIndependentTargetsInParallel = YES;
 				LastUpgradeCheck = 1430;
+				TargetAttributes = {
+				};
 			};
 			buildConfigurationList = 308B2C4FA9D023DFA14A4507 /* Build configuration list for PBXProject "Triage" */;
 			developmentRegion = en;
@@ -365,6 +370,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				305DC2FCA657790FD06D98F1 /* Assets.xcassets in Resources */,
 				9D68493918B8B629B6BC9AAA /* PrivacyInfo.xcprivacy in Resources */,
 				3028C043A7E174E865CBD938 /* Triage.storekit in Resources */,
 			);
@@ -504,7 +510,6 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = TriageApp/TriageApp.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
-				DEVELOPMENT_TEAM = YB5796PY3T;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = TriageApp/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -522,7 +527,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = TriageMessageFilter/TriageMessageFilter.entitlements;
-				DEVELOPMENT_TEAM = YB5796PY3T;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = TriageMessageFilter/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -604,7 +608,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = TriageSafariExtension/TriageSafariExtension.entitlements;
-				DEVELOPMENT_TEAM = YB5796PY3T;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = TriageSafariExtension/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -623,7 +626,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = TriageSafariExtension/TriageSafariExtension.entitlements;
-				DEVELOPMENT_TEAM = YB5796PY3T;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = TriageSafariExtension/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -642,7 +644,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = TriageMessageFilter/TriageMessageFilter.entitlements;
-				DEVELOPMENT_TEAM = YB5796PY3T;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = TriageMessageFilter/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -663,7 +664,6 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = TriageApp/TriageApp.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
-				DEVELOPMENT_TEAM = YB5796PY3T;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = TriageApp/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
