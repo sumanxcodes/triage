@@ -12,14 +12,15 @@ struct ContentView: View {
         NavigationStack {
             ScrollView {
                 VStack(spacing: 20) {
-                    // Header Status
+                    // MARK: - Hero Protection Status
                     VStack(spacing: 12) {
                         ZStack {
                             Circle()
                                 .fill(subscriptionManager.isProUser ?
                                       LinearGradient(colors: [.purple, .indigo], startPoint: .topLeading, endPoint: .bottomTrailing) :
                                       LinearGradient(colors: [.blue, .cyan], startPoint: .topLeading, endPoint: .bottomTrailing))
-                                .frame(width: 80, height: 80)
+                                .frame(width: 84, height: 84)
+                                .shadow(color: (subscriptionManager.isProUser ? Color.purple : Color.blue).opacity(0.3), radius: 10, y: 5)
 
                             Image(systemName: subscriptionManager.isProUser ? "shield.checkered" : "shield.lefthalf.filled.badge.checkmark")
                                 .resizable()
@@ -27,44 +28,148 @@ struct ContentView: View {
                                 .frame(width: 44, height: 44)
                                 .foregroundColor(.white)
                         }
-                        .padding(.top, 16)
+                        .padding(.top, 8)
 
-                        HStack(spacing: 8) {
-                            Text("Triage Active")
-                                .font(.title2)
-                                .fontWeight(.bold)
+                        VStack(spacing: 4) {
+                            HStack(spacing: 6) {
+                                Text("Protection Active")
+                                    .font(.title2)
+                                    .fontWeight(.bold)
 
-                            if subscriptionManager.isProUser {
-                                Text("PRO")
-                                    .font(.system(size: 11, weight: .heavy))
-                                    .padding(.horizontal, 8)
-                                    .padding(.vertical, 3)
-                                    .background(LinearGradient(colors: [.purple, .indigo], startPoint: .leading, endPoint: .trailing))
-                                    .foregroundColor(.white)
-                                    .cornerRadius(6)
+                                if subscriptionManager.isProUser {
+                                    Text("PRO")
+                                        .font(.system(size: 10, weight: .heavy))
+                                        .padding(.horizontal, 6)
+                                        .padding(.vertical, 2)
+                                        .background(LinearGradient(colors: [.purple, .indigo], startPoint: .leading, endPoint: .trailing))
+                                        .foregroundColor(.white)
+                                        .cornerRadius(4)
+                                }
                             }
+
+                            Text("Dual-layer on-device SMS & Safari protection.")
+                                .font(.subheadline)
+                                .foregroundColor(.secondary)
+                        }
+                    }
+                    .padding(.bottom, 4)
+
+                    // MARK: - Active Modules Section
+                    VStack(spacing: 0) {
+                        moduleRow(
+                            icon: "message.badge.filled.fill",
+                            iconColor: .green,
+                            title: "SMS Smishing Filter",
+                            subtitle: "On-device SQLite URL analysis",
+                            status: "Active"
+                        )
+
+                        Divider()
+                            .padding(.leading, 56)
+
+                        moduleRow(
+                            icon: "safari.fill",
+                            iconColor: .blue,
+                            title: "Safari Extension",
+                            subtitle: "Real-time phishing link blocker",
+                            status: "Active"
+                        )
+                    }
+                    .background(Color(.secondarySystemBackground))
+                    .cornerRadius(14)
+                    .padding(.horizontal, 16)
+
+                    // MARK: - Threat Intelligence Card
+                    VStack(spacing: 14) {
+                        HStack {
+                            Label("Offline Threat Database", systemImage: "internaldrive.fill")
+                                .font(.headline)
+                                .foregroundColor(.primary)
+                            Spacer()
+                            Text("\(threatCount) Active")
+                                .font(.subheadline)
+                                .fontWeight(.semibold)
+                                .foregroundColor(.secondary)
                         }
 
-                        Text("Dual-layer protection: SMS Filter & Safari Web Extension.")
-                            .font(.subheadline)
-                            .foregroundColor(.secondary)
-                            .multilineTextAlignment(.center)
-                            .padding(.horizontal, 24)
-                    }
+                        Divider()
 
-                    // Pro Upgrade Banner (if free tier)
+                        HStack {
+                            VStack(alignment: .leading, spacing: 2) {
+                                Text("Last Updated")
+                                    .font(.caption)
+                                    .foregroundColor(.secondary)
+                                if let lastSync = ThreatSyncManager.shared.lastSyncDate {
+                                    Text("\(lastSync, style: .relative) ago")
+                                        .font(.subheadline)
+                                        .fontWeight(.medium)
+                                } else {
+                                    Text("Never")
+                                        .font(.subheadline)
+                                        .fontWeight(.medium)
+                                }
+                            }
+
+                            Spacer()
+
+                            Button(action: triggerSync) {
+                                HStack(spacing: 6) {
+                                    if isSyncing {
+                                        ProgressView()
+                                            .tint(.white)
+                                            .scaleEffect(0.8)
+                                    } else {
+                                        Image(systemName: "arrow.triangle.2.circlepath")
+                                        Text("Sync Now")
+                                    }
+                                }
+                                .font(.subheadline)
+                                .fontWeight(.semibold)
+                                .padding(.horizontal, 14)
+                                .padding(.vertical, 8)
+                                .background(Color.blue)
+                                .foregroundColor(.white)
+                                .cornerRadius(10)
+                            }
+                            .disabled(isSyncing)
+                        }
+
+                        if let msg = syncStatusMessage {
+                            HStack {
+                                Image(systemName: "checkmark.circle.fill")
+                                    .foregroundColor(.green)
+                                    .font(.caption)
+                                Text(msg)
+                                    .font(.caption)
+                                    .foregroundColor(.secondary)
+                                Spacer()
+                            }
+                            .padding(.top, 2)
+                        }
+                    }
+                    .padding(16)
+                    .background(Color(.secondarySystemBackground))
+                    .cornerRadius(14)
+                    .padding(.horizontal, 16)
+
+                    // MARK: - Triage Pro Banner (if Free) or Pro Active Card (if Pro)
                     if !subscriptionManager.isProUser {
                         Button(action: { showingPaywall = true }) {
                             HStack(spacing: 14) {
-                                Image(systemName: "sparkles")
-                                    .font(.title2)
-                                    .foregroundColor(.yellow)
+                                ZStack {
+                                    Circle()
+                                        .fill(Color.white.opacity(0.2))
+                                        .frame(width: 42, height: 42)
+                                    Image(systemName: "sparkles")
+                                        .font(.title3)
+                                        .foregroundColor(.white)
+                                }
 
                                 VStack(alignment: .leading, spacing: 2) {
                                     Text("Upgrade to Triage Pro")
                                         .font(.headline)
                                         .foregroundColor(.white)
-                                    Text("Unlock Gemini Zero-Day AI & hourly updates")
+                                    Text("Unlock Gemini Zero-Day AI & hourly sync")
                                         .font(.caption)
                                         .foregroundColor(.white.opacity(0.85))
                                 }
@@ -72,9 +177,10 @@ struct ContentView: View {
                                 Spacer()
 
                                 Image(systemName: "chevron.right")
+                                    .font(.system(size: 14, weight: .semibold))
                                     .foregroundColor(.white.opacity(0.7))
                             }
-                            .padding()
+                            .padding(14)
                             .background(
                                 LinearGradient(
                                     colors: [.indigo, .blue],
@@ -82,12 +188,11 @@ struct ContentView: View {
                                     endPoint: .trailing
                                 )
                             )
-                            .cornerRadius(16)
-                            .shadow(color: .indigo.opacity(0.3), radius: 6, y: 3)
+                            .cornerRadius(14)
+                            .shadow(color: .indigo.opacity(0.25), radius: 6, y: 3)
                         }
-                        .padding(.horizontal, 20)
+                        .padding(.horizontal, 16)
                     } else {
-                        // Pro Active Status Card
                         HStack(spacing: 12) {
                             Image(systemName: "checkmark.seal.fill")
                                 .foregroundColor(.green)
@@ -97,108 +202,42 @@ struct ContentView: View {
                                 Text("Triage Pro Active")
                                     .font(.subheadline)
                                     .fontWeight(.bold)
-                                Text("Real-time Gemini AI & continuous threat updates active.")
+                                Text("Zero-Day Gemini AI and continuous sync enabled.")
                                     .font(.caption)
                                     .foregroundColor(.secondary)
                             }
                             Spacer()
                         }
-                        .padding()
+                        .padding(14)
                         .background(Color(.secondarySystemBackground))
-                        .cornerRadius(16)
-                        .padding(.horizontal, 20)
+                        .cornerRadius(14)
+                        .padding(.horizontal, 16)
                     }
 
-                    // Threat Status Card
-                    VStack(spacing: 12) {
-                        HStack {
-                            VStack(alignment: .leading, spacing: 4) {
-                                Text("Offline Threat Database")
-                                    .font(.headline)
-                                Text("\(threatCount) known threat hashes active")
-                                    .font(.subheadline)
-                                    .foregroundColor(.secondary)
-                            }
-                            Spacer()
-                            Image(systemName: "internaldrive.fill")
-                                .font(.title2)
-                                .foregroundColor(.indigo)
+                    // MARK: - Setup Guide Link
+                    Button(action: { showingOnboarding = true }) {
+                        HStack(spacing: 8) {
+                            Image(systemName: "questionmark.circle")
+                            Text("Extension Setup & Help Guide")
+                                .font(.subheadline)
+                                .fontWeight(.medium)
                         }
-
-                        Divider()
-
-                        HStack {
-                            if let lastSync = ThreatSyncManager.shared.lastSyncDate {
-                                Text("Last synced: \(lastSync, style: .relative) ago")
-                                    .font(.caption)
-                                    .foregroundColor(.secondary)
-                            } else {
-                                Text("Last synced: Never")
-                                    .font(.caption)
-                                    .foregroundColor(.secondary)
-                            }
-                            Spacer()
-                            Button(action: triggerSync) {
-                                if isSyncing {
-                                    ProgressView()
-                                        .scaleEffect(0.8)
-                                } else {
-                                    Text("Sync Now")
-                                        .font(.caption)
-                                        .fontWeight(.semibold)
-                                }
-                            }
-                            .disabled(isSyncing)
-                        }
-
-                        if let msg = syncStatusMessage {
-                            Text(msg)
-                                .font(.caption2)
-                                .foregroundColor(.blue)
-                        }
+                        .foregroundColor(.secondary)
+                        .padding(.vertical, 8)
                     }
-                    .padding()
-                    .background(Color(.secondarySystemBackground))
-                    .cornerRadius(16)
-                    .padding(.horizontal, 20)
-
-                    // Action Buttons
-                    VStack(spacing: 12) {
-                        Button(action: {
-                            showingOnboarding = true
-                        }) {
-                            HStack {
-                                Image(systemName: "questionmark.circle")
-                                Text("View Extension Setup Guide")
-                            }
-                            .frame(maxWidth: .infinity)
-                            .padding()
-                            .background(Color(.secondarySystemBackground))
-                            .foregroundColor(.primary)
-                            .cornerRadius(12)
-                        }
-
-                        if !subscriptionManager.isProUser {
-                            Button(action: {
-                                showingPaywall = true
-                            }) {
-                                HStack {
-                                    Image(systemName: "crown.fill")
-                                    Text("View Pro Plans")
-                                }
-                                .frame(maxWidth: .infinity)
-                                .padding()
-                                .background(Color.blue)
-                                .foregroundColor(.white)
-                                .cornerRadius(12)
-                            }
-                        }
-                    }
-                    .padding(.horizontal, 20)
-                    .padding(.bottom, 24)
+                    .padding(.bottom, 16)
                 }
+                .padding(.top, 8)
             }
             .navigationTitle("Triage Security")
+            .toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button(action: { showingOnboarding = true }) {
+                        Image(systemName: "questionmark.circle")
+                            .font(.body)
+                    }
+                }
+            }
             .sheet(isPresented: $showingOnboarding) {
                 OnboardingView()
             }
@@ -211,9 +250,54 @@ struct ContentView: View {
         }
     }
 
+    // MARK: - Subviews
+
+    private func moduleRow(icon: String, iconColor: Color, title: String, subtitle: String, status: String) -> some View {
+        Button(action: { showingOnboarding = true }) {
+            HStack(spacing: 14) {
+                Image(systemName: icon)
+                    .font(.title3)
+                    .foregroundColor(iconColor)
+                    .frame(width: 28, height: 28)
+
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(title)
+                        .font(.subheadline)
+                        .fontWeight(.semibold)
+                        .foregroundColor(.primary)
+                    Text(subtitle)
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                }
+
+                Spacer()
+
+                HStack(spacing: 4) {
+                    Circle()
+                        .fill(Color.green)
+                        .frame(width: 8, height: 8)
+                    Text(status)
+                        .font(.caption)
+                        .fontWeight(.medium)
+                        .foregroundColor(.green)
+                }
+                .padding(.horizontal, 8)
+                .padding(.vertical, 4)
+                .background(Color.green.opacity(0.1))
+                .cornerRadius(6)
+
+                Image(systemName: "chevron.right")
+                    .font(.caption2)
+                    .foregroundColor(Color(.tertiaryLabel))
+            }
+            .padding(14)
+        }
+        .buttonStyle(.plain)
+    }
+
     private func triggerSync() {
         isSyncing = true
-        syncStatusMessage = "Syncing threat hashes..."
+        syncStatusMessage = nil
         Task {
             do {
                 let result = try await ThreatSyncManager.shared.sync()
