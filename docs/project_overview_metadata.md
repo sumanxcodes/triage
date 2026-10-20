@@ -26,3 +26,4 @@
   * See `03_ios_client_spec.md` for Swift/iOS implementation.
   * See `04_backend_ai_spec.md` for Python/FastAPI implementation.
   * See `05_development_process_cicd.md` for our GitHub Flow and deployment rules.
+  * See `06_project_checklist.md` for implementation progress and roadmap.
