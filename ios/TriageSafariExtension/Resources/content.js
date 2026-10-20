@@ -53,7 +53,7 @@
                 margin: 16px 0;
                 border: 1px solid rgba(239, 68, 68, 0.3);
               }
-              button {
+              .btn-primary {
                 background: #ef4444;
                 color: white;
                 border: none;
@@ -64,6 +64,24 @@
                 cursor: pointer;
                 margin-top: 12px;
                 width: 100%;
+                box-sizing: border-box;
+                transition: background 0.2s;
+              }
+              .btn-primary:active {
+                background: #dc2626;
+              }
+              .btn-secondary {
+                background: transparent;
+                color: #fca5a5;
+                border: 1px solid rgba(254, 202, 202, 0.3);
+                border-radius: 12px;
+                padding: 12px 28px;
+                font-size: 14px;
+                font-weight: 500;
+                cursor: pointer;
+                margin-top: 10px;
+                width: 100%;
+                box-sizing: border-box;
               }
             </style>
           </head>
@@ -73,11 +91,31 @@
               <h1>Malicious Link Blocked</h1>
               <p>Triage detected this link as a dangerous smishing or phishing site attempting to steal your credentials.</p>
               <div class="url-box">${escapeHtml(currentUrl)}</div>
-              <button onclick="window.history.back()">Go Back Safely</button>
+              <button id="triage-back-btn" class="btn-primary">Go Back Safely</button>
+              <button id="triage-close-btn" class="btn-secondary">Leave this Page</button>
             </div>
           </body>
           </html>
         `;
+
+        // Attach event listeners programmatically (bypasses CSP restrictions)
+        const backBtn = document.getElementById("triage-back-btn");
+        if (backBtn) {
+          backBtn.addEventListener("click", function () {
+            if (window.history.length > 1) {
+              window.history.back();
+            } else {
+              window.location.replace("about:blank");
+            }
+          });
+        }
+
+        const closeBtn = document.getElementById("triage-close-btn");
+        if (closeBtn) {
+          closeBtn.addEventListener("click", function () {
+            window.location.replace("about:blank");
+          });
+        }
       }
     });
   }
