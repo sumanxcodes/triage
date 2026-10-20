@@ -11,8 +11,14 @@ final class SafariWebExtensionHandler: NSObject, NSExtensionRequestHandling {
             return
         }
 
-        let hash = URLHasher.sha256(urlString)
-        let isBlocked = ThreatDatabase.shared.isThreat(urlHash: hash)
+        var isBlocked = false
+        if let url = URL(string: urlString) {
+            let candidateHashes = URLHasher.candidateHashes(for: url)
+            isBlocked = ThreatDatabase.shared.isThreat(candidateHashes: candidateHashes)
+        } else {
+            let hash = URLHasher.sha256(urlString)
+            isBlocked = ThreatDatabase.shared.isThreat(urlHash: hash)
+        }
 
         let response = NSExtensionItem()
         response.userInfo = [

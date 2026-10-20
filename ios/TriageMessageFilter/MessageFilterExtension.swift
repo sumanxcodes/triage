@@ -30,8 +30,19 @@ extension MessageFilterExtension: ILMessageFilterQueryHandling {
         // 4. If inconclusive and message contains suspicious links, defer to network
         if !urls.isEmpty {
             context.deferQueryRequestToNetwork { networkResponse, error in
-                if let networkResponse = networkResponse {
-                    response.action = networkResponse.action
+                if let networkResponse = networkResponse,
+                   let json = try? JSONSerialization.jsonObject(with: networkResponse.data) as? [String: Any],
+                   let actionString = json["action"] as? String {
+                    switch actionString.lowercased() {
+                    case "filter", "junk":
+                        response.action = .junk
+                    case "promotion":
+                        response.action = .promotion
+                    case "transaction":
+                        response.action = .transaction
+                    default:
+                        response.action = .none
+                    }
                 } else {
                     response.action = .none
                 }
