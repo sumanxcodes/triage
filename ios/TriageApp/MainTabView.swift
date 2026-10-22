@@ -3,6 +3,7 @@ import SwiftUI
 public struct MainTabView: View {
     @State private var selectedTab: Int = 0
     @AppStorage("triage_last_viewed_history_date") private var lastViewedTimestamp: Double = 0
+    @AppStorage("triage_has_completed_onboarding") private var hasCompletedOnboarding: Bool = false
     @State private var unreadCount: Int = 0
 
     public init() {}
@@ -27,6 +28,12 @@ public struct MainTabView: View {
                     Label("Settings", systemImage: "gearshape.fill")
                 }
                 .tag(2)
+        }
+        .sheet(isPresented: Binding(
+            get: { !hasCompletedOnboarding },
+            set: { if !$0 { hasCompletedOnboarding = true } }
+        )) {
+            OnboardingView()
         }
         .onAppear {
             refreshBadge()

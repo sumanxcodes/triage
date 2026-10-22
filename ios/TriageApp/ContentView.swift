@@ -40,7 +40,6 @@ struct ContentView: View {
     @ObservedObject private var subscriptionManager = SubscriptionManager.shared
     @Environment(\.scenePhase) private var scenePhase
 
-    @State private var showingOnboarding = false
     @State private var showingPaywall = false
     @State private var selectedModule: ModuleType?
     @State private var threatCount = ThreatDatabase.shared.count()
@@ -362,17 +361,6 @@ struct ContentView: View {
                 .padding(.bottom, 16)
             }
             .navigationTitle("Triage")
-            .toolbar {
-                ToolbarItem(placement: .topBarTrailing) {
-                    Button(action: { showingOnboarding = true }) {
-                        Image(systemName: "questionmark.circle")
-                            .font(.body)
-                    }
-                }
-            }
-            .sheet(isPresented: $showingOnboarding) {
-                OnboardingView()
-            }
             .sheet(isPresented: $showingPaywall) {
                 PaywallView()
             }
@@ -490,7 +478,7 @@ struct ContentView: View {
     }
 }
 
-// MARK: - Module Detail Sheet
+// MARK: - Focused Module Setup Sheet
 
 struct ModuleDetailSheet: View {
     let moduleType: ModuleType
@@ -524,15 +512,6 @@ struct ModuleDetailSheet: View {
         }
     }
 
-    private var moduleDescription: String {
-        switch moduleType {
-        case .sms:
-            return "Analyzes incoming SMS messages from unknown senders on-device using high-speed SQLite hash matching."
-        case .safari:
-            return "Intercepts malicious web links and phishing pages inside Safari before malicious code or login forms execute."
-        }
-    }
-
     private var currentStatus: ModuleStatus {
         if let date = lastHeartbeatDate {
             return .active(date)
@@ -546,205 +525,132 @@ struct ModuleDetailSheet: View {
     var body: some View {
         NavigationStack {
             ScrollView {
-                VStack(alignment: .leading, spacing: 18) {
-                    // Header Card
-                    VStack(alignment: .leading, spacing: 12) {
-                        HStack(spacing: 14) {
-                            ZStack {
-                                RoundedRectangle(cornerRadius: 12, style: .continuous)
-                                    .fill(moduleColor.opacity(0.15))
-                                    .frame(width: 48, height: 48)
+                VStack(spacing: 20) {
+                    // Header Badge
+                    VStack(spacing: 10) {
+                        ZStack {
+                            Circle()
+                                .fill(moduleColor.opacity(0.15))
+                                .frame(width: 64, height: 64)
 
-                                Image(systemName: moduleIcon)
-                                    .font(.system(size: 22, weight: .semibold))
-                                    .foregroundColor(moduleColor)
-                            }
-
-                            VStack(alignment: .leading, spacing: 2) {
-                                Text(moduleTitle)
-                                    .font(.title3)
-                                    .fontWeight(.bold)
-
-                                Text(moduleDescription)
-                                    .font(.caption)
-                                    .foregroundColor(.secondary)
-                            }
-
-                            Spacer()
+                            Image(systemName: moduleIcon)
+                                .font(.system(size: 28, weight: .semibold))
+                                .foregroundColor(moduleColor)
                         }
+                        .padding(.top, 8)
 
-                        Divider()
+                        Text(moduleTitle)
+                            .font(.title2.bold())
 
-                        HStack {
-                            Text("Current Status")
+                        HStack(spacing: 6) {
+                            Circle()
+                                .fill(currentStatus.badgeColor)
+                                .frame(width: 8, height: 8)
+                            Text(currentStatus.badgeText)
                                 .font(.subheadline)
-                                .fontWeight(.medium)
-                                .foregroundColor(.primary)
-
-                            Spacer()
-
-                            HStack(spacing: 5) {
-                                Circle()
-                                    .fill(currentStatus.badgeColor)
-                                    .frame(width: 8, height: 8)
-                                Text(currentStatus.badgeText)
-                                    .font(.subheadline)
-                                    .fontWeight(.semibold)
-                                    .foregroundColor(currentStatus.badgeColor)
-                            }
-                            .padding(.horizontal, 10)
-                            .padding(.vertical, 4)
-                            .background(currentStatus.badgeColor.opacity(0.12))
-                            .cornerRadius(8)
-                        }
-                    }
-                    .padding(16)
-                    .background(Color(.secondarySystemBackground))
-                    .cornerRadius(16)
-
-                    // Configuration Toggle Card
-                    VStack(alignment: .leading, spacing: 12) {
-                        Toggle(isOn: Binding(
-                            get: { isConfigured },
-                            set: { newValue in
-                                isConfigured = newValue
-                                updateConfiguration(newValue)
-                            }
-                        )) {
-                            VStack(alignment: .leading, spacing: 2) {
-                                Text("Enabled in iOS Settings")
-                                    .font(.subheadline)
-                                    .fontWeight(.semibold)
-                                Text("Reflects whether you switched this on in Settings")
-                                    .font(.caption2)
-                                    .foregroundColor(.secondary)
-                            }
-                        }
-                        .tint(moduleColor)
-
-                        Divider()
-
-                        HStack(alignment: .top, spacing: 8) {
-                            Image(systemName: statusInfoIcon)
+                                .fontWeight(.semibold)
                                 .foregroundColor(currentStatus.badgeColor)
-                                .font(.footnote)
-                                .padding(.top, 1)
-
-                            Text(statusInfoText)
-                                .font(.caption)
-                                .foregroundColor(.secondary)
                         }
+                        .padding(.horizontal, 10)
+                        .padding(.vertical, 4)
+                        .background(currentStatus.badgeColor.opacity(0.12))
+                        .cornerRadius(8)
                     }
-                    .padding(16)
-                    .background(Color(.secondarySystemBackground))
-                    .cornerRadius(16)
 
-                    // Setup Instructions
-                    VStack(alignment: .leading, spacing: 12) {
-                        Text("How to Configure")
-                            .font(.headline)
-                            .foregroundColor(.primary)
-
-                        Divider()
+                    // Navigation Breadcrumbs Card
+                    VStack(alignment: .leading, spacing: 14) {
+                        Text("Settings Navigation Route")
+                            .font(.subheadline.weight(.semibold))
+                            .foregroundColor(.secondary)
 
                         if moduleType == .sms {
-                            stepRow(number: "1", text: "Open **Settings** > **Apps** > **Messages**")
-                            stepRow(number: "2", text: "Tap **Unknown & Spam**")
-                            stepRow(number: "3", text: "Turn ON **Filter Unknown Senders**")
-                            stepRow(number: "4", text: "Under SMS Filtering, select **Triage** and tap **Enable**")
+                            breadcrumbStep(number: "1", text: "Open **Settings** > **Apps** > **Messages**")
+                            breadcrumbStep(number: "2", text: "Tap **Unknown & Spam**")
+                            breadcrumbStep(number: "3", text: "Turn ON **Filter Unknown Senders**")
+                            breadcrumbStep(number: "4", text: "Select **Triage** and tap **Enable**")
                         } else {
-                            stepRow(number: "1", text: "Open **Settings** > **Safari** (or **Apps** > **Safari**)")
-                            stepRow(number: "2", text: "Tap **Extensions**")
-                            stepRow(number: "3", text: "Turn ON **Triage Security**")
-                            stepRow(number: "4", text: "Under Permissions, select **All Websites** > **Always Allow**")
+                            breadcrumbStep(number: "1", text: "Open **Settings** > **Apps** > **Safari**")
+                            breadcrumbStep(number: "2", text: "Tap **Extensions**")
+                            breadcrumbStep(number: "3", text: "Turn ON **Triage Security**")
+                            breadcrumbStep(number: "4", text: "Permissions: **All Websites** > **Always Allow**")
                         }
                     }
                     .padding(16)
                     .background(Color(.secondarySystemBackground))
                     .cornerRadius(16)
 
-                    // Action Buttons
-                    VStack(spacing: 10) {
+                    // Action Section
+                    VStack(spacing: 12) {
                         Button(action: openSettings) {
                             HStack(spacing: 8) {
                                 Image(systemName: "gear")
                                     .font(.body.weight(.semibold))
-                                Text("Open iOS Settings")
+                                Text("Open Settings")
                                     .fontWeight(.semibold)
                             }
                             .frame(maxWidth: .infinity)
-                            .frame(minHeight: 22)
+                            .frame(minHeight: 24)
                         }
                         .buttonStyle(.borderedProminent)
                         .controlSize(.large)
                         .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
 
-                        // Navigation Hint Banner
-                        HStack(alignment: .top, spacing: 8) {
-                            Image(systemName: "lightbulb.fill")
-                                .foregroundColor(.orange)
-                                .font(.footnote)
-                                .padding(.top, 1)
-
-                            if moduleType == .sms {
-                                Text("**Settings Navigation Note:** Apple opens **Settings > Triage**. Tap **‹ Apps** (or **‹ Settings**) in the top-left corner, tap **Messages** > **Unknown & Spam**, then select **Triage**.")
-                                    .font(.caption)
-                                    .foregroundColor(.secondary)
-                            } else {
-                                Text("**Settings Navigation Note:** Apple opens **Settings > Triage**. Tap **‹ Apps** (or **‹ Settings**) in the top-left corner, tap **Safari** > **Extensions**, then enable **Triage Security**.")
-                                    .font(.caption)
-                                    .foregroundColor(.secondary)
-                            }
-                        }
-                        .padding(10)
-                        .background(Color.orange.opacity(0.08))
-                        .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
+                        Text("iOS opens Settings > Triage. Tap **‹ Apps** in top-left to reach \(moduleType == .sms ? "Messages" : "Safari").")
+                            .font(.caption2)
+                            .foregroundColor(.secondary)
+                            .multilineTextAlignment(.center)
+                            .padding(.horizontal, 8)
 
                         if moduleType == .safari {
                             Button(action: testInSafari) {
                                 HStack(spacing: 8) {
                                     Image(systemName: "safari")
                                         .font(.body.weight(.semibold))
-                                    Text("Test in Safari")
+                                    Text("Test Safari Shield")
                                         .fontWeight(.semibold)
                                 }
                                 .frame(maxWidth: .infinity)
-                                .frame(minHeight: 22)
+                                .frame(minHeight: 24)
                             }
                             .buttonStyle(.bordered)
                             .controlSize(.large)
                             .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
-                        }
+                            .padding(.top, 4)
 
-                        if let msg = testPromptMessage {
-                            Text(msg)
+                            if let msg = testPromptMessage {
+                                Text(msg)
+                                    .font(.caption2)
+                                    .foregroundColor(.secondary)
+                                    .multilineTextAlignment(.center)
+                                    .padding(.horizontal, 8)
+                            }
+                        }
+                    }
+
+                    // Acknowledge Toggle
+                    Toggle(isOn: Binding(
+                        get: { isConfigured },
+                        set: { newValue in
+                            isConfigured = newValue
+                            updateConfiguration(newValue)
+                        }
+                    )) {
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text("Enabled in iOS Settings")
+                                .font(.subheadline.weight(.semibold))
+                            Text(statusSubtitleText)
                                 .font(.caption2)
                                 .foregroundColor(.secondary)
-                                .multilineTextAlignment(.center)
-                                .frame(maxWidth: .infinity)
-                                .padding(.horizontal, 8)
                         }
                     }
-
-                    // Apple Privacy Notice
-                    HStack(alignment: .top, spacing: 8) {
-                        Image(systemName: "lock.shield.fill")
-                            .foregroundColor(.secondary)
-                            .font(.footnote)
-                            .padding(.top, 1)
-
-                        Text("**Apple Privacy Isolation:** iOS sandboxes extensions so third-party apps cannot inspect your system Settings toggles. Triage verifies status through private on-device App Group heartbeats without transmitting personal data.")
-                            .font(.caption2)
-                            .foregroundColor(.secondary)
-                    }
-                    .padding(12)
-                    .background(Color(.tertiarySystemBackground))
-                    .cornerRadius(12)
+                    .tint(moduleColor)
+                    .padding(16)
+                    .background(Color(.secondarySystemBackground))
+                    .cornerRadius(16)
                 }
                 .padding(.horizontal, 16)
                 .padding(.vertical, 12)
             }
-            .navigationTitle(moduleTitle)
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .confirmationAction) {
@@ -766,29 +672,19 @@ struct ModuleDetailSheet: View {
         }
     }
 
-    private var statusInfoIcon: String {
-        switch currentStatus {
-        case .active: return "checkmark.circle.fill"
-        case .ready: return "clock.fill"
-        case .setupNeeded: return "exclamationmark.circle.fill"
-        }
-    }
-
-    private var statusInfoText: String {
+    private var statusSubtitleText: String {
         switch currentStatus {
         case .active(let date):
-            let formatter = RelativeDateTimeFormatter()
-            formatter.unitsStyle = .short
-            let rel = formatter.localizedString(for: date, relativeTo: Date())
-            return "Verified active (\(rel)) via on-device extension."
+            let rel = RelativeDateTimeFormatter().localizedString(for: date, relativeTo: Date())
+            return "Verified active (\(rel))"
         case .ready:
-            return "Marked as enabled. Standing by for incoming events."
+            return "Standing by for first scan"
         case .setupNeeded:
-            return "Disabled. Open iOS Settings to activate this module."
+            return "Action needed in Settings"
         }
     }
 
-    private func stepRow(number: String, text: LocalizedStringKey) -> some View {
+    private func breadcrumbStep(number: String, text: LocalizedStringKey) -> some View {
         HStack(alignment: .center, spacing: 10) {
             Text(number)
                 .font(.caption2.bold())
@@ -851,7 +747,7 @@ struct ModuleDetailSheet: View {
 
     private func testInSafari() {
         UIImpactFeedbackGenerator(style: .medium).impactOccurred()
-        testPromptMessage = "Safari opened! If Triage is enabled in Settings, the extension will send a heartbeat. Switch back to verify."
+        testPromptMessage = "Safari opened. If enabled, the extension sends an instant heartbeat. Return to verify."
         if let url = URL(string: "https://example.com") {
             UIApplication.shared.open(url)
         }
