@@ -37,6 +37,7 @@
 		9B131B8F29F96B49D6DA40FB /* ThreatEventRecord.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB0331E52B76E54C2EA5B885 /* ThreatEventRecord.swift */; };
 		9D68493918B8B629B6BC9AAA /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 9557448EEDA86B541F70E6DD /* PrivacyInfo.xcprivacy */; };
 		A1BBD58C852A3A3EBAEEB3BC /* MainTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0EBCA6F7311AFCCB24D6C91 /* MainTabView.swift */; };
+		C11A23D456E789F012345678 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F11A23D456E789F012345678 /* SettingsView.swift */; };
 		B0B75EA9480A64BFD0576F88 /* ThreatRecord.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E3C316134F10DDA84685E75 /* ThreatRecord.swift */; };
 		B89B5E3B6806A845367282E4 /* GRDB in Frameworks */ = {isa = PBXBuildFile; productRef = 6CC8233E319BEF59CE18EAF4 /* GRDB */; };
 		C2CF39C1895D15CAEC45BE7F /* ThreatSyncManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2CD2343696754EACAF98C20 /* ThreatSyncManager.swift */; };
@@ -115,6 +116,7 @@
 		E6B1D1968114693CEDB547DE /* TriageMessageFilter.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = TriageMessageFilter.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		EB0331E52B76E54C2EA5B885 /* ThreatEventRecord.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThreatEventRecord.swift; sourceTree = "<group>"; };
 		F0EBCA6F7311AFCCB24D6C91 /* MainTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainTabView.swift; sourceTree = "<group>"; };
+		F11A23D456E789F012345678 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		F13643C92E27663F6D258F28 /* content.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = content.js; sourceTree = "<group>"; };
 		F45D764DB1A395F74585E666 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		FF1E59A10EBC6B5CA5788E27 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -235,6 +237,7 @@
 				FF1E59A10EBC6B5CA5788E27 /* ContentView.swift */,
 				58E01A2461F8138369AA1C50 /* Info.plist */,
 				F0EBCA6F7311AFCCB24D6C91 /* MainTabView.swift */,
+				F11A23D456E789F012345678 /* SettingsView.swift */,
 				6231CE7E75C226A69AA58BE6 /* OnboardingView.swift */,
 				9557448EEDA86B541F70E6DD /* PrivacyInfo.xcprivacy */,
 				7301D38DBB832A95F1059712 /* TriageApp.entitlements */,
@@ -416,6 +419,7 @@
 				DB139EFD310BE572F8DF279B /* AppGroup.swift in Sources */,
 				EB5D3ACD7203AD8BDACBE472 /* ContentView.swift in Sources */,
 				A1BBD58C852A3A3EBAEEB3BC /* MainTabView.swift in Sources */,
+				C11A23D456E789F012345678 /* SettingsView.swift in Sources */,
 				26109AC0AFC96AB3744D9B98 /* OnboardingView.swift in Sources */,
 				9294AF2DEFF5FBC7C88F364B /* PaywallView.swift in Sources */,
 				19C73E8761298203A45879BB /* SubscriptionManager.swift in Sources */,

@@ -21,6 +21,12 @@ public struct MainTabView: View {
                 }
                 .badge(unreadCount > 0 ? unreadCount : 0)
                 .tag(1)
+
+            SettingsView()
+                .tabItem {
+                    Label("Settings", systemImage: "gearshape.fill")
+                }
+                .tag(2)
         }
         .onAppear {
             refreshBadge()
