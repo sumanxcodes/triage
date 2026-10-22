@@ -36,6 +36,7 @@ public final class ThreatSyncManager {
     /// Performs incremental delta sync from backend API and updates local GRDB SQLite.
     public func sync(
         baseURL: URL = URL(string: "https://triage-api-oeyj.onrender.com")!,
+        forceFullBootstrap: Bool = false,
         session: URLSession = .shared
     ) async throws -> (added: Int, removed: Int) {
         var components = URLComponents(
@@ -43,7 +44,9 @@ public final class ThreatSyncManager {
             resolvingAgainstBaseURL: true
         )
 
-        if let lastSync = lastSyncDate {
+        // Only query incremental delta if we already have a real database populated (> 9 items)
+        let isInitialSeed = ThreatDatabase.shared.count() <= 9
+        if let lastSync = lastSyncDate, !forceFullBootstrap, !isInitialSeed {
             components?.queryItems = [
                 URLQueryItem(name: "since", value: iso8601Formatter.string(from: lastSync))
             ]

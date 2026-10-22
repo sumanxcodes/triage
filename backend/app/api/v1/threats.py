@@ -86,3 +86,20 @@ async def get_threat_delta(
         added_hashes=added_hashes,
         removed_hashes=removed_hashes,
     )
+
+
+@router.post("/ingest", tags=["Threat Intelligence Sync"])
+async def trigger_feed_ingestion(
+    feed: str = Query(default="all", pattern="^(urlhaus|openphish|phishing_army|all)$"),
+    limit: int = Query(default=500, le=5000),
+):
+    """Triggers an on-demand feed ingestion to populate live threats."""
+    from worker.ingestion import run_feed_pipeline
+    feeds = ["openphish", "phishing_army"] if feed == "all" else [feed]
+    results = {}
+    for f in feeds:
+        try:
+            results[f] = await run_feed_pipeline(f, limit=limit)
+        except Exception as e:
+            results[f] = {"error": str(e)}
+    return {"status": "ok", "results": results}
