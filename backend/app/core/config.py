@@ -21,6 +21,15 @@ class Settings(BaseSettings):
     # Google Gemini API
     GEMINI_API_KEY: str = ""
 
+    # Threat Intelligence Feeds & Ethics Configuration
+    THREAT_INTEL_USER_AGENT: str = (
+        "Triage-Threat-Intel/1.0 (+https://triage.security; research@triage.security)"
+    )
+    URLHAUS_RECENT_URL: str = "https://urlhaus-api.abuse.ch/v1/urls/recent/"
+    OPENPHISH_FEED_URL: str = "https://openphish.com/feed.txt"
+    FEED_RETENTION_DAYS: int = 14
+    FEED_BATCH_SIZE: int = 500
+
     model_config = {
         "env_file": ".env",
         "env_file_encoding": "utf-8",

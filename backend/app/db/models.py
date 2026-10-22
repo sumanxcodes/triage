@@ -13,11 +13,12 @@ class ThreatRecordModel(Base):
     __tablename__ = "threat_records"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
-    url_hash: Mapped[str] = mapped_column(String(64), nullable=False, index=True)
+    url_hash: Mapped[str] = mapped_column(String(64), nullable=False, unique=True, index=True)
     domain_hash: Mapped[str] = mapped_column(String(64), nullable=False, index=True)
     canonical_url: Mapped[str] = mapped_column(String(2048), nullable=False)
     threat_type: Mapped[str] = mapped_column(String(64), nullable=False, default="phishing")
     target_brand: Mapped[Optional[str]] = mapped_column(String(128), nullable=True)
+    source: Mapped[str] = mapped_column(String(64), nullable=False, default="manual")
     confidence_score: Mapped[float] = mapped_column(Float, nullable=False, default=1.0)
     is_active: Mapped[bool] = mapped_column(nullable=False, default=True, index=True)
     created_at: Mapped[datetime] = mapped_column(

@@ -43,6 +43,29 @@ public enum URLHasher {
         return components.url?.absoluteString ?? url.absoluteString
     }
 
+    private static let twoLevelTLDs: Set<String> = [
+        "com.au", "net.au", "org.au", "gov.au", "edu.au",
+        "co.uk", "org.uk", "me.uk", "ltd.uk",
+        "co.nz", "net.nz", "org.nz", "govt.nz",
+        "co.jp", "ne.jp", "com.br", "co.za"
+    ]
+
+    /// Extracts the registered root domain (handling two-level ccTLDs like .com.au or .co.uk).
+    public static func extractRegisteredDomain(from hostname: String) -> String {
+        let cleanHost = hostname.split(separator: ":").first.map(String.init)?.lowercased() ?? hostname.lowercased()
+        let parts = cleanHost.split(separator: ".").map(String.init)
+        if parts.count <= 2 {
+            return cleanHost
+        }
+
+        let lastTwo = "\(parts[parts.count - 2]).\(parts[parts.count - 1])"
+        if twoLevelTLDs.contains(lastTwo) && parts.count >= 3 {
+            return parts.suffix(3).joined(separator: ".")
+        }
+
+        return parts.suffix(2).joined(separator: ".")
+    }
+
     /// Generates multi-level candidate hashes: canonical URL hash and root host/domain hash.
     public static func candidateHashes(for url: URL) -> [String] {
         var hashes: [String] = []
@@ -57,14 +80,12 @@ public enum URLHasher {
             hashes.append(sha256(raw))
         }
 
-        // 3. Hostname hash
+        // 3. Hostname hash & registered root domain hash
         if let host = url.host?.lowercased() {
             hashes.append(sha256(host))
 
-            // Root domain (e.g. sub.phish.com -> phish.com)
-            let parts = host.split(separator: ".")
-            if parts.count > 2 {
-                let rootDomain = parts.suffix(2).joined(separator: ".")
+            let rootDomain = extractRegisteredDomain(from: host)
+            if rootDomain != host {
                 hashes.append(sha256(rootDomain))
             }
         }

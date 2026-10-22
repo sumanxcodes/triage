@@ -15,4 +15,21 @@ celery_app.conf.update(
     enable_utc=True,
     task_track_started=True,
     task_time_limit=60,  # Playwright scrapers should not run longer than 60s
+    beat_schedule={
+        "ingest-urlhaus-every-30-mins": {
+            "task": "ingest_urlhaus_feed_task",
+            "schedule": 1800.0,
+            "args": (1000,),
+        },
+        "ingest-openphish-every-6-hours": {
+            "task": "ingest_openphish_feed_task",
+            "schedule": 21600.0,
+            "args": (1000,),
+        },
+        "prune-stale-threats-daily": {
+            "task": "prune_stale_threats_task",
+            "schedule": 86400.0,
+            "args": (14,),
+        },
+    },
 )

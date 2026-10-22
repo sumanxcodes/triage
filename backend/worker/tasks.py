@@ -38,6 +38,7 @@ async def async_save_threat_record(
                 canonical_url=canonical,
                 threat_type=verdict.threat_category,
                 target_brand=verdict.target_brand,
+                source="gemini_zero_day",
                 confidence_score=verdict.confidence_score,
                 is_active=True,
             )
@@ -119,3 +120,28 @@ def analyze_urls_zero_day(self, urls: List[str]) -> Dict[str, Any]:
                 logger.error(f"Failed to publish threat to Redis: {e}")
 
     return results
+
+
+@celery_app.task(name="ingest_urlhaus_feed_task")
+def ingest_urlhaus_feed_task(limit: int = 1000) -> Dict[str, Any]:
+    """Periodic task: Ingests online malware URLs from URLhaus (abuse.ch)."""
+    from worker.ingestion import run_feed_pipeline
+    logger.info("Starting scheduled URLhaus feed ingestion task.")
+    return asyncio.run(run_feed_pipeline("urlhaus", limit=limit))
+
+
+@celery_app.task(name="ingest_openphish_feed_task")
+def ingest_openphish_feed_task(limit: int = 1000) -> Dict[str, Any]:
+    """Periodic task: Ingests active phishing URLs from OpenPhish."""
+    from worker.ingestion import run_feed_pipeline
+    logger.info("Starting scheduled OpenPhish feed ingestion task.")
+    return asyncio.run(run_feed_pipeline("openphish", limit=limit))
+
+
+@celery_app.task(name="prune_stale_threats_task")
+def prune_stale_threats_task(retention_days: int = 14) -> Dict[str, Any]:
+    """Periodic task: Deactivates stale threats older than retention window for client sync pruning."""
+    from worker.ingestion import prune_stale_threats
+    logger.info(f"Starting scheduled stale threat pruning task (retention={retention_days}d).")
+    pruned = asyncio.run(prune_stale_threats(retention_days=retention_days))
+    return {"pruned_count": pruned, "retention_days": retention_days}
