@@ -2,6 +2,29 @@ import SwiftUI
 
 struct OnboardingView: View {
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.scenePhase) private var scenePhase
+
+    @State private var refreshId = UUID()
+
+    private var smsStatus: ModuleStatus {
+        if let date = AppGroup.lastSMSEvaluationDate {
+            return .active(date)
+        } else if AppGroup.isSMSConfiguredByUser {
+            return .ready
+        } else {
+            return .setupNeeded
+        }
+    }
+
+    private var safariStatus: ModuleStatus {
+        if let date = AppGroup.lastSafariEvaluationDate {
+            return .active(date)
+        } else if AppGroup.isSafariConfiguredByUser {
+            return .ready
+        } else {
+            return .setupNeeded
+        }
+    }
 
     var body: some View {
         NavigationStack {
@@ -38,6 +61,10 @@ struct OnboardingView: View {
                                     .font(.caption)
                                     .foregroundColor(.secondary)
                             }
+
+                            Spacer()
+
+                            statusBadge(smsStatus)
                         }
 
                         Divider()
@@ -88,6 +115,10 @@ struct OnboardingView: View {
                                     .font(.caption)
                                     .foregroundColor(.secondary)
                             }
+
+                            Spacer()
+
+                            statusBadge(safariStatus)
                         }
 
                         Divider()
@@ -103,20 +134,36 @@ struct OnboardingView: View {
                     .background(Color(.secondarySystemBackground))
                     .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
 
-                    // Open Settings Shortcut Button
-                    Button(action: openSettings) {
-                        HStack(spacing: 8) {
-                            Image(systemName: "gear")
-                                .font(.body.weight(.semibold))
-                            Text("Open iOS Settings")
-                                .fontWeight(.semibold)
+                    // Action Buttons
+                    VStack(spacing: 10) {
+                        Button(action: openSettings) {
+                            HStack(spacing: 8) {
+                                Image(systemName: "gear")
+                                    .font(.body.weight(.semibold))
+                                Text("Open iOS Settings")
+                                    .fontWeight(.semibold)
+                            }
+                            .frame(maxWidth: .infinity)
+                            .frame(minHeight: 24)
                         }
-                        .frame(maxWidth: .infinity)
-                        .frame(minHeight: 24)
+                        .buttonStyle(.borderedProminent)
+                        .controlSize(.large)
+                        .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
+
+                        Button(action: testSafari) {
+                            HStack(spacing: 8) {
+                                Image(systemName: "safari")
+                                    .font(.body.weight(.semibold))
+                                Text("Test Safari Extension")
+                                    .fontWeight(.semibold)
+                            }
+                            .frame(maxWidth: .infinity)
+                            .frame(minHeight: 24)
+                        }
+                        .buttonStyle(.bordered)
+                        .controlSize(.large)
+                        .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
                     }
-                    .buttonStyle(.borderedProminent)
-                    .controlSize(.large)
-                    .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
                     .padding(.top, 4)
                 }
                 .padding(.horizontal, 16)
@@ -126,12 +173,36 @@ struct OnboardingView: View {
             .toolbar {
                 ToolbarItem(placement: .confirmationAction) {
                     Button("Done") {
+                        AppGroup.isSMSConfiguredByUser = true
+                        AppGroup.isSafariConfiguredByUser = true
                         dismiss()
                     }
                     .fontWeight(.semibold)
                 }
             }
+            .onChange(of: scenePhase) {
+                if scenePhase == .active {
+                    refreshId = UUID()
+                }
+            }
         }
+        .id(refreshId)
+    }
+
+    private func statusBadge(_ status: ModuleStatus) -> some View {
+        HStack(spacing: 4) {
+            Circle()
+                .fill(status.badgeColor)
+                .frame(width: 7, height: 7)
+            Text(status.badgeText)
+                .font(.caption2)
+                .fontWeight(.semibold)
+                .foregroundColor(status.badgeColor)
+        }
+        .padding(.horizontal, 7)
+        .padding(.vertical, 3)
+        .background(status.badgeColor.opacity(0.12))
+        .cornerRadius(6)
     }
 
     private func stepRow(number: String, text: LocalizedStringKey) -> some View {
@@ -153,6 +224,13 @@ struct OnboardingView: View {
     private func openSettings() {
         UIImpactFeedbackGenerator(style: .medium).impactOccurred()
         if let url = URL(string: UIApplication.openSettingsURLString) {
+            UIApplication.shared.open(url)
+        }
+    }
+
+    private func testSafari() {
+        UIImpactFeedbackGenerator(style: .medium).impactOccurred()
+        if let url = URL(string: "https://example.com") {
             UIApplication.shared.open(url)
         }
     }

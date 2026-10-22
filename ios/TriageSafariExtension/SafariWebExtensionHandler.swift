@@ -5,11 +5,34 @@ final class SafariWebExtensionHandler: NSObject, NSExtensionRequestHandling {
     func beginRequest(with context: NSExtensionContext) {
         guard let item = context.inputItems.first as? NSExtensionItem,
               let userInfo = item.userInfo as? [String: Any],
-              let message = userInfo[SFExtensionMessageKey] as? [String: Any],
-              let urlString = message["url"] as? String else {
+              let message = userInfo[SFExtensionMessageKey] as? [String: Any] else {
             context.completeRequest(returningItems: nil, completionHandler: nil)
             return
         }
+
+        // Heartbeat or diagnostic ping from background.js
+        let action = message["action"] as? String
+        let type = message["type"] as? String
+        if action == "heartbeat" || type == "heartbeat" {
+            AppGroup.recordSafariHeartbeat()
+            let response = NSExtensionItem()
+            response.userInfo = [
+                SFExtensionMessageKey: [
+                    "status": "ok",
+                    "heartbeat": true
+                ]
+            ]
+            context.completeRequest(returningItems: [response], completionHandler: nil)
+            return
+        }
+
+        guard let urlString = message["url"] as? String else {
+            context.completeRequest(returningItems: nil, completionHandler: nil)
+            return
+        }
+
+        // Record heartbeat on every evaluated URL
+        AppGroup.recordSafariHeartbeat()
 
         var isBlocked = false
         if let url = URL(string: urlString) {

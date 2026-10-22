@@ -5,6 +5,9 @@ final class MessageFilterExtension: ILMessageFilterExtension {}
 
 extension MessageFilterExtension: ILMessageFilterQueryHandling {
     func handle(_ queryRequest: ILMessageFilterQueryRequest, context: ILMessageFilterExtensionContext, completion: @escaping (ILMessageFilterQueryResponse) -> Void) {
+        // Record SMS evaluation heartbeat
+        AppGroup.recordSMSHeartbeat()
+
         let response = ILMessageFilterQueryResponse()
 
         // 1. Check if message body exists
