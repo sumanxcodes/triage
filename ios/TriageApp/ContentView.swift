@@ -46,14 +46,19 @@ struct ContentView: View {
     @State private var threatCount = ThreatDatabase.shared.count()
     @State private var isSyncing = false
     @State private var syncStatusMessage: String?
-    @State private var refreshId = UUID()
+
+    // Extension & Configuration State
+    @State private var lastSMSDate: Date?
+    @State private var lastSafariDate: Date?
+    @State private var isSMSConfigured: Bool = false
+    @State private var isSafariConfigured: Bool = false
 
     // MARK: - Dynamic Module Status
 
     private var smsStatus: ModuleStatus {
-        if let date = AppGroup.lastSMSEvaluationDate {
+        if let date = lastSMSDate {
             return .active(date)
-        } else if AppGroup.isSMSConfiguredByUser {
+        } else if isSMSConfigured {
             return .ready
         } else {
             return .setupNeeded
@@ -61,9 +66,9 @@ struct ContentView: View {
     }
 
     private var safariStatus: ModuleStatus {
-        if let date = AppGroup.lastSafariEvaluationDate {
+        if let date = lastSafariDate {
             return .active(date)
-        } else if AppGroup.isSafariConfiguredByUser {
+        } else if isSafariConfigured {
             return .ready
         } else {
             return .setupNeeded
@@ -334,8 +339,8 @@ struct ContentView: View {
                     } else {
                         HStack(spacing: 12) {
                             Image(systemName: "checkmark.seal.fill")
-                                .foregroundColor(.green)
-                                .font(.title2)
+                            .foregroundColor(.green)
+                            .font(.title2)
 
                             VStack(alignment: .leading, spacing: 2) {
                                 Text("Triage Pro Active")
@@ -372,7 +377,9 @@ struct ContentView: View {
                 PaywallView()
             }
             .sheet(item: $selectedModule) { module in
-                ModuleDetailSheet(moduleType: module)
+                ModuleDetailSheet(moduleType: module, onDismiss: {
+                    refreshView()
+                })
             }
             .onAppear {
                 refreshView()
@@ -383,7 +390,6 @@ struct ContentView: View {
                 }
             }
         }
-        .id(refreshId)
     }
 
     // MARK: - Subviews
@@ -440,7 +446,19 @@ struct ContentView: View {
 
     private func refreshView() {
         threatCount = ThreatDatabase.shared.count()
-        refreshId = UUID()
+        let state = AppGroup.loadState()
+        if let ts = state.lastSMSEvaluation, ts > 0 {
+            lastSMSDate = Date(timeIntervalSince1970: ts)
+        } else {
+            lastSMSDate = nil
+        }
+        if let ts = state.lastSafariEvaluation, ts > 0 {
+            lastSafariDate = Date(timeIntervalSince1970: ts)
+        } else {
+            lastSafariDate = nil
+        }
+        isSMSConfigured = state.isSMSConfigured
+        isSafariConfigured = state.isSafariConfigured
     }
 
     private func formattedRelativeDate(_ date: Date) -> String {
@@ -476,6 +494,8 @@ struct ContentView: View {
 
 struct ModuleDetailSheet: View {
     let moduleType: ModuleType
+    var onDismiss: (() -> Void)? = nil
+
     @Environment(\.dismiss) private var dismiss
     @Environment(\.scenePhase) private var scenePhase
 
@@ -708,6 +728,7 @@ struct ModuleDetailSheet: View {
             .toolbar {
                 ToolbarItem(placement: .confirmationAction) {
                     Button("Done") {
+                        onDismiss?()
                         dismiss()
                     }
                     .fontWeight(.semibold)
@@ -763,13 +784,22 @@ struct ModuleDetailSheet: View {
     }
 
     private func loadState() {
+        let state = AppGroup.loadState()
         switch moduleType {
         case .sms:
-            isConfigured = AppGroup.isSMSConfiguredByUser
-            lastHeartbeatDate = AppGroup.lastSMSEvaluationDate
+            isConfigured = state.isSMSConfigured
+            if let ts = state.lastSMSEvaluation, ts > 0 {
+                lastHeartbeatDate = Date(timeIntervalSince1970: ts)
+            } else {
+                lastHeartbeatDate = nil
+            }
         case .safari:
-            isConfigured = AppGroup.isSafariConfiguredByUser
-            lastHeartbeatDate = AppGroup.lastSafariEvaluationDate
+            isConfigured = state.isSafariConfigured
+            if let ts = state.lastSafariEvaluation, ts > 0 {
+                lastHeartbeatDate = Date(timeIntervalSince1970: ts)
+            } else {
+                lastHeartbeatDate = nil
+            }
         }
     }
 

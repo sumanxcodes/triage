@@ -4,12 +4,15 @@ struct OnboardingView: View {
     @Environment(\.dismiss) private var dismiss
     @Environment(\.scenePhase) private var scenePhase
 
-    @State private var refreshId = UUID()
+    @State private var lastSMSDate: Date?
+    @State private var lastSafariDate: Date?
+    @State private var isSMSConfigured: Bool = false
+    @State private var isSafariConfigured: Bool = false
 
     private var smsStatus: ModuleStatus {
-        if let date = AppGroup.lastSMSEvaluationDate {
+        if let date = lastSMSDate {
             return .active(date)
-        } else if AppGroup.isSMSConfiguredByUser {
+        } else if isSMSConfigured {
             return .ready
         } else {
             return .setupNeeded
@@ -17,9 +20,9 @@ struct OnboardingView: View {
     }
 
     private var safariStatus: ModuleStatus {
-        if let date = AppGroup.lastSafariEvaluationDate {
+        if let date = lastSafariDate {
             return .active(date)
-        } else if AppGroup.isSafariConfiguredByUser {
+        } else if isSafariConfigured {
             return .ready
         } else {
             return .setupNeeded
@@ -180,13 +183,31 @@ struct OnboardingView: View {
                     .fontWeight(.semibold)
                 }
             }
+            .onAppear {
+                refreshState()
+            }
             .onChange(of: scenePhase) {
                 if scenePhase == .active {
-                    refreshId = UUID()
+                    refreshState()
                 }
             }
         }
-        .id(refreshId)
+    }
+
+    private func refreshState() {
+        let state = AppGroup.loadState()
+        if let ts = state.lastSMSEvaluation, ts > 0 {
+            lastSMSDate = Date(timeIntervalSince1970: ts)
+        } else {
+            lastSMSDate = nil
+        }
+        if let ts = state.lastSafariEvaluation, ts > 0 {
+            lastSafariDate = Date(timeIntervalSince1970: ts)
+        } else {
+            lastSafariDate = nil
+        }
+        isSMSConfigured = state.isSMSConfigured
+        isSafariConfigured = state.isSafariConfigured
     }
 
     private func statusBadge(_ status: ModuleStatus) -> some View {

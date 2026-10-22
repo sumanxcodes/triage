@@ -1,5 +1,24 @@
 import Foundation
 
+public struct AppGroupState: Codable {
+    public var lastSMSEvaluation: Double?
+    public var lastSafariEvaluation: Double?
+    public var isSMSConfigured: Bool
+    public var isSafariConfigured: Bool
+
+    public init(
+        lastSMSEvaluation: Double? = nil,
+        lastSafariEvaluation: Double? = nil,
+        isSMSConfigured: Bool = false,
+        isSafariConfigured: Bool = false
+    ) {
+        self.lastSMSEvaluation = lastSMSEvaluation
+        self.lastSafariEvaluation = lastSafariEvaluation
+        self.isSMSConfigured = isSMSConfigured
+        self.isSafariConfigured = isSafariConfigured
+    }
+}
+
 public enum AppGroup {
     public static let identifier = "group.com.sumanxcodes.triage"
 
@@ -16,57 +35,79 @@ public enum AppGroup {
         return containerURL.appendingPathComponent("threats.sqlite")
     }
 
-    public static var userDefaults: UserDefaults? {
-        return UserDefaults(suiteName: identifier)
+    private static var stateFileURL: URL {
+        return containerURL.appendingPathComponent("extension_state.json")
     }
 
-    // Storage Keys
-    public static let keyLastSMSEvaluation = "triage_last_sms_evaluation_ts"
-    public static let keyLastSafariEvaluation = "triage_last_safari_evaluation_ts"
-    public static let keySMSConfiguredByUser = "triage_sms_configured_by_user"
-    public static let keySafariConfiguredByUser = "triage_safari_configured_by_user"
+    // Direct filesystem state access (avoids CFPreferences / cfprefsd daemon issues)
+    public static func loadState() -> AppGroupState {
+        guard let data = try? Data(contentsOf: stateFileURL),
+              let state = try? JSONDecoder().decode(AppGroupState.self, from: data) else {
+            return AppGroupState()
+        }
+        return state
+    }
+
+    public static func updateState(_ modify: (inout AppGroupState) -> Void) {
+        var state = loadState()
+        modify(&state)
+        if let data = try? JSONEncoder().encode(state) {
+            try? data.write(to: stateFileURL, options: .atomic)
+        }
+    }
 
     // Heartbeat Recorders
     public static func recordSMSHeartbeat() {
-        userDefaults?.set(Date().timeIntervalSince1970, forKey: keyLastSMSEvaluation)
-        userDefaults?.set(true, forKey: keySMSConfiguredByUser)
+        updateState { state in
+            state.lastSMSEvaluation = Date().timeIntervalSince1970
+            state.isSMSConfigured = true
+        }
     }
 
     public static func recordSafariHeartbeat() {
-        userDefaults?.set(Date().timeIntervalSince1970, forKey: keyLastSafariEvaluation)
-        userDefaults?.set(true, forKey: keySafariConfiguredByUser)
+        updateState { state in
+            state.lastSafariEvaluation = Date().timeIntervalSince1970
+            state.isSafariConfigured = true
+        }
     }
 
     public static func clearSMSHeartbeat() {
-        userDefaults?.removeObject(forKey: keyLastSMSEvaluation)
+        updateState { state in
+            state.lastSMSEvaluation = nil
+        }
     }
 
     public static func clearSafariHeartbeat() {
-        userDefaults?.removeObject(forKey: keyLastSafariEvaluation)
+        updateState { state in
+            state.lastSafariEvaluation = nil
+        }
     }
 
     public static var lastSMSEvaluationDate: Date? {
-        guard let ts = userDefaults?.double(forKey: keyLastSMSEvaluation), ts > 0 else {
-            return nil
-        }
+        guard let ts = loadState().lastSMSEvaluation, ts > 0 else { return nil }
         return Date(timeIntervalSince1970: ts)
     }
 
     public static var lastSafariEvaluationDate: Date? {
-        guard let ts = userDefaults?.double(forKey: keyLastSafariEvaluation), ts > 0 else {
-            return nil
-        }
+        guard let ts = loadState().lastSafariEvaluation, ts > 0 else { return nil }
         return Date(timeIntervalSince1970: ts)
     }
 
     public static var isSMSConfiguredByUser: Bool {
-        get { userDefaults?.bool(forKey: keySMSConfiguredByUser) ?? false }
-        set { userDefaults?.set(newValue, forKey: keySMSConfiguredByUser) }
+        get { loadState().isSMSConfigured }
+        set {
+            updateState { state in
+                state.isSMSConfigured = newValue
+            }
+        }
     }
 
     public static var isSafariConfiguredByUser: Bool {
-        get { userDefaults?.bool(forKey: keySafariConfiguredByUser) ?? false }
-        set { userDefaults?.set(newValue, forKey: keySafariConfiguredByUser) }
+        get { loadState().isSafariConfigured }
+        set {
+            updateState { state in
+                state.isSafariConfigured = newValue
+            }
+        }
     }
 }
-
