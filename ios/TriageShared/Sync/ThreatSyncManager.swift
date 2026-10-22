@@ -35,7 +35,7 @@ public final class ThreatSyncManager {
 
     /// Performs incremental delta sync from backend API and updates local GRDB SQLite.
     public func sync(
-        baseURL: URL = URL(string: "https://api.triage.security")!,
+        baseURL: URL = URL(string: "https://triage-api-oeyj.onrender.com")!,
         session: URLSession = .shared
     ) async throws -> (added: Int, removed: Int) {
         var components = URLComponents(
