@@ -15,6 +15,7 @@ from app.db.models import ThreatRecordModel
 from app.db.session import async_session_factory
 from worker.feeds.base import FeedThreatItem
 from worker.feeds.openphish import OpenPhishCollector
+from worker.feeds.phishing_army import PhishingArmyCollector
 from worker.feeds.urlhaus import URLhausCollector
 
 logger = logging.getLogger(__name__)
@@ -183,11 +184,13 @@ async def prune_stale_threats(retention_days: int = 14) -> int:
 
 async def run_feed_pipeline(feed_name: str, limit: Optional[int] = None) -> Dict[str, Any]:
     """Runs a single feed ingestion collector and ingestion pipeline."""
-    collector: URLhausCollector | OpenPhishCollector
+    collector: URLhausCollector | OpenPhishCollector | PhishingArmyCollector
     if feed_name == "urlhaus":
         collector = URLhausCollector()
     elif feed_name == "openphish":
         collector = OpenPhishCollector()
+    elif feed_name == "phishing_army":
+        collector = PhishingArmyCollector()
     else:
         raise ValueError(f"Unknown feed name: {feed_name}")
 
@@ -201,8 +204,9 @@ if __name__ == "__main__":
     import argparse
 
     parser = argparse.ArgumentParser(description="Triage Threat Feed Ingestion CLI")
-    parser.add_argument("--feed", choices=["urlhaus", "openphish", "all"], default="urlhaus")
-    parser.add_argument("--limit", type=int, default=50, help="Max threats to fetch")
+    parser.add_argument("--feed", choices=["urlhaus", "openphish", "phishing_army", "all"], default="all")
+    parser.add_argument("--limit", type=int, default=20, help="Max threats to fetch")
+    parser.add_argument("--dry-run", action="store_true", help="Preview fetched URLs without saving to database")
     parser.add_argument("--prune", action="store_true", help="Run stale threat pruning")
     args = parser.parse_args()
 
@@ -212,14 +216,35 @@ if __name__ == "__main__":
             print(f"Pruned {count} stale threats.")
             return
 
-        if args.feed in ("urlhaus", "all"):
-            print(f"Running URLhaus ingestion (limit={args.limit})...")
-            res = await run_feed_pipeline("urlhaus", limit=args.limit)
-            print(f"URLhaus Result: {res}")
+        feeds_to_run = ["openphish", "phishing_army", "urlhaus"] if args.feed == "all" else [args.feed]
 
-        if args.feed in ("openphish", "all"):
-            print(f"Running OpenPhish ingestion (limit={args.limit})...")
-            res = await run_feed_pipeline("openphish", limit=args.limit)
-            print(f"OpenPhish Result: {res}")
+        for f in feeds_to_run:
+            print(f"\n==================== {f.upper()} FEED PREVIEW ====================")
+            if f == "urlhaus":
+                collector = URLhausCollector()
+            elif f == "openphish":
+                collector = OpenPhishCollector()
+            else:
+                collector = PhishingArmyCollector()
+
+            items = await collector.fetch_threats(limit=args.limit)
+            print(f"Total fetched: {len(items)}\n")
+
+            print(f"{'#':<3} | {'STATUS':<7} | {'CATEGORY':<16} | {'TAG / BRAND':<16} | {'URL'}")
+            print("-" * 100)
+            for idx, item in enumerate(items[:args.limit], 1):
+                status = "ONLINE" if item.is_online else "OFFLINE"
+                brand = (item.target_brand or "-")[:16]
+                cat = item.threat_type[:16]
+                url = item.raw_url[:50] + ("..." if len(item.raw_url) > 50 else "")
+                print(f"{idx:<3} | {status:<7} | {cat:<16} | {brand:<16} | {url}")
+
+            if not args.dry_run:
+                print(f"\nIngesting {len(items)} items into database & cache...")
+                try:
+                    res = await ingest_threat_items(items)
+                    print(f"Result: {res}")
+                except Exception as e:
+                    print(f"Note: Database ingestion skipped or encountered error (run with active PostgreSQL): {e}")
 
     asyncio.run(main())

@@ -127,7 +127,7 @@ async def test_urlhaus_collector_mock():
 
     with patch.object(URLhausCollector, "_get", new_callable=AsyncMock) as mock_get:
         mock_get.return_value = mock_resp
-        collector = URLhausCollector()
+        collector = URLhausCollector(auth_key="test_key")
         items = await collector.fetch_threats(limit=10)
 
     assert len(items) == 2

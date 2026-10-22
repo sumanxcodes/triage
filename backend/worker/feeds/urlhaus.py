@@ -14,11 +14,26 @@ class URLhausCollector(BaseFeedCollector):
     Pulls recent malware distribution and payload delivery links.
     """
 
-    def __init__(self, feed_url: Optional[str] = None, timeout_seconds: float = 20.0) -> None:
+    def __init__(
+        self,
+        feed_url: Optional[str] = None,
+        auth_key: Optional[str] = None,
+        timeout_seconds: float = 20.0,
+    ) -> None:
         super().__init__(timeout_seconds=timeout_seconds)
         self.feed_url = feed_url or settings.URLHAUS_RECENT_URL
+        self.auth_key = auth_key or settings.URLHAUS_AUTH_KEY
+        if self.auth_key:
+            self.headers["Auth-Key"] = self.auth_key
 
     async def fetch_threats(self, limit: Optional[int] = None) -> List[FeedThreatItem]:
+        if not self.auth_key:
+            logger.info(
+                "Notice: URLhaus requires an Auth-Key as of 2024. "
+                "Get a free API key at https://auth.abuse.ch/ and set URLHAUS_AUTH_KEY in .env."
+            )
+            return []
+
         logger.info(f"Fetching URLhaus feed from {self.feed_url}")
         items: List[FeedThreatItem] = []
 
