@@ -26,15 +26,14 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 # Install uv for fast dependency management
 COPY --from=ghcr.io/astral-sh/uv:latest /uv /bin/uv
 
-# Install Python dependencies
-COPY pyproject.toml .
-RUN uv pip install --system -e ".[dev]"
+# Copy project files and metadata
+COPY . .
+
+# Install Python dependencies and package
+RUN uv pip install --system .
 
 # Install Playwright browser binaries
 RUN playwright install chromium --with-deps
-
-# Copy application source code
-COPY . .
 
 EXPOSE 8000
 
