@@ -153,6 +153,21 @@ struct OnboardingView: View {
                         .controlSize(.large)
                         .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
 
+                        // Navigation Hint Banner
+                        HStack(alignment: .top, spacing: 8) {
+                            Image(systemName: "lightbulb.fill")
+                                .foregroundColor(.orange)
+                                .font(.footnote)
+                                .padding(.top, 1)
+
+                            Text("**Settings Navigation Note:** Apple opens **Settings > Triage**. Tap **‹ Apps** (or **‹ Settings**) in the top-left corner of your screen, then select **Messages** or **Safari**.")
+                                .font(.caption)
+                                .foregroundColor(.secondary)
+                        }
+                        .padding(10)
+                        .background(Color.orange.opacity(0.08))
+                        .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
+
                         Button(action: testSafari) {
                             HStack(spacing: 8) {
                                 Image(systemName: "safari")

@@ -116,7 +116,7 @@ public struct SettingsView: View {
                                 VStack(alignment: .leading, spacing: 2) {
                                     Text("Extension Setup Guide")
                                         .foregroundColor(.primary)
-                                    Text("Step-by-step instructions for Messages and Safari")
+                                    Text("Step-by-step route for Messages & Safari")
                                         .font(.caption2)
                                         .foregroundColor(.secondary)
                                 }
@@ -133,8 +133,18 @@ public struct SettingsView: View {
 
                     Button(action: openSettings) {
                         HStack {
-                            Label("Open iPhone Settings", systemImage: "gear")
-                                .foregroundColor(.primary)
+                            Label {
+                                VStack(alignment: .leading, spacing: 2) {
+                                    Text("Open iPhone Settings")
+                                        .foregroundColor(.primary)
+                                    Text("Opens Settings > Triage (tap ‹ Apps to navigate)")
+                                        .font(.caption2)
+                                        .foregroundColor(.secondary)
+                                }
+                            } icon: {
+                                Image(systemName: "gear")
+                                    .foregroundColor(.gray)
+                            }
                             Spacer()
                             Image(systemName: "arrow.up.forward")
                                 .font(.caption2)
@@ -144,8 +154,18 @@ public struct SettingsView: View {
 
                     Button(action: testSafari) {
                         HStack {
-                            Label("Test Safari Extension", systemImage: "safari")
-                                .foregroundColor(.primary)
+                            Label {
+                                VStack(alignment: .leading, spacing: 2) {
+                                    Text("Test Safari Extension")
+                                        .foregroundColor(.primary)
+                                    Text("Verifies real-time background shield heartbeat")
+                                        .font(.caption2)
+                                        .foregroundColor(.secondary)
+                                }
+                            } icon: {
+                                Image(systemName: "safari")
+                                    .foregroundColor(.blue)
+                            }
                             Spacer()
                             Image(systemName: "arrow.up.forward")
                                 .font(.caption2)
@@ -155,7 +175,7 @@ public struct SettingsView: View {
                 } header: {
                     Text("Protection Configuration")
                 } footer: {
-                    Text("Apple's privacy model requires enabling Triage manually in Settings > Messages and Settings > Safari.")
+                    Text("Apple's privacy rules require enabling extensions manually. Tapping Open Settings will open Settings > Triage — from there, tap ‹ Apps (or ‹ Settings) in the top-left to configure Messages or Safari.")
                 }
 
                 // MARK: - Section 3: Threat Intelligence Database

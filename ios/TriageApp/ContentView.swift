@@ -639,6 +639,30 @@ struct ModuleDetailSheet: View {
                     .background(Color(.secondarySystemBackground))
                     .cornerRadius(16)
 
+                    // Setup Instructions
+                    VStack(alignment: .leading, spacing: 12) {
+                        Text("How to Configure")
+                            .font(.headline)
+                            .foregroundColor(.primary)
+
+                        Divider()
+
+                        if moduleType == .sms {
+                            stepRow(number: "1", text: "Open **Settings** > **Apps** > **Messages**")
+                            stepRow(number: "2", text: "Tap **Unknown & Spam**")
+                            stepRow(number: "3", text: "Turn ON **Filter Unknown Senders**")
+                            stepRow(number: "4", text: "Under SMS Filtering, select **Triage** and tap **Enable**")
+                        } else {
+                            stepRow(number: "1", text: "Open **Settings** > **Safari** (or **Apps** > **Safari**)")
+                            stepRow(number: "2", text: "Tap **Extensions**")
+                            stepRow(number: "3", text: "Turn ON **Triage Security**")
+                            stepRow(number: "4", text: "Under Permissions, select **All Websites** > **Always Allow**")
+                        }
+                    }
+                    .padding(16)
+                    .background(Color(.secondarySystemBackground))
+                    .cornerRadius(16)
+
                     // Action Buttons
                     VStack(spacing: 10) {
                         Button(action: openSettings) {
@@ -654,6 +678,27 @@ struct ModuleDetailSheet: View {
                         .buttonStyle(.borderedProminent)
                         .controlSize(.large)
                         .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
+
+                        // Navigation Hint Banner
+                        HStack(alignment: .top, spacing: 8) {
+                            Image(systemName: "lightbulb.fill")
+                                .foregroundColor(.orange)
+                                .font(.footnote)
+                                .padding(.top, 1)
+
+                            if moduleType == .sms {
+                                Text("**Settings Navigation Note:** Apple opens **Settings > Triage**. Tap **‹ Apps** (or **‹ Settings**) in the top-left corner, tap **Messages** > **Unknown & Spam**, then select **Triage**.")
+                                    .font(.caption)
+                                    .foregroundColor(.secondary)
+                            } else {
+                                Text("**Settings Navigation Note:** Apple opens **Settings > Triage**. Tap **‹ Apps** (or **‹ Settings**) in the top-left corner, tap **Safari** > **Extensions**, then enable **Triage Security**.")
+                                    .font(.caption)
+                                    .foregroundColor(.secondary)
+                            }
+                        }
+                        .padding(10)
+                        .background(Color.orange.opacity(0.08))
+                        .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
 
                         if moduleType == .safari {
                             Button(action: testInSafari) {
@@ -680,30 +725,6 @@ struct ModuleDetailSheet: View {
                                 .padding(.horizontal, 8)
                         }
                     }
-
-                    // Setup Instructions
-                    VStack(alignment: .leading, spacing: 12) {
-                        Text("How to Configure")
-                            .font(.headline)
-                            .foregroundColor(.primary)
-
-                        Divider()
-
-                        if moduleType == .sms {
-                            stepRow(number: "1", text: "Open **Settings** > **Apps** > **Messages**")
-                            stepRow(number: "2", text: "Tap **Unknown & Spam**")
-                            stepRow(number: "3", text: "Turn ON **Filter Unknown Senders**")
-                            stepRow(number: "4", text: "Under SMS Filtering, select **Triage** and tap **Enable**")
-                        } else {
-                            stepRow(number: "1", text: "Open **Settings** > **Safari** (or **Apps** > **Safari**)")
-                            stepRow(number: "2", text: "Tap **Extensions**")
-                            stepRow(number: "3", text: "Turn ON **Triage Security**")
-                            stepRow(number: "4", text: "Under Permissions, select **All Websites** > **Always Allow**")
-                        }
-                    }
-                    .padding(16)
-                    .background(Color(.secondarySystemBackground))
-                    .cornerRadius(16)
 
                     // Apple Privacy Notice
                     HStack(alignment: .top, spacing: 8) {
