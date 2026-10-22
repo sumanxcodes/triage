@@ -368,6 +368,8 @@ struct ContentView: View {
                 ModuleDetailSheet(moduleType: module, onDismiss: {
                     refreshView()
                 })
+                .presentationDetents([.fraction(0.68), .large])
+                .presentationDragIndicator(.visible)
             }
             .onAppear {
                 refreshView()
@@ -478,7 +480,7 @@ struct ContentView: View {
     }
 }
 
-// MARK: - Focused Module Setup Sheet
+// MARK: - Native Apple HIG-Compliant Module Setup Sheet
 
 struct ModuleDetailSheet: View {
     let moduleType: ModuleType
@@ -487,14 +489,14 @@ struct ModuleDetailSheet: View {
     @Environment(\.dismiss) private var dismiss
     @Environment(\.scenePhase) private var scenePhase
 
-    @State private var isConfigured: Bool = false
     @State private var lastHeartbeatDate: Date?
+    @State private var isConfigured: Bool = false
     @State private var testPromptMessage: String?
 
     private var moduleTitle: String {
         switch moduleType {
-        case .sms: return "SMS Smishing Filter"
-        case .safari: return "Safari Extension"
+        case .sms: return "SMS Filter"
+        case .safari: return "Safari Shield"
         }
     }
 
@@ -522,135 +524,36 @@ struct ModuleDetailSheet: View {
         }
     }
 
+    private var statusDescription: String {
+        switch currentStatus {
+        case .active(let date):
+            let rel = RelativeDateTimeFormatter().localizedString(for: date, relativeTo: Date())
+            return "Verified active (\(rel))"
+        case .ready:
+            return "Configured • Standing by for first scan"
+        case .setupNeeded:
+            return "Setup required in iPhone Settings"
+        }
+    }
+
     var body: some View {
         NavigationStack {
             ScrollView {
-                VStack(spacing: 20) {
-                    // Header Badge
-                    VStack(spacing: 10) {
-                        ZStack {
-                            Circle()
-                                .fill(moduleColor.opacity(0.15))
-                                .frame(width: 64, height: 64)
+                VStack(spacing: 16) {
+                    // 1. Status Overview Card
+                    statusCard
 
-                            Image(systemName: moduleIcon)
-                                .font(.system(size: 28, weight: .semibold))
-                                .foregroundColor(moduleColor)
-                        }
-                        .padding(.top, 8)
+                    // 2. Step-by-Step Instructions Card
+                    instructionsCard
 
-                        Text(moduleTitle)
-                            .font(.title2.bold())
-
-                        HStack(spacing: 6) {
-                            Circle()
-                                .fill(currentStatus.badgeColor)
-                                .frame(width: 8, height: 8)
-                            Text(currentStatus.badgeText)
-                                .font(.subheadline)
-                                .fontWeight(.semibold)
-                                .foregroundColor(currentStatus.badgeColor)
-                        }
-                        .padding(.horizontal, 10)
-                        .padding(.vertical, 4)
-                        .background(currentStatus.badgeColor.opacity(0.12))
-                        .cornerRadius(8)
-                    }
-
-                    // Navigation Breadcrumbs Card
-                    VStack(alignment: .leading, spacing: 14) {
-                        Text("Settings Navigation Route")
-                            .font(.subheadline.weight(.semibold))
-                            .foregroundColor(.secondary)
-
-                        if moduleType == .sms {
-                            breadcrumbStep(number: "1", text: "Open **Settings** > **Apps** > **Messages**")
-                            breadcrumbStep(number: "2", text: "Tap **Unknown & Spam**")
-                            breadcrumbStep(number: "3", text: "Turn ON **Filter Unknown Senders**")
-                            breadcrumbStep(number: "4", text: "Select **Triage** and tap **Enable**")
-                        } else {
-                            breadcrumbStep(number: "1", text: "Open **Settings** > **Apps** > **Safari**")
-                            breadcrumbStep(number: "2", text: "Tap **Extensions**")
-                            breadcrumbStep(number: "3", text: "Turn ON **Triage Security**")
-                            breadcrumbStep(number: "4", text: "Permissions: **All Websites** > **Always Allow**")
-                        }
-                    }
-                    .padding(16)
-                    .background(Color(.secondarySystemBackground))
-                    .cornerRadius(16)
-
-                    // Action Section
-                    VStack(spacing: 12) {
-                        Button(action: openSettings) {
-                            HStack(spacing: 8) {
-                                Image(systemName: "gear")
-                                    .font(.body.weight(.semibold))
-                                Text("Open Settings")
-                                    .fontWeight(.semibold)
-                            }
-                            .frame(maxWidth: .infinity)
-                            .frame(minHeight: 24)
-                        }
-                        .buttonStyle(.borderedProminent)
-                        .controlSize(.large)
-                        .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
-
-                        Text("iOS opens Settings > Triage. Tap **‹ Apps** in top-left to reach \(moduleType == .sms ? "Messages" : "Safari").")
-                            .font(.caption2)
-                            .foregroundColor(.secondary)
-                            .multilineTextAlignment(.center)
-                            .padding(.horizontal, 8)
-
-                        if moduleType == .safari {
-                            Button(action: testInSafari) {
-                                HStack(spacing: 8) {
-                                    Image(systemName: "safari")
-                                        .font(.body.weight(.semibold))
-                                    Text("Test Safari Shield")
-                                        .fontWeight(.semibold)
-                                }
-                                .frame(maxWidth: .infinity)
-                                .frame(minHeight: 24)
-                            }
-                            .buttonStyle(.bordered)
-                            .controlSize(.large)
-                            .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
-                            .padding(.top, 4)
-
-                            if let msg = testPromptMessage {
-                                Text(msg)
-                                    .font(.caption2)
-                                    .foregroundColor(.secondary)
-                                    .multilineTextAlignment(.center)
-                                    .padding(.horizontal, 8)
-                            }
-                        }
-                    }
-
-                    // Acknowledge Toggle
-                    Toggle(isOn: Binding(
-                        get: { isConfigured },
-                        set: { newValue in
-                            isConfigured = newValue
-                            updateConfiguration(newValue)
-                        }
-                    )) {
-                        VStack(alignment: .leading, spacing: 2) {
-                            Text("Enabled in iOS Settings")
-                                .font(.subheadline.weight(.semibold))
-                            Text(statusSubtitleText)
-                                .font(.caption2)
-                                .foregroundColor(.secondary)
-                        }
-                    }
-                    .tint(moduleColor)
-                    .padding(16)
-                    .background(Color(.secondarySystemBackground))
-                    .cornerRadius(16)
+                    // 3. Primary Actions Section
+                    actionSection
                 }
                 .padding(.horizontal, 16)
-                .padding(.vertical, 12)
+                .padding(.top, 12)
+                .padding(.bottom, 24)
             }
+            .navigationTitle(moduleTitle)
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .confirmationAction) {
@@ -672,33 +575,180 @@ struct ModuleDetailSheet: View {
         }
     }
 
-    private var statusSubtitleText: String {
-        switch currentStatus {
-        case .active(let date):
-            let rel = RelativeDateTimeFormatter().localizedString(for: date, relativeTo: Date())
-            return "Verified active (\(rel))"
-        case .ready:
-            return "Standing by for first scan"
-        case .setupNeeded:
-            return "Action needed in Settings"
+    // MARK: - Subviews
+
+    private var statusCard: some View {
+        HStack(spacing: 14) {
+            ZStack {
+                RoundedRectangle(cornerRadius: 12, style: .continuous)
+                    .fill(moduleColor.opacity(0.15))
+                    .frame(width: 48, height: 48)
+
+                Image(systemName: moduleIcon)
+                    .font(.system(size: 22, weight: .semibold))
+                    .foregroundColor(moduleColor)
+            }
+
+            VStack(alignment: .leading, spacing: 3) {
+                Text(moduleType == .sms ? "SMS Smishing Filter" : "Safari Web Extension")
+                    .font(.headline)
+                    .foregroundColor(.primary)
+
+                Text(statusDescription)
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+            }
+
+            Spacer()
+
+            HStack(spacing: 5) {
+                Circle()
+                    .fill(currentStatus.badgeColor)
+                    .frame(width: 7, height: 7)
+                Text(currentStatus.badgeText)
+                    .font(.caption.weight(.semibold))
+                    .foregroundColor(currentStatus.badgeColor)
+            }
+            .padding(.horizontal, 9)
+            .padding(.vertical, 4)
+            .background(currentStatus.badgeColor.opacity(0.12))
+            .cornerRadius(7)
+        }
+        .padding(14)
+        .background(Color(.secondarySystemBackground))
+        .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+    }
+
+    private var instructionsCard: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Text("HOW TO ENABLE")
+                .font(.caption.weight(.bold))
+                .foregroundColor(.secondary)
+                .padding(.horizontal, 2)
+
+            VStack(spacing: 12) {
+                if moduleType == .sms {
+                    stepRow(
+                        icon: "gearshape.fill",
+                        iconColor: .gray,
+                        text: "Open **Settings** > **Apps** > **Messages**"
+                    )
+                    Divider()
+                    stepRow(
+                        icon: "bubble.left.and.exclamationmark.bubble.right.fill",
+                        iconColor: .blue,
+                        text: "Tap **Unknown & Spam**"
+                    )
+                    Divider()
+                    stepRow(
+                        icon: "switch.2",
+                        iconColor: .green,
+                        text: "Turn ON **Filter Unknown Senders**"
+                    )
+                    Divider()
+                    stepRow(
+                        icon: "checkmark.shield.fill",
+                        iconColor: .purple,
+                        text: "Select **Triage** and tap **Enable**"
+                    )
+                } else {
+                    stepRow(
+                        icon: "gearshape.fill",
+                        iconColor: .gray,
+                        text: "Open **Settings** > **Apps** > **Safari**"
+                    )
+                    Divider()
+                    stepRow(
+                        icon: "puzzlepiece.extension.fill",
+                        iconColor: .blue,
+                        text: "Tap **Extensions**"
+                    )
+                    Divider()
+                    stepRow(
+                        icon: "switch.2",
+                        iconColor: .green,
+                        text: "Turn ON **Triage Security**"
+                    )
+                    Divider()
+                    stepRow(
+                        icon: "checkmark.shield.fill",
+                        iconColor: .purple,
+                        text: "Permissions: **All Websites** > **Always Allow**"
+                    )
+                }
+            }
+            .padding(14)
+            .background(Color(.secondarySystemBackground))
+            .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
         }
     }
 
-    private func breadcrumbStep(number: String, text: LocalizedStringKey) -> some View {
-        HStack(alignment: .center, spacing: 10) {
-            Text(number)
-                .font(.caption2.bold())
-                .foregroundColor(.secondary)
-                .frame(width: 22, height: 22)
-                .background(Color(.systemFill))
-                .clipShape(Circle())
+    private func stepRow(icon: String, iconColor: Color, text: LocalizedStringKey) -> some View {
+        HStack(spacing: 12) {
+            Image(systemName: icon)
+                .font(.subheadline)
+                .foregroundColor(iconColor)
+                .frame(width: 24, height: 24)
 
             Text(text)
                 .font(.subheadline)
                 .foregroundColor(.primary)
                 .fixedSize(horizontal: false, vertical: true)
+
+            Spacer()
         }
     }
+
+    private var actionSection: some View {
+        VStack(spacing: 10) {
+            Button(action: openSettings) {
+                HStack(spacing: 8) {
+                    Image(systemName: "gearshape.fill")
+                        .font(.body.weight(.semibold))
+                    Text("Open iPhone Settings")
+                        .fontWeight(.semibold)
+                }
+                .frame(maxWidth: .infinity)
+                .frame(minHeight: 24)
+            }
+            .buttonStyle(.borderedProminent)
+            .controlSize(.large)
+            .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
+
+            Text("Settings opens on Triage. Tap **‹ Apps** in top-left to reach \(moduleType == .sms ? "Messages" : "Safari").")
+                .font(.caption2)
+                .foregroundColor(.secondary)
+                .multilineTextAlignment(.center)
+                .padding(.horizontal, 12)
+
+            if moduleType == .safari {
+                Button(action: testInSafari) {
+                    HStack(spacing: 8) {
+                        Image(systemName: "safari")
+                            .font(.body.weight(.semibold))
+                        Text("Test Safari Shield")
+                            .fontWeight(.semibold)
+                    }
+                    .frame(maxWidth: .infinity)
+                    .frame(minHeight: 24)
+                }
+                .buttonStyle(.bordered)
+                .controlSize(.large)
+                .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
+                .padding(.top, 4)
+
+                if let msg = testPromptMessage {
+                    Text(msg)
+                        .font(.caption2)
+                        .foregroundColor(.secondary)
+                        .multilineTextAlignment(.center)
+                        .padding(.horizontal, 8)
+                }
+            }
+        }
+    }
+
+    // MARK: - Helper Methods
 
     private func loadState() {
         let state = AppGroup.loadState()
@@ -720,26 +770,15 @@ struct ModuleDetailSheet: View {
         }
     }
 
-    private func updateConfiguration(_ enabled: Bool) {
-        UIImpactFeedbackGenerator(style: .light).impactOccurred()
-        switch moduleType {
-        case .sms:
-            AppGroup.isSMSConfiguredByUser = enabled
-            if !enabled {
-                AppGroup.clearSMSHeartbeat()
-                lastHeartbeatDate = nil
-            }
-        case .safari:
-            AppGroup.isSafariConfiguredByUser = enabled
-            if !enabled {
-                AppGroup.clearSafariHeartbeat()
-                lastHeartbeatDate = nil
-            }
-        }
-    }
-
     private func openSettings() {
         UIImpactFeedbackGenerator(style: .medium).impactOccurred()
+        switch moduleType {
+        case .sms:
+            AppGroup.isSMSConfiguredByUser = true
+        case .safari:
+            AppGroup.isSafariConfiguredByUser = true
+        }
+        isConfigured = true
         if let url = URL(string: UIApplication.openSettingsURLString) {
             UIApplication.shared.open(url)
         }
