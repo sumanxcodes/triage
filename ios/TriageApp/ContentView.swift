@@ -29,7 +29,7 @@ enum ModuleStatus {
 
     var badgeColor: Color {
         switch self {
-        case .active: return .green
+        case .active: return .triageVolt
         case .ready: return .blue
         case .setupNeeded: return .orange
         }
@@ -42,6 +42,7 @@ struct ContentView: View {
 
     @State private var showingPaywall = false
     @State private var selectedModule: ModuleType?
+    @State private var showThreatSimulator = false
     @State private var threatCount = ThreatDatabase.shared.count()
     @State private var isSyncing = false
     @State private var syncStatusMessage: String?
@@ -77,22 +78,22 @@ struct ContentView: View {
     private var smsSubtitle: String {
         switch smsStatus {
         case .active(let date):
-            return "Verified active • \(formattedRelativeDate(date))"
+            return "Active • Verified \(formattedRelativeDate(date))"
         case .ready:
-            return "Standing by in Messages"
+            return "Configured • Standing by in Messages"
         case .setupNeeded:
-            return "Requires activation in Settings"
+            return "Action required in iPhone Settings"
         }
     }
 
     private var safariSubtitle: String {
         switch safariStatus {
         case .active(let date):
-            return "Verified active • \(formattedRelativeDate(date))"
+            return "Active • Verified \(formattedRelativeDate(date))"
         case .ready:
-            return "Standing by in Safari"
+            return "Configured • Standing by in Safari"
         case .setupNeeded:
-            return "Requires activation in Settings"
+            return "Action required in iPhone Settings"
         }
     }
 
@@ -127,24 +128,21 @@ struct ContentView: View {
 
     private var heroSubtitle: String {
         if isFullyProtected {
-            return "Dual-layer on-device SMS & Safari protection."
+            return "Dual-layer on-device SMS & Safari link inspection active."
         } else if isPartiallyProtected {
-            return "One or more security modules require setup."
+            return "One or more security shields require configuration."
         } else {
-            return "Enable SMS & Safari protection in iOS Settings."
+            return "Enable SMS & Safari shields in iPhone Settings to start."
         }
     }
 
-    private var heroGradient: LinearGradient {
-        if subscriptionManager.isProUser {
-            return LinearGradient(colors: [.purple, .indigo], startPoint: .topLeading, endPoint: .bottomTrailing)
-        }
+    private var heroStatusColor: Color {
         if isFullyProtected {
-            return LinearGradient(colors: [.blue, .cyan], startPoint: .topLeading, endPoint: .bottomTrailing)
+            return .triageVolt
         } else if isPartiallyProtected {
-            return LinearGradient(colors: [.orange, .yellow], startPoint: .topLeading, endPoint: .bottomTrailing)
+            return .orange
         } else {
-            return LinearGradient(colors: [.orange, .red], startPoint: .topLeading, endPoint: .bottomTrailing)
+            return .red
         }
     }
 
@@ -161,206 +159,32 @@ struct ContentView: View {
     var body: some View {
         NavigationStack {
             ScrollView {
-                VStack(spacing: 18) {
-                    // MARK: - Hero Protection Status
-                    VStack(spacing: 12) {
-                        ZStack {
-                            Circle()
-                                .fill(heroGradient)
-                                .frame(width: 80, height: 80)
+                VStack(spacing: 20) {
+                    // MARK: - 1. Hero Security Status Card
+                    heroStatusCard
 
-                            Image(systemName: heroIcon)
-                                .resizable()
-                                .scaledToFit()
-                                .frame(width: 42, height: 42)
-                                .foregroundColor(.white)
-                        }
-                        .padding(.top, 4)
+                    // MARK: - 2. Active Protection Layers
+                    modulesSection
 
-                        VStack(spacing: 4) {
-                            HStack(spacing: 6) {
-                                Text(heroTitle)
-                                    .font(.title2)
-                                    .fontWeight(.bold)
+                    // MARK: - 3. Threat Intelligence Telemetry
+                    threatIntelligenceSection
 
-                                if subscriptionManager.isProUser {
-                                    Text("PRO")
-                                        .font(.system(size: 10, weight: .heavy))
-                                        .padding(.horizontal, 6)
-                                        .padding(.vertical, 2)
-                                        .background(LinearGradient(colors: [.purple, .indigo], startPoint: .leading, endPoint: .trailing))
-                                        .foregroundColor(.white)
-                                        .cornerRadius(4)
-                                }
-                            }
+                    // MARK: - 4. Diagnostics & Testing
+                    simulatorSection
 
-                            Text(heroSubtitle)
-                                .font(.subheadline)
-                                .foregroundColor(.secondary)
-                        }
-                    }
-                    .padding(.bottom, 2)
-
-                    // MARK: - Active Modules Section
-                    VStack(spacing: 0) {
-                        moduleRow(
-                            type: .sms,
-                            icon: "message.badge.filled.fill",
-                            iconColor: .green,
-                            title: "SMS Smishing Filter",
-                            subtitle: smsSubtitle,
-                            status: smsStatus
-                        )
-
-                        Divider()
-                            .padding(.leading, 56)
-
-                        moduleRow(
-                            type: .safari,
-                            icon: "safari.fill",
-                            iconColor: .blue,
-                            title: "Safari Extension",
-                            subtitle: safariSubtitle,
-                            status: safariStatus
-                        )
-                    }
-                    .background(Color(.secondarySystemBackground))
-                    .cornerRadius(16)
-                    .padding(.horizontal, 16)
-
-                    // MARK: - Threat Intelligence Card
-                    VStack(spacing: 14) {
-                        HStack {
-                            Label("Offline Threat Database", systemImage: "internaldrive.fill")
-                                .font(.headline)
-                                .foregroundColor(.primary)
-                            Spacer()
-                            Text("\(threatCount) Active")
-                                .font(.subheadline)
-                                .fontWeight(.semibold)
-                                .foregroundColor(.secondary)
-                        }
-
-                        Divider()
-
-                        HStack {
-                            VStack(alignment: .leading, spacing: 2) {
-                                Text("Last Updated")
-                                    .font(.caption)
-                                    .foregroundColor(.secondary)
-                                if let lastSync = ThreatSyncManager.shared.lastSyncDate {
-                                    Text("\(lastSync, style: .relative) ago")
-                                        .font(.subheadline)
-                                        .fontWeight(.medium)
-                                } else {
-                                    Text("Never")
-                                        .font(.subheadline)
-                                        .fontWeight(.medium)
-                                }
-                            }
-
-                            Spacer()
-
-                            Button(action: triggerSync) {
-                                HStack(spacing: 5) {
-                                    if isSyncing {
-                                        ProgressView()
-                                            .scaleEffect(0.8)
-                                    } else {
-                                        Image(systemName: "arrow.triangle.2.circlepath")
-                                        Text("Sync")
-                                    }
-                                }
-                                .font(.subheadline.weight(.semibold))
-                            }
-                            .buttonStyle(.bordered)
-                            .buttonBorderShape(.capsule)
-                            .disabled(isSyncing)
-                        }
-
-                        if let msg = syncStatusMessage {
-                            HStack(spacing: 6) {
-                                Image(systemName: "checkmark.circle.fill")
-                                    .foregroundColor(.green)
-                                    .font(.caption)
-                                Text(msg)
-                                    .font(.caption)
-                                    .foregroundColor(.secondary)
-                                Spacer()
-                            }
-                            .padding(.top, 2)
-                        }
-                    }
-                    .padding(16)
-                    .background(Color(.secondarySystemBackground))
-                    .cornerRadius(16)
-                    .padding(.horizontal, 16)
-
-                    // MARK: - Triage Pro Banner (if Free) or Pro Active Card (if Pro)
-                    if !subscriptionManager.isProUser {
-                        Button(action: { showingPaywall = true }) {
-                            HStack(spacing: 14) {
-                                ZStack {
-                                    Circle()
-                                        .fill(Color.white.opacity(0.2))
-                                        .frame(width: 40, height: 40)
-                                    Image(systemName: "sparkles")
-                                        .font(.title3)
-                                        .foregroundColor(.white)
-                                }
-
-                                VStack(alignment: .leading, spacing: 2) {
-                                    Text("Upgrade to Triage Pro")
-                                        .font(.headline)
-                                        .foregroundColor(.white)
-                                    Text("Unlock Gemini Zero-Day AI & hourly sync")
-                                        .font(.caption)
-                                        .foregroundColor(.white.opacity(0.85))
-                                }
-
-                                Spacer()
-
-                                Image(systemName: "chevron.right")
-                                    .font(.system(size: 14, weight: .semibold))
-                                    .foregroundColor(.white.opacity(0.7))
-                            }
-                            .padding(14)
-                            .background(
-                                LinearGradient(
-                                    colors: [.indigo, .blue],
-                                    startPoint: .leading,
-                                    endPoint: .trailing
-                                )
-                            )
-                            .cornerRadius(16)
-                        }
-                        .padding(.horizontal, 16)
-                    } else {
-                        HStack(spacing: 12) {
-                            Image(systemName: "checkmark.seal.fill")
-                            .foregroundColor(.green)
-                            .font(.title2)
-
-                            VStack(alignment: .leading, spacing: 2) {
-                                Text("Triage Pro Active")
-                                    .font(.subheadline)
-                                    .fontWeight(.bold)
-                                Text("Zero-Day Gemini AI and continuous sync enabled.")
-                                    .font(.caption)
-                                    .foregroundColor(.secondary)
-                            }
-                            Spacer()
-                        }
-                        .padding(14)
-                        .background(Color(.secondarySystemBackground))
-                        .cornerRadius(16)
-                        .padding(.horizontal, 16)
-                    }
+                    // MARK: - 5. Membership Banner
+                    membershipSection
                 }
-                .padding(.top, 8)
-                .padding(.bottom, 16)
+                .padding(.horizontal, 16)
+                .padding(.top, 10)
+                .padding(.bottom, 28)
             }
             .navigationTitle("Triage")
+            .toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
+                    proBadgeToolbarItem
+                }
+            }
             .sheet(isPresented: $showingPaywall) {
                 PaywallView()
             }
@@ -369,6 +193,13 @@ struct ContentView: View {
                     refreshView()
                 })
                 .presentationDetents([.fraction(0.68), .large])
+                .presentationDragIndicator(.visible)
+            }
+            .sheet(isPresented: $showThreatSimulator) {
+                SMSSimulatorSheet(onComplete: {
+                    refreshView()
+                })
+                .presentationDetents([.fraction(0.88), .large])
                 .presentationDragIndicator(.visible)
             }
             .onAppear {
@@ -384,6 +215,122 @@ struct ContentView: View {
 
     // MARK: - Subviews
 
+    private var heroStatusCard: some View {
+        VStack(spacing: 16) {
+            HStack(spacing: 16) {
+                // High-Tech Squircle Security Crest
+                ZStack {
+                    RoundedRectangle(cornerRadius: 18, style: .continuous)
+                        .fill(heroStatusColor.opacity(0.14))
+                        .frame(width: 58, height: 58)
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 18, style: .continuous)
+                                .stroke(heroStatusColor.opacity(0.32), lineWidth: 1.5)
+                        )
+
+                    Image(systemName: heroIcon)
+                        .font(.system(size: 26, weight: .semibold))
+                        .foregroundColor(heroStatusColor)
+                }
+
+                VStack(alignment: .leading, spacing: 4) {
+                    HStack(spacing: 6) {
+                        Text(heroTitle)
+                            .font(.title3.weight(.bold))
+                            .foregroundColor(.primary)
+
+                        if subscriptionManager.isProUser {
+                            Text("PRO")
+                                .font(.system(size: 9, weight: .heavy))
+                                .padding(.horizontal, 5)
+                                .padding(.vertical, 2)
+                                .background(Color.triageVolt.opacity(0.2))
+                                .foregroundColor(.triageVolt)
+                                .clipShape(Capsule())
+                        }
+                    }
+
+                    Text(heroSubtitle)
+                        .font(.subheadline)
+                        .foregroundColor(.secondary)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+
+                Spacer()
+            }
+
+            Divider()
+
+            // Privacy Assurance Footer
+            HStack(spacing: 6) {
+                Image(systemName: "lock.shield.fill")
+                    .font(.caption.weight(.semibold))
+                    .foregroundColor(isFullyProtected ? .triageVolt : .secondary)
+
+                Text("100% On-Device • Zero Telemetry")
+                    .font(.caption.weight(.medium))
+                    .foregroundColor(.secondary)
+
+                Spacer()
+
+                HStack(spacing: 4) {
+                    Circle()
+                        .fill(heroStatusColor)
+                        .frame(width: 6, height: 6)
+                    Text(isFullyProtected ? "Secured" : "Attention")
+                        .font(.caption2.weight(.semibold))
+                        .foregroundColor(heroStatusColor)
+                }
+                .padding(.horizontal, 8)
+                .padding(.vertical, 3)
+                .background(heroStatusColor.opacity(0.12))
+                .clipShape(Capsule())
+            }
+        }
+        .padding(18)
+        .background(Color(.secondarySystemBackground))
+        .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
+        .overlay(
+            RoundedRectangle(cornerRadius: 20, style: .continuous)
+                .stroke(heroStatusColor.opacity(0.16), lineWidth: 1)
+        )
+    }
+
+    private var modulesSection: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Text("Active Protection Layers")
+                .font(.footnote.weight(.semibold))
+                .foregroundColor(.secondary)
+                .textCase(.uppercase)
+                .padding(.horizontal, 4)
+
+            VStack(spacing: 0) {
+                moduleRow(
+                    type: .sms,
+                    icon: "message.badge.filled.fill",
+                    iconColor: .triageVolt,
+                    title: "SMS Smishing Filter",
+                    subtitle: smsSubtitle,
+                    status: smsStatus
+                )
+
+                Divider()
+                    .padding(.leading, 64)
+
+                moduleRow(
+                    type: .safari,
+                    icon: "safari.fill",
+                    iconColor: .blue,
+                    title: "Safari Web Shield",
+                    subtitle: safariSubtitle,
+                    status: safariStatus
+                )
+            }
+            .background(Color(.secondarySystemBackground))
+            .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
+        }
+    }
+
     private func moduleRow(
         type: ModuleType,
         icon: String,
@@ -392,21 +339,30 @@ struct ContentView: View {
         subtitle: String,
         status: ModuleStatus
     ) -> some View {
-        Button(action: { selectedModule = type }) {
+        Button(action: {
+            UIImpactFeedbackGenerator(style: .light).impactOccurred()
+            selectedModule = type
+        }) {
             HStack(spacing: 14) {
-                Image(systemName: icon)
-                    .font(.title3)
-                    .foregroundColor(iconColor)
-                    .frame(width: 28, height: 28)
+                ZStack {
+                    RoundedRectangle(cornerRadius: 11, style: .continuous)
+                        .fill(iconColor.opacity(0.14))
+                        .frame(width: 40, height: 40)
 
-                VStack(alignment: .leading, spacing: 2) {
+                    Image(systemName: icon)
+                        .font(.system(size: 19, weight: .semibold))
+                        .foregroundColor(iconColor)
+                }
+
+                VStack(alignment: .leading, spacing: 3) {
                     Text(title)
-                        .font(.subheadline)
-                        .fontWeight(.semibold)
+                        .font(.body.weight(.semibold))
                         .foregroundColor(.primary)
+
                     Text(subtitle)
                         .font(.caption)
                         .foregroundColor(.secondary)
+                        .lineLimit(1)
                 }
 
                 Spacer()
@@ -414,24 +370,291 @@ struct ContentView: View {
                 HStack(spacing: 5) {
                     Circle()
                         .fill(status.badgeColor)
-                        .frame(width: 7, height: 7)
+                        .frame(width: 6, height: 6)
                     Text(status.badgeText)
-                        .font(.caption)
-                        .fontWeight(.medium)
+                        .font(.caption.weight(.semibold))
                         .foregroundColor(status.badgeColor)
                 }
-                .padding(.horizontal, 8)
+                .padding(.horizontal, 9)
                 .padding(.vertical, 4)
                 .background(status.badgeColor.opacity(0.12))
-                .cornerRadius(6)
+                .clipShape(Capsule())
 
                 Image(systemName: "chevron.right")
-                    .font(.caption2)
+                    .font(.caption2.weight(.semibold))
                     .foregroundColor(Color(.tertiaryLabel))
             }
-            .padding(14)
+            .padding(.horizontal, 16)
+            .padding(.vertical, 14)
+            .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
+    }
+
+    private var threatIntelligenceSection: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Text("Threat Intelligence")
+                .font(.footnote.weight(.semibold))
+                .foregroundColor(.secondary)
+                .textCase(.uppercase)
+                .padding(.horizontal, 4)
+
+            VStack(spacing: 14) {
+                // Telemetry 2-Column Grid
+                HStack(spacing: 12) {
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text("SIGNATURES")
+                            .font(.system(size: 10, weight: .bold))
+                            .foregroundColor(.secondary)
+                            .tracking(0.5)
+
+                        Text("\(threatCount)")
+                            .font(.title2.weight(.bold))
+                            .monospacedDigit()
+                            .foregroundColor(.primary)
+
+                        Text("On-device hash database")
+                            .font(.caption2)
+                            .foregroundColor(.secondary)
+                    }
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding(12)
+                    .background(Color(.tertiarySystemBackground))
+                    .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text("DETECTION ENGINE")
+                            .font(.system(size: 10, weight: .bold))
+                            .foregroundColor(.secondary)
+                            .tracking(0.5)
+
+                        Text("O(1) SQLite")
+                            .font(.title2.weight(.bold))
+                            .foregroundColor(.primary)
+
+                        Text("Zero network latency")
+                            .font(.caption2)
+                            .foregroundColor(.secondary)
+                    }
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding(12)
+                    .background(Color(.tertiarySystemBackground))
+                    .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+                }
+
+                Divider()
+
+                // Sync Bar
+                HStack {
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text("Signature Updates")
+                            .font(.caption.weight(.semibold))
+                            .foregroundColor(.primary)
+
+                        if let lastSync = ThreatSyncManager.shared.lastSyncDate {
+                            Text("Updated \(lastSync, style: .relative) ago")
+                                .font(.caption2)
+                                .foregroundColor(.secondary)
+                        } else {
+                            Text("Initial signature seed")
+                                .font(.caption2)
+                                .foregroundColor(.secondary)
+                        }
+                    }
+
+                    Spacer()
+
+                    Button(action: triggerSync) {
+                        HStack(spacing: 6) {
+                            if isSyncing {
+                                ProgressView()
+                                    .scaleEffect(0.7)
+                            } else {
+                                Image(systemName: "arrow.triangle.2.circlepath")
+                                    .font(.caption.weight(.bold))
+                                Text("Sync")
+                                    .font(.caption.weight(.bold))
+                            }
+                        }
+                        .padding(.horizontal, 14)
+                        .padding(.vertical, 7)
+                        .background(Color.triageVolt.opacity(0.18))
+                        .foregroundColor(.triageVolt)
+                        .clipShape(Capsule())
+                    }
+                    .disabled(isSyncing)
+                }
+
+                if let msg = syncStatusMessage {
+                    HStack(spacing: 6) {
+                        Image(systemName: "checkmark.circle.fill")
+                            .foregroundColor(.triageVolt)
+                            .font(.caption)
+                        Text(msg)
+                            .font(.caption2)
+                            .foregroundColor(.secondary)
+                        Spacer()
+                    }
+                    .padding(.top, -4)
+                }
+            }
+            .padding(16)
+            .background(Color(.secondarySystemBackground))
+            .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
+        }
+    }
+
+    private var simulatorSection: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Text("Diagnostics & Testing")
+                .font(.footnote.weight(.semibold))
+                .foregroundColor(.secondary)
+                .textCase(.uppercase)
+                .padding(.horizontal, 4)
+
+            Button(action: {
+                UIImpactFeedbackGenerator(style: .medium).impactOccurred()
+                showThreatSimulator = true
+            }) {
+                HStack(spacing: 14) {
+                    ZStack {
+                        RoundedRectangle(cornerRadius: 11, style: .continuous)
+                            .fill(Color.triageVolt.opacity(0.14))
+                            .frame(width: 40, height: 40)
+
+                        Image(systemName: "waveform.badge.magnifyingglass")
+                            .font(.system(size: 18, weight: .semibold))
+                            .foregroundColor(.triageVolt)
+                    }
+
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text("Simulate Threat Detection")
+                            .font(.body.weight(.semibold))
+                            .foregroundColor(.primary)
+
+                        Text("Evaluate test smishing payloads against local engine")
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                    }
+
+                    Spacer()
+
+                    Image(systemName: "chevron.right")
+                        .font(.caption2.weight(.semibold))
+                        .foregroundColor(Color(.tertiaryLabel))
+                }
+                .padding(14)
+                .background(Color(.secondarySystemBackground))
+                .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
+            }
+            .buttonStyle(.plain)
+        }
+    }
+
+    private var membershipSection: some View {
+        Group {
+            if !subscriptionManager.isProUser {
+                Button(action: {
+                    UIImpactFeedbackGenerator(style: .medium).impactOccurred()
+                    showingPaywall = true
+                }) {
+                    HStack(spacing: 14) {
+                        ZStack {
+                            RoundedRectangle(cornerRadius: 12, style: .continuous)
+                                .fill(Color.triageVolt.opacity(0.16))
+                                .frame(width: 42, height: 42)
+
+                            Image(systemName: "sparkles")
+                                .font(.system(size: 20, weight: .semibold))
+                                .foregroundColor(.triageVolt)
+                        }
+
+                        VStack(alignment: .leading, spacing: 2) {
+                            HStack(spacing: 6) {
+                                Text("Upgrade to Triage Pro")
+                                    .font(.subheadline.weight(.bold))
+                                    .foregroundColor(.primary)
+
+                                Text("PRO")
+                                    .font(.system(size: 9, weight: .heavy))
+                                    .padding(.horizontal, 5)
+                                    .padding(.vertical, 2)
+                                    .background(Color.triageVolt)
+                                    .foregroundColor(.black)
+                                    .clipShape(Capsule())
+                            }
+
+                            Text("Zero-Day Gemini AI Analysis & hourly delta sync")
+                                .font(.caption)
+                                .foregroundColor(.secondary)
+                        }
+
+                        Spacer()
+
+                        Image(systemName: "chevron.right")
+                            .font(.caption2.weight(.semibold))
+                            .foregroundColor(Color(.tertiaryLabel))
+                    }
+                    .padding(14)
+                    .background(Color(.secondarySystemBackground))
+                    .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 18, style: .continuous)
+                            .stroke(Color.triageVolt.opacity(0.15), lineWidth: 1)
+                    )
+                }
+                .buttonStyle(.plain)
+            } else {
+                HStack(spacing: 12) {
+                    Image(systemName: "checkmark.seal.fill")
+                        .foregroundColor(.triageVolt)
+                        .font(.title3)
+
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text("Triage Pro Active")
+                            .font(.subheadline.weight(.bold))
+                            .foregroundColor(.primary)
+                        Text("Zero-Day Gemini AI and hourly sync enabled.")
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                    }
+                    Spacer()
+                }
+                .padding(14)
+                .background(Color(.secondarySystemBackground))
+                .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
+            }
+        }
+    }
+
+    @ViewBuilder
+    private var proBadgeToolbarItem: some View {
+        if subscriptionManager.isProUser {
+            Text("PRO")
+                .font(.system(size: 11, weight: .heavy))
+                .padding(.horizontal, 8)
+                .padding(.vertical, 3)
+                .background(Color.triageVolt.opacity(0.18))
+                .foregroundColor(.triageVolt)
+                .clipShape(Capsule())
+        } else {
+            Button(action: {
+                UIImpactFeedbackGenerator(style: .light).impactOccurred()
+                showingPaywall = true
+            }) {
+                HStack(spacing: 4) {
+                    Image(systemName: "sparkles")
+                        .font(.caption2.weight(.bold))
+                    Text("PRO")
+                        .font(.caption2.weight(.heavy))
+                }
+                .padding(.horizontal, 9)
+                .padding(.vertical, 4)
+                .background(Color.triageVolt.opacity(0.15))
+                .foregroundColor(.triageVolt)
+                .clipShape(Capsule())
+            }
+        }
     }
 
     private func refreshView() {
