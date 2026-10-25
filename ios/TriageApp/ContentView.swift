@@ -94,14 +94,18 @@ struct ContentView: View {
         }
     }
 
-    private var statusColor: Color {
-        isFullyProtected ? RetroTheme.accent : RetroTheme.warning
-    }
-
     private var formattedThreatCount: String {
         let formatter = NumberFormatter()
         formatter.numberStyle = .decimal
         return formatter.string(from: NSNumber(value: threatCount)) ?? "\(threatCount)"
+    }
+
+    private var lastSyncDescription: String {
+        if let lastSync = ThreatSyncManager.shared.lastSyncDate {
+            return "Updated \(formattedRelativeDate(lastSync))"
+        } else {
+            return "Offline intelligence ready"
+        }
     }
 
     var body: some View {
@@ -111,33 +115,31 @@ struct ContentView: View {
                     .ignoresSafeArea()
 
                 ScrollView(showsIndicators: false) {
-                    VStack(spacing: 22) {
-                        // MARK: - 1. Retro Terminal Brand Header
-                        topBar
-
-                        // MARK: - 2. Hero Security Centerpiece
+                    VStack(spacing: 20) {
+                        // MARK: - 1. Hero Security Status
                         heroStatusSection
 
-                        // MARK: - 3. Retro Dual Shield Cards
+                        // MARK: - 2. Grouped Protection Modules
                         modulesSection
 
-                        // MARK: - 4. Unified Telemetry Dock
-                        telemetrySection
+                        // MARK: - 3. Grouped Security Tools & Intelligence
+                        toolsSection
 
-                        // MARK: - 5. Threat Simulator Action
-                        simulatorButton
-
-                        // MARK: - 6. Pro Membership
+                        // MARK: - 4. Pro Upgrade Banner
                         if !subscriptionManager.isProUser {
                             proBanner
                         }
                     }
-                    .padding(.horizontal, 20)
-                    .padding(.top, 8)
+                    .padding(.horizontal, 16)
+                    .padding(.top, 12)
                     .padding(.bottom, 96)
                 }
+                .refreshable {
+                    triggerSync()
+                }
             }
-            .toolbar(.hidden, for: .navigationBar)
+            .navigationTitle("Protection")
+            .navigationBarTitleDisplayMode(.large)
             .sheet(isPresented: $showingPaywall) {
                 PaywallView()
             }
@@ -168,76 +170,23 @@ struct ContentView: View {
 
     // MARK: - Subviews
 
-    private var topBar: some View {
-        HStack {
-            HStack(spacing: 8) {
-                Circle()
-                    .fill(statusColor)
-                    .frame(width: 8, height: 8)
-
-                Text("TRIAGE")
-                    .font(RetroTheme.headlineSmall)
-                    .foregroundColor(RetroTheme.foreground)
-            }
-
-            Spacer()
-
-            if subscriptionManager.isProUser {
-                RetroBadge("PRO", color: .accent, isFilled: true)
-            } else {
-                Button(action: {
-                    UIImpactFeedbackGenerator(style: .light).impactOccurred()
-                    showingPaywall = true
-                }) {
-                    HStack(spacing: 5) {
-                        Image(systemName: "sparkles")
-                            .font(RetroTheme.captionSmall)
-                        Text("UPGRADE")
-                            .font(RetroTheme.buttonSmall)
-                    }
-                    .padding(.horizontal, 11)
-                    .padding(.vertical, 6)
-                    .background(RetroTheme.accentBackground)
-                    .foregroundColor(RetroTheme.accent)
-                    .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
-                }
-                .buttonStyle(.plain)
-            }
-        }
-        .padding(.horizontal, 2)
-    }
-
     private var heroStatusSection: some View {
         AppCard {
-            VStack(spacing: 16) {
-                HStack {
-                    AppBadge(
-                        isFullyProtected ? "SHIELD: ACTIVE" : "SHIELD: INCOMPLETE",
-                        color: isFullyProtected ? .accent : .warning,
-                        isFilled: true
-                    )
+            VStack(spacing: 14) {
+                HStack(spacing: 14) {
+                    TriageLogoView(size: 48, showsGlow: isFullyProtected)
 
-                    Spacer()
-
-                    Text(isFullyProtected ? "2/2 ONLINE" : "\(activeLayersCount)/2 READY")
-                        .font(RetroTheme.captionLarge)
-                        .foregroundColor(RetroTheme.secondaryForeground)
-                }
-
-                HStack(spacing: 16) {
-                    TriageLogoView(size: 56, showsGlow: isFullyProtected)
-
-                    VStack(alignment: .leading, spacing: 4) {
-                        Text(isFullyProtected ? "System Secured" : "Action Needed")
+                    VStack(alignment: .leading, spacing: 3) {
+                        Text(isFullyProtected ? "System Protected" : "Action Needed")
                             .font(RetroTheme.headlineMedium)
                             .foregroundColor(RetroTheme.foreground)
 
                         Text(isFullyProtected ?
-                             "SMS smishing filter & Safari web shield actively protecting." :
-                             "Turn on shields in iPhone Settings to guard messages & web.")
+                             "SMS filter and Safari shield are actively protecting your device." :
+                             "Enable shields in iPhone Settings to start protecting your device.")
                             .font(RetroTheme.bodySmall)
                             .foregroundColor(RetroTheme.secondaryForeground)
-                            .lineLimit(2)
+                            .fixedSize(horizontal: false, vertical: true)
                     }
 
                     Spacer()
@@ -245,14 +194,14 @@ struct ContentView: View {
 
                 VStack(alignment: .leading, spacing: 6) {
                     HStack {
-                        Text("DEFENSE INTEGRITY")
+                        Text("Defense Integrity")
                             .font(RetroTheme.captionMedium)
                             .foregroundColor(RetroTheme.secondaryForeground)
 
                         Spacer()
 
                         Text(isFullyProtected ? "100%" : "\(activeLayersCount * 50)%")
-                            .font(RetroTheme.captionMedium)
+                            .font(RetroTheme.captionLarge)
                             .foregroundColor(isFullyProtected ? RetroTheme.accent : RetroTheme.warning)
                     }
 
@@ -267,123 +216,125 @@ struct ContentView: View {
     }
 
     private var modulesSection: some View {
-        VStack(spacing: 12) {
-            moduleCard(
-                type: .sms,
-                icon: "message.badge.filled.fill",
-                title: "SMS Filter",
-                subtitle: "On-Device Message Guard",
-                status: smsStatus
-            )
+        VStack(alignment: .leading, spacing: 8) {
+            AppSectionHeader("PROTECTION MODULES")
 
-            moduleCard(
-                type: .safari,
-                icon: "safari.fill",
-                title: "Safari Shield",
-                subtitle: "WebKit Phishing Blocker",
-                status: safariStatus
-            )
-        }
-    }
+            AppCard {
+                VStack(spacing: 0) {
+                    Button(action: {
+                        UIImpactFeedbackGenerator(style: .light).impactOccurred()
+                        selectedModule = .sms
+                    }) {
+                        AppNavigationRow(
+                            icon: "message.badge.filled.fill",
+                            iconColor: RetroTheme.accent,
+                            title: "SMS Filter",
+                            subtitle: "Spam & unknown scam messages",
+                            statusText: isModuleProtected(smsStatus) ? "Active" : "Action Needed",
+                            badge: nil,
+                            showChevron: true
+                        )
+                        .padding(.vertical, 4)
+                    }
+                    .buttonStyle(.plain)
 
-    private func moduleCard(
-        type: ModuleType,
-        icon: String,
-        title: String,
-        subtitle: String,
-        status: ModuleStatus
-    ) -> some View {
-        Button(action: {
-            UIImpactFeedbackGenerator(style: .light).impactOccurred()
-            selectedModule = type
-        }) {
-            AppCard(isTappable: true) {
-                AppNavigationRow(
-                    icon: icon,
-                    iconColor: RetroTheme.accent,
-                    title: title,
-                    subtitle: subtitle,
-                    badge: status.badgeText,
-                    badgeColor: isModuleProtected(status) ? .accent : .warning,
-                    showChevron: true
-                )
+                    Divider()
+                        .padding(.vertical, 8)
+
+                    Button(action: {
+                        UIImpactFeedbackGenerator(style: .light).impactOccurred()
+                        selectedModule = .safari
+                    }) {
+                        AppNavigationRow(
+                            icon: "safari.fill",
+                            iconColor: RetroTheme.accent,
+                            title: "Safari Shield",
+                            subtitle: "Deceptive websites & fraud links",
+                            statusText: isModuleProtected(safariStatus) ? "Active" : "Action Needed",
+                            badge: nil,
+                            showChevron: true
+                        )
+                        .padding(.vertical, 4)
+                    }
+                    .buttonStyle(.plain)
+                }
             }
         }
-        .buttonStyle(.plain)
     }
 
-    private var telemetrySection: some View {
-        AppCard {
-            HStack(alignment: .center) {
-                VStack(alignment: .leading, spacing: 3) {
-                    HStack(spacing: 6) {
-                        Text(formattedThreatCount)
-                            .font(RetroTheme.headlineMedium)
-                            .foregroundColor(RetroTheme.foreground)
+    private var toolsSection: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            AppSectionHeader("SECURITY TOOLS")
 
-                        Text("SIGNATURES")
-                            .font(RetroTheme.captionSmall)
-                            .foregroundColor(RetroTheme.secondaryForeground)
-                            .tracking(0.5)
+            AppCard {
+                VStack(spacing: 0) {
+                    Button(action: {
+                        UIImpactFeedbackGenerator(style: .medium).impactOccurred()
+                        showThreatSimulator = true
+                    }) {
+                        AppNavigationRow(
+                            icon: "shield.lefthalf.filled",
+                            iconColor: RetroTheme.accent,
+                            title: "Test Threat Detection",
+                            subtitle: "Simulate attacks to verify filtering",
+                            statusText: nil,
+                            badge: nil,
+                            showChevron: true
+                        )
+                        .padding(.vertical, 4)
                     }
+                    .buttonStyle(.plain)
 
-                    if let lastSync = ThreatSyncManager.shared.lastSyncDate {
-                        Text("Synced \(lastSync, style: .relative) ago · SQLite")
-                            .font(RetroTheme.captionMedium)
-                            .foregroundColor(RetroTheme.secondaryForeground)
-                    } else {
-                        Text("Local SQLite · Cache ready")
-                            .font(RetroTheme.captionMedium)
-                            .foregroundColor(RetroTheme.secondaryForeground)
-                    }
-                }
+                    Divider()
+                        .padding(.vertical, 8)
 
-                Spacer()
+                    HStack(spacing: 14) {
+                        AppIconWell(
+                            icon: "arrow.triangle.2.circlepath",
+                            iconColor: RetroTheme.accent,
+                            backgroundColor: RetroTheme.content1,
+                            size: 44,
+                            iconSize: 18
+                        )
 
-                Button(action: triggerSync) {
-                    HStack(spacing: 6) {
-                        if isSyncing {
-                            ProgressView()
-                                .scaleEffect(0.7)
-                                .tint(RetroTheme.primaryContrast)
-                        } else {
-                            Image(systemName: "arrow.triangle.2.circlepath")
-                                .font(RetroTheme.captionSmall)
+                        VStack(alignment: .leading, spacing: 3) {
+                            Text("\(formattedThreatCount) Threat Signatures")
+                                .font(RetroTheme.headlineSmall)
+                                .foregroundColor(RetroTheme.foreground)
+
+                            Text(lastSyncDescription)
+                                .font(RetroTheme.captionMedium)
+                                .foregroundColor(RetroTheme.secondaryForeground)
                         }
 
-                        Text(isSyncing ? "SYNCING" : "SYNC")
-                            .font(RetroTheme.buttonSmall)
-                    }
-                    .padding(.horizontal, 14)
-                    .padding(.vertical, 8)
-                    .background(RetroTheme.primary)
-                    .foregroundColor(RetroTheme.primaryContrast)
-                    .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
-                }
-                .buttonStyle(.plain)
-                .disabled(isSyncing)
-            }
-        }
-    }
+                        Spacer()
 
-    private var simulatorButton: some View {
-        Button(action: {
-            UIImpactFeedbackGenerator(style: .medium).impactOccurred()
-            showThreatSimulator = true
-        }) {
-            AppCard(isTappable: true) {
-                AppNavigationRow(
-                    icon: "shield.lefthalf.filled",
-                    iconColor: RetroTheme.accent,
-                    title: "Test Threat Detection",
-                    subtitle: "Simulate live attacks on-device",
-                    badge: "SIM",
-                    badgeColor: .accent,
-                    showChevron: true
-                )
+                        Button(action: triggerSync) {
+                            HStack(spacing: 5) {
+                                if isSyncing {
+                                    ProgressView()
+                                        .scaleEffect(0.7)
+                                } else {
+                                    Image(systemName: "arrow.clockwise")
+                                        .font(RetroTheme.captionSmall)
+                                }
+
+                                Text(isSyncing ? "Syncing" : "Sync")
+                                    .font(RetroTheme.buttonSmall)
+                            }
+                            .padding(.horizontal, 12)
+                            .padding(.vertical, 6)
+                            .background(RetroTheme.content1)
+                            .foregroundColor(RetroTheme.foreground)
+                            .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
+                        }
+                        .buttonStyle(.plain)
+                        .disabled(isSyncing)
+                    }
+                    .padding(.vertical, 4)
+                }
             }
         }
-        .buttonStyle(.plain)
     }
 
     private var proBanner: some View {
@@ -396,10 +347,10 @@ struct ContentView: View {
                     icon: "sparkles",
                     iconColor: RetroTheme.accent,
                     title: "Upgrade to Triage Pro",
-                    subtitle: "Zero-day AI smishing heuristics & delta sync",
-                    badge: "PRO",
-                    badgeColor: .accent,
-                    showChevron: false
+                    subtitle: "Zero-day AI protection & continuous updates",
+                    statusText: nil,
+                    badge: nil,
+                    showChevron: true
                 )
             }
         }

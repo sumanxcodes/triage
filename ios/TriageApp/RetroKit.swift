@@ -411,10 +411,10 @@ extension CardVM {
             $0.backgroundColor = backgroundColor
             $0.backgroundStyle = .solid
             $0.borderColor = .divider
-            $0.borderWidth = .medium
+            $0.borderWidth = .small
             $0.contentPaddings = .init(padding: padding)
             $0.cornerRadius = cornerRadius
-            $0.shadow = .medium
+            $0.shadow = .none
             $0.isTappable = isTappable
         }
     }
@@ -737,13 +737,14 @@ public struct AppSectionHeader: View {
     }
 }
 
-/// Standardized List / Menu Row with leading icon, title, subtitle, optional badge, and chevron
+/// Standardized List / Menu Row with leading icon, title, subtitle, optional badge, status text, and chevron
 public struct AppNavigationRow: View {
     public var icon: String
     public var iconColor: Color
     public var backgroundColor: Color
     public var title: String
     public var subtitle: String?
+    public var statusText: String?
     public var badge: String?
     public var badgeColor: ComponentColor
     public var showChevron: Bool
@@ -754,6 +755,7 @@ public struct AppNavigationRow: View {
         backgroundColor: Color = RetroTheme.content1,
         title: String,
         subtitle: String? = nil,
+        statusText: String? = nil,
         badge: String? = nil,
         badgeColor: ComponentColor = .primary,
         showChevron: Bool = true
@@ -763,6 +765,7 @@ public struct AppNavigationRow: View {
         self.backgroundColor = backgroundColor
         self.title = title
         self.subtitle = subtitle
+        self.statusText = statusText
         self.badge = badge
         self.badgeColor = badgeColor
         self.showChevron = showChevron
@@ -791,6 +794,12 @@ public struct AppNavigationRow: View {
             }
 
             Spacer()
+
+            if let statusText = statusText {
+                Text(statusText)
+                    .font(RetroTheme.captionLarge)
+                    .foregroundColor(RetroTheme.secondaryForeground)
+            }
 
             if let badge = badge {
                 AppBadge(badge, color: badgeColor, isFilled: true)
