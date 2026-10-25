@@ -14,11 +14,30 @@ public struct TriageLogoView: View {
     }
 
     public var body: some View {
-        Image("TriageLogo")
-            .resizable()
-            .scaledToFit()
-            .frame(width: size, height: size)
-            .shadow(color: showsGlow ? RetroTheme.accent.opacity(0.35) : Color.clear, radius: 10, x: 0, y: 0)
+        ZStack {
+            RoundedRectangle(cornerRadius: size * 0.22, style: .continuous)
+                .fill(
+                    LinearGradient(
+                        colors: [
+                            RetroTheme.accent,
+                            RetroTheme.accent.opacity(0.85)
+                        ],
+                        startPoint: .topLeading,
+                        endPoint: .bottomTrailing
+                    )
+                )
+                .frame(width: size, height: size)
+                .shadow(
+                    color: showsGlow ? RetroTheme.accent.opacity(0.35) : Color.clear,
+                    radius: size * 0.2,
+                    x: 0,
+                    y: size * 0.08
+                )
+
+            Image(systemName: "shield.checkered")
+                .font(.system(size: size * 0.48, weight: .semibold))
+                .foregroundColor(RetroTheme.accentContrast)
+        }
     }
 }
 

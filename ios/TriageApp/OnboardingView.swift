@@ -31,7 +31,7 @@ public struct OnboardingView: View {
                                 Text("Your Browsing.")
                                     .foregroundColor(RetroTheme.foreground)
                                 Text("Protected.")
-                                    .foregroundColor(RetroTheme.success)
+                                    .foregroundColor(RetroTheme.accent)
                             }
                             .font(RetroTheme.urbanist(size: 30, weight: .bold))
 
@@ -64,7 +64,7 @@ public struct OnboardingView: View {
                                 title: "ZERO TELEMETRY",
                                 subtitle: "No account required. No analytics. Your private data never leaves your device.",
                                 icon: "lock.shield.fill",
-                                iconColor: RetroTheme.success
+                                iconColor: RetroTheme.accent
                             )
                         }
                     }

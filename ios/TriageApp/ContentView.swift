@@ -30,7 +30,7 @@ enum ModuleStatus {
 
     var componentColor: ComponentColor {
         switch self {
-        case .active: return .success
+        case .active: return .accent
         case .ready: return .accent
         case .setupNeeded: return .warning
         }
@@ -95,7 +95,7 @@ struct ContentView: View {
     }
 
     private var statusColor: Color {
-        isFullyProtected ? RetroTheme.success : RetroTheme.warning
+        isFullyProtected ? RetroTheme.accent : RetroTheme.warning
     }
 
     private var formattedThreatCount: String {
@@ -208,12 +208,12 @@ struct ContentView: View {
     }
 
     private var heroStatusSection: some View {
-        RetroCard {
+        AppCard {
             VStack(spacing: 16) {
                 HStack {
-                    RetroBadge(
+                    AppBadge(
                         isFullyProtected ? "SHIELD: ACTIVE" : "SHIELD: INCOMPLETE",
-                        color: isFullyProtected ? .success : .warning,
+                        color: isFullyProtected ? .accent : .warning,
                         isFilled: true
                     )
 
@@ -253,13 +253,13 @@ struct ContentView: View {
 
                         Text(isFullyProtected ? "100%" : "\(activeLayersCount * 50)%")
                             .font(RetroTheme.captionMedium)
-                            .foregroundColor(isFullyProtected ? RetroTheme.success : RetroTheme.warning)
+                            .foregroundColor(isFullyProtected ? RetroTheme.accent : RetroTheme.warning)
                     }
 
-                    RetroBlockMeter(
+                    AppBlockMeter(
                         filled: isFullyProtected ? 16 : (activeLayersCount * 8),
                         total: 16,
-                        color: isFullyProtected ? .success : .warning
+                        color: isFullyProtected ? .accent : .warning
                     )
                 }
             }
@@ -304,7 +304,7 @@ struct ContentView: View {
                     title: title,
                     subtitle: subtitle,
                     badge: status.badgeText,
-                    badgeColor: isModuleProtected(status) ? .success : .warning,
+                    badgeColor: isModuleProtected(status) ? .accent : .warning,
                     showChevron: true
                 )
             }
@@ -586,7 +586,7 @@ struct ModuleDetailSheet: View {
 
                 AppBadge(
                     currentStatus.badgeText,
-                    color: isModuleProtected(currentStatus) ? .success : .warning,
+                    color: isModuleProtected(currentStatus) ? .accent : .warning,
                     isFilled: true
                 )
             }

@@ -137,7 +137,7 @@ public struct ThreatHistoryView: View {
                  "On-device SQLite filter active. Blocked scam texts and malicious Safari links will be cataloged here." :
                  "Try searching with an alternate keyword or domain query.",
             badgeText: "SYSTEM SECURED",
-            badgeColor: .success
+            badgeColor: .accent
         )
     }
 

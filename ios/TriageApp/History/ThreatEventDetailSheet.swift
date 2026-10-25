@@ -91,7 +91,7 @@ public struct ThreatEventDetailSheet: View {
                             HStack(alignment: .top, spacing: 12) {
                                 AppIconWell(
                                     icon: "lock.shield.fill",
-                                    iconColor: RetroTheme.success,
+                                    iconColor: RetroTheme.accent,
                                     backgroundColor: RetroTheme.content1,
                                     size: 40,
                                     iconSize: 18

@@ -616,13 +616,13 @@ public struct RetroBadge: View {
     }
 }
 
-/// RetroBlockMeter powered by ComponentsKit SUProgressBar (.striped)
-public struct RetroBlockMeter: View {
+/// AppBlockMeter powered by ComponentsKit SUProgressBar (.filled)
+public struct AppBlockMeter: View {
     public let filled: Int
     public let total: Int
     public let color: ComponentColor
 
-    public init(filled: Int = 12, total: Int = 16, color: ComponentColor = .primary) {
+    public init(filled: Int = 12, total: Int = 16, color: ComponentColor = .accent) {
         self.filled = filled
         self.total = total
         self.color = color
@@ -632,13 +632,14 @@ public struct RetroBlockMeter: View {
         SUProgressBar(model: ProgressBarVM {
             $0.currentValue = CGFloat(filled)
             $0.maxValue = CGFloat(total)
-            $0.style = .striped
+            $0.style = .filled
             $0.color = color
             $0.size = .small
             $0.cornerRadius = .small
         })
     }
 }
+public typealias RetroBlockMeter = AppBlockMeter
 
 /// RetroButtonStyle powered by ComponentsKit Theme layout and borders
 public struct RetroButtonStyle: SwiftUI.ButtonStyle {
@@ -683,7 +684,6 @@ public struct RetroButtonStyle: SwiftUI.ButtonStyle {
 
 public typealias AppCard = RetroCard
 public typealias AppBadge = RetroBadge
-public typealias AppBlockMeter = RetroBlockMeter
 
 /// Standardized Icon Well with continuous rounded corners and semantic token colors
 public struct AppIconWell: View {
@@ -884,7 +884,7 @@ public struct AppEmptyState: View {
         title: String,
         subtitle: String,
         badgeText: String? = nil,
-        badgeColor: ComponentColor = .success
+        badgeColor: ComponentColor = .accent
     ) {
         self.icon = icon
         self.title = title
@@ -901,7 +901,7 @@ public struct AppEmptyState: View {
                 VStack(spacing: 14) {
                     AppIconWell(
                         icon: icon,
-                        iconColor: RetroTheme.success,
+                        iconColor: RetroTheme.accent,
                         backgroundColor: RetroTheme.content1,
                         size: 56,
                         iconSize: 24

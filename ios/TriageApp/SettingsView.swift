@@ -139,7 +139,7 @@ public struct SettingsView: View {
                                             hasCompletedOnboarding = false
                                         }
                                     }) {
-                                        menuRow(title: "REPLAY ONBOARDING TOUR", icon: "arrow.counterclockwise", iconColor: RetroTheme.success)
+                                        menuRow(title: "REPLAY ONBOARDING TOUR", icon: "arrow.counterclockwise", iconColor: RetroTheme.accent)
                                     }
                                 }
                                 .padding(.horizontal, 16)
@@ -154,7 +154,7 @@ public struct SettingsView: View {
                             AppCard {
                                 VStack(spacing: 0) {
                                     Button(action: { showingPrivacyPolicy = true }) {
-                                        menuRow(title: "PRIVACY POLICY & ZERO-LOGGING", icon: "lock.shield.fill", iconColor: RetroTheme.success)
+                                        menuRow(title: "PRIVACY POLICY & ZERO-LOGGING", icon: "lock.shield.fill", iconColor: RetroTheme.accent)
                                     }
 
                                     SUDivider()
@@ -365,7 +365,7 @@ struct PrivacyPolicySheet: View {
                         HStack(spacing: 12) {
                             AppIconWell(
                                 icon: "lock.shield.fill",
-                                iconColor: RetroTheme.success,
+                                iconColor: RetroTheme.accent,
                                 backgroundColor: RetroTheme.content1,
                                 size: 44,
                                 iconSize: 20
