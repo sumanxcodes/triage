@@ -510,7 +510,7 @@ struct ContentView: View {
     }
 }
 
-// MARK: - Native Apple HIG-Compliant Module Setup Sheet
+// MARK: - Retro Module Setup Sheet
 
 struct ModuleDetailSheet: View {
     let moduleType: ModuleType
@@ -540,7 +540,7 @@ struct ModuleDetailSheet: View {
 
     private var moduleColor: Color {
         switch moduleType {
-        case .sms: return .triageVolt
+        case .sms: return RetroTheme.textAccent
         case .safari: return .blue
         }
     }
@@ -559,40 +559,46 @@ struct ModuleDetailSheet: View {
         switch currentStatus {
         case .active(let date):
             let rel = RelativeDateTimeFormatter().localizedString(for: date, relativeTo: Date())
-            return "Verified active (\(rel))"
+            return "Active heartbeat verified (\(rel))"
         case .ready:
-            return "Configured • Standing by for first scan"
+            return "Extension active // Standing by for inspection"
         case .setupNeeded:
-            return "Setup required in iPhone Settings"
+            return "Configuration required in iPhone Settings"
         }
     }
 
     var body: some View {
         NavigationStack {
-            ScrollView {
-                VStack(spacing: 16) {
-                    // 1. Status Overview Card
-                    statusCard
+            ZStack {
+                RetroTheme.background
+                    .ignoresSafeArea()
 
-                    // 2. Step-by-Step Instructions Card
-                    instructionsCard
+                ScrollView {
+                    VStack(spacing: 16) {
+                        // 1. Status Overview Card
+                        statusCard
 
-                    // 3. Primary Actions Section
-                    actionSection
+                        // 2. Step-by-Step Instructions Card
+                        instructionsCard
+
+                        // 3. Primary Actions Section
+                        actionSection
+                    }
+                    .padding(.horizontal, 16)
+                    .padding(.top, 12)
+                    .padding(.bottom, 24)
                 }
-                .padding(.horizontal, 16)
-                .padding(.top, 12)
-                .padding(.bottom, 24)
             }
-            .navigationTitle(moduleTitle)
+            .navigationTitle(moduleTitle.uppercased())
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .confirmationAction) {
-                    Button("Done") {
+                    Button(action: {
                         onDismiss?()
                         dismiss()
+                    }) {
+                        RetroBadge("DONE", color: .secondary, isFilled: false)
                     }
-                    .fontWeight(.semibold)
                 }
             }
             .onAppear {
@@ -617,120 +623,84 @@ struct ModuleDetailSheet: View {
     // MARK: - Subviews
 
     private var statusCard: some View {
-        HStack(spacing: 14) {
-            ZStack {
-                RoundedRectangle(cornerRadius: 12, style: .continuous)
-                    .fill(moduleColor.opacity(0.15))
-                    .frame(width: 48, height: 48)
+        RetroCard(cornerRadius: 10) {
+            HStack(spacing: 14) {
+                ZStack {
+                    Rectangle()
+                        .fill(RetroTheme.elevatedSurface)
+                        .frame(width: 44, height: 44)
+                        .overlay(
+                            Rectangle()
+                                .stroke(RetroTheme.border, lineWidth: 1.5)
+                        )
 
-                Image(systemName: moduleIcon)
-                    .font(.system(size: 22, weight: .semibold))
-                    .foregroundColor(moduleColor)
+                    Image(systemName: moduleIcon)
+                        .font(.system(size: 18, weight: .bold))
+                        .foregroundColor(moduleColor)
+                }
+
+                VStack(alignment: .leading, spacing: 3) {
+                    Text(moduleType == .sms ? "SMS SMISHING FILTER" : "SAFARI WEB SHIELD")
+                        .font(.system(size: 12, weight: .heavy, design: .monospaced))
+                        .foregroundColor(.primary)
+
+                    Text(statusDescription)
+                        .font(.system(size: 10, design: .monospaced))
+                        .foregroundColor(.secondary)
+                }
+
+                Spacer()
+
+                RetroBadge(
+                    currentStatus.badgeText,
+                    color: isModuleProtected(currentStatus) ? RetroTheme.textAccent : RetroTheme.textAmber,
+                    isFilled: true
+                )
             }
-
-            VStack(alignment: .leading, spacing: 3) {
-                Text(moduleType == .sms ? "SMS Smishing Filter" : "Safari Web Extension")
-                    .font(.headline)
-                    .foregroundColor(.primary)
-
-                Text(statusDescription)
-                    .font(.caption)
-                    .foregroundColor(.secondary)
-            }
-
-            Spacer()
-
-            HStack(spacing: 5) {
-                Circle()
-                    .fill(currentStatus.badgeColor)
-                    .frame(width: 7, height: 7)
-                Text(currentStatus.badgeText)
-                    .font(.caption.weight(.semibold))
-                    .foregroundColor(currentStatus.badgeColor)
-            }
-            .padding(.horizontal, 9)
-            .padding(.vertical, 4)
-            .background(currentStatus.badgeColor.opacity(0.12))
-            .cornerRadius(7)
+            .padding(14)
         }
-        .padding(14)
-        .background(Color(.secondarySystemBackground))
-        .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
     }
 
     private var instructionsCard: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            Text("HOW TO ENABLE")
-                .font(.caption.weight(.bold))
+        VStack(alignment: .leading, spacing: 8) {
+            Text("// ACTIVATION INSTRUCTIONS")
+                .font(.system(size: 10, weight: .heavy, design: .monospaced))
                 .foregroundColor(.secondary)
-                .padding(.horizontal, 2)
+                .padding(.horizontal, 4)
 
-            VStack(spacing: 12) {
-                if moduleType == .sms {
-                    stepRow(
-                        icon: "gearshape.fill",
-                        iconColor: .gray,
-                        text: "Open **Settings** > **Apps** > **Messages**"
-                    )
-                    Divider()
-                    stepRow(
-                        icon: "bubble.left.and.exclamationmark.bubble.right.fill",
-                        iconColor: .blue,
-                        text: "Tap **Unknown & Spam**"
-                    )
-                    Divider()
-                    stepRow(
-                        icon: "switch.2",
-                        iconColor: .triageVolt,
-                        text: "Turn ON **Filter Unknown Senders**"
-                    )
-                    Divider()
-                    stepRow(
-                        icon: "checkmark.shield.fill",
-                        iconColor: .purple,
-                        text: "Select **Triage** and tap **Enable**"
-                    )
-                } else {
-                    stepRow(
-                        icon: "gearshape.fill",
-                        iconColor: .gray,
-                        text: "Open **Settings** > **Apps** > **Safari**"
-                    )
-                    Divider()
-                    stepRow(
-                        icon: "puzzlepiece.extension.fill",
-                        iconColor: .blue,
-                        text: "Tap **Extensions**"
-                    )
-                    Divider()
-                    stepRow(
-                        icon: "switch.2",
-                        iconColor: .triageVolt,
-                        text: "Turn ON **Triage Security**"
-                    )
-                    Divider()
-                    stepRow(
-                        icon: "checkmark.shield.fill",
-                        iconColor: .purple,
-                        text: "Permissions: **All Websites** > **Always Allow**"
-                    )
+            RetroCard(cornerRadius: 10) {
+                VStack(alignment: .leading, spacing: 12) {
+                    if moduleType == .sms {
+                        retroStepRow(step: "[01]", text: "Open iPhone **Settings** > **Apps** > **Messages**")
+                        Divider()
+                        retroStepRow(step: "[02]", text: "Tap **Unknown & Spam**")
+                        Divider()
+                        retroStepRow(step: "[03]", text: "Toggle ON **Filter Unknown Senders**")
+                        Divider()
+                        retroStepRow(step: "[04]", text: "Select **Triage** and confirm **Enable**")
+                    } else {
+                        retroStepRow(step: "[01]", text: "Open iPhone **Settings** > **Apps** > **Safari**")
+                        Divider()
+                        retroStepRow(step: "[02]", text: "Tap **Extensions**")
+                        Divider()
+                        retroStepRow(step: "[03]", text: "Toggle ON **Triage Security**")
+                        Divider()
+                        retroStepRow(step: "[04]", text: "Set **All Websites** to **Always Allow**")
+                    }
                 }
+                .padding(14)
             }
-            .padding(14)
-            .background(Color(.secondarySystemBackground))
-            .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
         }
     }
 
-    private func stepRow(icon: String, iconColor: Color, text: LocalizedStringKey) -> some View {
-        HStack(spacing: 12) {
-            Image(systemName: icon)
-                .font(.subheadline)
-                .foregroundColor(iconColor)
-                .frame(width: 24, height: 24)
+    private func retroStepRow(step: String, text: LocalizedStringKey) -> some View {
+        HStack(alignment: .top, spacing: 10) {
+            Text(step)
+                .font(.system(size: 11, weight: .heavy, design: .monospaced))
+                .foregroundColor(RetroTheme.textAccent)
 
             Text(text)
-                .font(.subheadline)
+                .font(.system(size: 11, design: .monospaced))
                 .foregroundColor(.primary)
                 .fixedSize(horizontal: false, vertical: true)
 
@@ -743,19 +713,18 @@ struct ModuleDetailSheet: View {
             Button(action: openSettings) {
                 HStack(spacing: 8) {
                     Image(systemName: "gearshape.fill")
-                        .font(.body.weight(.semibold))
-                    Text("Open iPhone Settings")
-                        .fontWeight(.semibold)
+                    Text("OPEN IPHONE SETTINGS")
                 }
                 .frame(maxWidth: .infinity)
-                .frame(minHeight: 24)
             }
-            .buttonStyle(.borderedProminent)
-            .controlSize(.large)
-            .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
+            .buttonStyle(RetroButtonStyle(
+                backgroundColor: RetroTheme.volt,
+                foregroundColor: .black,
+                cornerRadius: 8
+            ))
 
             Text("Settings opens on Triage. Tap **‹ Apps** in top-left to reach \(moduleType == .sms ? "Messages" : "Safari").")
-                .font(.caption2)
+                .font(.system(size: 10, design: .monospaced))
                 .foregroundColor(.secondary)
                 .multilineTextAlignment(.center)
                 .padding(.horizontal, 12)
@@ -766,17 +735,16 @@ struct ModuleDetailSheet: View {
                     showSMSSimulator = true
                 }) {
                     HStack(spacing: 8) {
-                        Image(systemName: "shield.lefthalf.filled")
-                            .font(.body.weight(.semibold))
-                        Text("Simulate SMS Inspection")
-                            .fontWeight(.semibold)
+                        Image(systemName: "terminal.fill")
+                        Text("TEST WITH SMS SIMULATOR")
                     }
                     .frame(maxWidth: .infinity)
-                    .frame(minHeight: 24)
                 }
-                .buttonStyle(.bordered)
-                .controlSize(.large)
-                .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
+                .buttonStyle(RetroButtonStyle(
+                    backgroundColor: RetroTheme.elevatedSurface,
+                    foregroundColor: .primary,
+                    cornerRadius: 8
+                ))
                 .padding(.top, 4)
             }
 
@@ -784,22 +752,21 @@ struct ModuleDetailSheet: View {
                 Button(action: testInSafari) {
                     HStack(spacing: 8) {
                         Image(systemName: "safari")
-                            .font(.body.weight(.semibold))
-                        Text("Test Safari Shield")
-                            .fontWeight(.semibold)
+                        Text("TEST SAFARI SHIELD")
                     }
                     .frame(maxWidth: .infinity)
-                    .frame(minHeight: 24)
                 }
-                .buttonStyle(.bordered)
-                .controlSize(.large)
-                .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
+                .buttonStyle(RetroButtonStyle(
+                    backgroundColor: RetroTheme.elevatedSurface,
+                    foregroundColor: .primary,
+                    cornerRadius: 8
+                ))
                 .padding(.top, 4)
 
                 if let msg = testPromptMessage {
                     Text(msg)
-                        .font(.caption2)
-                        .foregroundColor(.secondary)
+                        .font(.system(size: 10, design: .monospaced))
+                        .foregroundColor(RetroTheme.textAccent)
                         .multilineTextAlignment(.center)
                         .padding(.horizontal, 8)
                 }
@@ -807,7 +774,12 @@ struct ModuleDetailSheet: View {
         }
     }
 
-    // MARK: - Helper Methods
+    private func isModuleProtected(_ status: ModuleStatus) -> Bool {
+        switch status {
+        case .active, .ready: return true
+        case .setupNeeded: return false
+        }
+    }
 
     private func loadState() {
         let state = AppGroup.loadState()
@@ -852,7 +824,7 @@ struct ModuleDetailSheet: View {
     }
 }
 
-// MARK: - Native SMS Threat Simulator Sheet
+// MARK: - Retro SMS Threat Simulator Sheet
 
 struct SMSSimulatorSheet: View {
     var onComplete: (() -> Void)? = nil
@@ -869,30 +841,30 @@ struct SMSSimulatorSheet: View {
 
     private let presets: [AttackPreset] = [
         AttackPreset(
-            title: "AusPost",
+            title: "AUSPOST",
             icon: "shippingbox.fill",
             color: .red,
             sender: "+61 489 123 456",
             message: "AusPost: Your parcel could not be delivered due to incomplete address details. Update delivery address here: https://example.com/delivery"
         ),
         AttackPreset(
-            title: "CommBank",
+            title: "COMMBANK",
             icon: "building.columns.fill",
             color: .orange,
             sender: "+61 412 987 654",
             message: "CommBank: Unusual sign-in attempt detected from an unrecognized device. Verify NetBank identity: https://example.com/auth"
         ),
         AttackPreset(
-            title: "Linkt Toll",
+            title: "LINKT TOLL",
             icon: "car.fill",
             color: .purple,
             sender: "+61 400 555 123",
             message: "Linkt: You have an unpaid toll invoice of $12.40. Avoid late fees by paying now: https://example.com/toll"
         ),
         AttackPreset(
-            title: "Clean SMS",
+            title: "CLEAN SMS",
             icon: "bubble.left.and.bubble.right.fill",
-            color: .triageVolt,
+            color: RetroTheme.volt,
             sender: "+61 491 570 006",
             message: "Hey! Are you still free for coffee at 2pm today? Let me know!"
         )
@@ -911,129 +883,133 @@ struct SMSSimulatorSheet: View {
 
     var body: some View {
         NavigationStack {
-            ScrollView {
-                VStack(spacing: 16) {
-                    // Header Description
-                    HStack(spacing: 12) {
-                        Image(systemName: "shield.lefthalf.filled")
-                            .font(.system(size: 24))
-                            .foregroundColor(.triageVolt)
-                        VStack(alignment: .leading, spacing: 2) {
-                            Text("IdentityLookup Evaluation Engine")
-                                .font(.subheadline.weight(.semibold))
-                            Text("Tests message payloads against the on-device threat database without requiring cellular SMS.")
-                                .font(.caption)
-                                .foregroundColor(.secondary)
+            ZStack {
+                RetroTheme.background
+                    .ignoresSafeArea()
+
+                ScrollView {
+                    VStack(spacing: 16) {
+                        // Header Description
+                        RetroCard(cornerRadius: 10) {
+                            HStack(spacing: 12) {
+                                Image(systemName: "terminal.fill")
+                                    .font(.system(size: 20, weight: .bold))
+                                    .foregroundColor(RetroTheme.textAccent)
+                                VStack(alignment: .leading, spacing: 2) {
+                                    Text("IDENTITYLOOKUP SIMULATOR")
+                                        .font(.system(size: 11, weight: .heavy, design: .monospaced))
+                                        .foregroundColor(.primary)
+                                    Text("Evaluates message candidates against the on-device SQLite database in O(1) time.")
+                                        .font(.system(size: 10, design: .monospaced))
+                                        .foregroundColor(.secondary)
+                                }
+                            }
+                            .padding(14)
                         }
-                    }
-                    .padding(14)
-                    .background(Color(.secondarySystemBackground))
-                    .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
 
-                    // Attack Presets
-                    VStack(alignment: .leading, spacing: 10) {
-                        Text("Sample Test Scenarios")
-                            .font(.caption.weight(.semibold))
-                            .foregroundColor(.secondary)
-                            .textCase(.uppercase)
+                        // Attack Presets
+                        VStack(alignment: .leading, spacing: 8) {
+                            Text("// SAMPLE ATTACK SCENARIOS")
+                                .font(.system(size: 10, weight: .heavy, design: .monospaced))
+                                .foregroundColor(.secondary)
+                                .padding(.horizontal, 4)
 
-                        ScrollView(.horizontal, showsIndicators: false) {
-                            HStack(spacing: 8) {
-                                ForEach(Array(presets.enumerated()), id: \.element.id) { index, preset in
-                                    Button(action: {
-                                        selectPreset(index)
-                                    }) {
-                                        HStack(spacing: 6) {
-                                            Image(systemName: preset.icon)
-                                                .font(.caption.weight(.semibold))
-                                                .foregroundColor(preset.color)
-                                            Text(preset.title)
-                                                .font(.subheadline.weight(.medium))
-                                                .foregroundColor(.primary)
+                            ScrollView(.horizontal, showsIndicators: false) {
+                                HStack(spacing: 8) {
+                                    ForEach(Array(presets.enumerated()), id: \.element.id) { index, preset in
+                                        let isSelected = selectedPresetIndex == index
+                                        Button(action: {
+                                            selectPreset(index)
+                                        }) {
+                                            HStack(spacing: 6) {
+                                                Image(systemName: preset.icon)
+                                                    .font(.system(size: 10, weight: .bold))
+                                                    .foregroundColor(isSelected ? .black : preset.color)
+                                                Text(preset.title)
+                                                    .font(.system(size: 11, weight: .heavy, design: .monospaced))
+                                                    .foregroundColor(isSelected ? .black : .primary)
+                                            }
+                                            .padding(.horizontal, 10)
+                                            .padding(.vertical, 7)
+                                            .background(isSelected ? RetroTheme.volt : RetroTheme.elevatedSurface)
+                                            .clipShape(RoundedRectangle(cornerRadius: 6, style: .continuous))
+                                            .overlay(
+                                                RoundedRectangle(cornerRadius: 6, style: .continuous)
+                                                    .stroke(RetroTheme.border, lineWidth: isSelected ? 2 : 1)
+                                            )
                                         }
-                                        .padding(.horizontal, 12)
-                                        .padding(.vertical, 8)
-                                        .background(selectedPresetIndex == index ? preset.color.opacity(0.18) : Color(.secondarySystemBackground))
-                                        .overlay(
-                                            RoundedRectangle(cornerRadius: 10, style: .continuous)
-                                                .stroke(selectedPresetIndex == index ? preset.color : Color.clear, lineWidth: 1.5)
-                                        )
-                                        .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
+                                        .buttonStyle(.plain)
                                     }
-                                    .buttonStyle(.plain)
                                 }
                             }
                         }
-                    }
 
-                    // Simulated Message Editor
-                    VStack(alignment: .leading, spacing: 10) {
-                        Text("Simulated Incoming Payload")
-                            .font(.caption.weight(.semibold))
-                            .foregroundColor(.secondary)
-                            .textCase(.uppercase)
+                        // Simulated Message Editor
+                        VStack(alignment: .leading, spacing: 8) {
+                            Text("// INCOMING PAYLOAD BUFFER")
+                                .font(.system(size: 10, weight: .heavy, design: .monospaced))
+                                .foregroundColor(.secondary)
+                                .padding(.horizontal, 4)
 
-                        VStack(alignment: .leading, spacing: 12) {
+                            RetroCard(cornerRadius: 10) {
+                                VStack(alignment: .leading, spacing: 10) {
+                                    HStack(spacing: 8) {
+                                        Text("SENDER:")
+                                            .font(.system(size: 10, weight: .heavy, design: .monospaced))
+                                            .foregroundColor(.secondary)
+                                        TextField("Sender Number", text: $senderNumber)
+                                            .font(.system(size: 11, design: .monospaced))
+                                            .keyboardType(.phonePad)
+                                    }
+
+                                    Divider()
+
+                                    VStack(alignment: .leading, spacing: 4) {
+                                        Text("MESSAGE TEXT:")
+                                            .font(.system(size: 10, weight: .heavy, design: .monospaced))
+                                            .foregroundColor(.secondary)
+                                        TextEditor(text: $messageBody)
+                                            .font(.system(size: 11, design: .monospaced))
+                                            .frame(minHeight: 64)
+                                            .scrollContentBackground(.hidden)
+                                    }
+                                }
+                                .padding(14)
+                            }
+                        }
+
+                        // Run Inspection Button
+                        Button(action: runEvaluation) {
                             HStack(spacing: 8) {
-                                Image(systemName: "person.crop.circle")
-                                    .foregroundColor(.secondary)
-                                    .frame(width: 20)
-                                TextField("Sender Number", text: $senderNumber)
-                                    .font(.subheadline)
-                                    .keyboardType(.phonePad)
+                                Image(systemName: "play.fill")
+                                Text("EXECUTE THREAT INSPECTION")
                             }
-
-                            Divider()
-
-                            HStack(alignment: .top, spacing: 8) {
-                                Image(systemName: "bubble.left.fill")
-                                    .foregroundColor(.secondary)
-                                    .frame(width: 20)
-                                    .padding(.top, 4)
-                                TextEditor(text: $messageBody)
-                                    .font(.subheadline)
-                                    .frame(minHeight: 70)
-                                    .scrollContentBackground(.hidden)
-                            }
+                            .frame(maxWidth: .infinity)
                         }
-                        .padding(14)
-                        .background(Color(.secondarySystemBackground))
-                        .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
-                    }
+                        .buttonStyle(RetroButtonStyle(
+                            backgroundColor: RetroTheme.volt,
+                            foregroundColor: .black,
+                            cornerRadius: 8
+                        ))
 
-                    // Run Inspection Button
-                    Button(action: runEvaluation) {
-                        HStack(spacing: 8) {
-                            Image(systemName: "play.fill")
-                                .font(.body.weight(.semibold))
-                            Text("Run Threat Evaluation")
-                                .fontWeight(.semibold)
+                        // Evaluation Verdict Card
+                        if let verdict = evaluationResult {
+                            verdictCard(for: verdict)
+                                .transition(.opacity.combined(with: .move(edge: .bottom)))
                         }
-                        .frame(maxWidth: .infinity)
-                        .frame(minHeight: 24)
                     }
-                    .buttonStyle(.borderedProminent)
-                    .controlSize(.large)
-                    .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
-
-                    // Evaluation Verdict Card
-                    if let verdict = evaluationResult {
-                        verdictCard(for: verdict)
-                            .transition(.opacity.combined(with: .move(edge: .bottom)))
-                    }
+                    .padding(.horizontal, 16)
+                    .padding(.top, 12)
+                    .padding(.bottom, 24)
                 }
-                .padding(.horizontal, 16)
-                .padding(.top, 12)
-                .padding(.bottom, 24)
             }
-            .navigationTitle("SMS Threat Simulator")
+            .navigationTitle("THREAT SIMULATOR")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .confirmationAction) {
-                    Button("Done") {
-                        dismiss()
+                    Button(action: { dismiss() }) {
+                        RetroBadge("DONE", color: .secondary, isFilled: false)
                     }
-                    .fontWeight(.semibold)
                 }
             }
             .onAppear {
@@ -1048,126 +1024,108 @@ struct SMSSimulatorSheet: View {
 
     @ViewBuilder
     private func verdictCard(for verdict: SimulationVerdict) -> some View {
-        VStack(alignment: .leading, spacing: 12) {
-            switch verdict {
-            case .threat(let url, let brand, let category):
-                HStack(spacing: 12) {
-                    Image(systemName: "shield.slash.fill")
-                        .font(.title2)
-                        .foregroundColor(.red)
-
-                    VStack(alignment: .leading, spacing: 2) {
-                        Text("Smishing Threat Detected")
-                            .font(.headline)
+        RetroCard(cornerRadius: 10) {
+            VStack(alignment: .leading, spacing: 12) {
+                switch verdict {
+                case .threat(let url, let brand, let category):
+                    HStack(spacing: 10) {
+                        Image(systemName: "shield.slash.fill")
+                            .font(.system(size: 18, weight: .bold))
                             .foregroundColor(.red)
-                        Text("Action: Filtered to Junk (.junk)")
-                            .font(.caption.weight(.semibold))
-                            .foregroundColor(.secondary)
+
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text("MALICIOUS SMISHING DETECTED")
+                                .font(.system(size: 12, weight: .heavy, design: .monospaced))
+                                .foregroundColor(.red)
+                            Text("Action: Filtered to Junk (.junk)")
+                                .font(.system(size: 10, design: .monospaced))
+                                .foregroundColor(.secondary)
+                        }
+
+                        Spacer()
+
+                        RetroBadge("JUNKED", color: .red, isFilled: true)
                     }
 
-                    Spacer()
+                    Divider()
 
-                    Text("BLOCKED")
-                        .font(.caption2.weight(.bold))
-                        .padding(.horizontal, 8)
-                        .padding(.vertical, 4)
-                        .background(Color.red.opacity(0.15))
-                        .foregroundColor(.red)
-                        .cornerRadius(6)
-                }
-
-                Divider()
-
-                VStack(alignment: .leading, spacing: 6) {
-                    if let b = brand {
-                        detailRow(label: "Brand Impersonated", value: b)
-                    }
-                    detailRow(label: "Threat Category", value: category.capitalized)
-                    detailRow(label: "Extracted URL", value: url)
-                    detailRow(label: "iOS Action", value: "Silently routed to Messages > Junk")
-                    detailRow(label: "Audit Status", value: "Logged to Triage Threat History")
-                }
-
-            case .clean:
-                HStack(spacing: 12) {
-                    Image(systemName: "checkmark.shield.fill")
-                        .font(.title2)
-                        .foregroundColor(.triageVolt)
-
-                    VStack(alignment: .leading, spacing: 2) {
-                        Text("Legitimate Message")
-                            .font(.headline)
-                            .foregroundColor(.triageVolt)
-                        Text("Action: Allowed to Inbox (.none)")
-                            .font(.caption.weight(.semibold))
-                            .foregroundColor(.secondary)
+                    VStack(alignment: .leading, spacing: 6) {
+                        if let b = brand {
+                            simDetailRow(label: "IMPERSONATING", value: b)
+                        }
+                        simDetailRow(label: "CATEGORY", value: category.uppercased())
+                        simDetailRow(label: "EXTRACTED URL", value: url)
+                        simDetailRow(label: "ROUTING", value: "Messages > Junk folder")
+                        simDetailRow(label: "AUDIT LOG", value: "Recorded to local SQLite DB")
                     }
 
-                    Spacer()
+                case .clean:
+                    HStack(spacing: 10) {
+                        Image(systemName: "checkmark.shield.fill")
+                            .font(.system(size: 18, weight: .bold))
+                            .foregroundColor(RetroTheme.textAccent)
 
-                    Text("CLEAN")
-                        .font(.caption2.weight(.bold))
-                        .padding(.horizontal, 8)
-                        .padding(.vertical, 4)
-                        .background(Color.triageVoltSubtle)
-                        .foregroundColor(.triageVolt)
-                        .cornerRadius(6)
-                }
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text("CLEAN MESSAGE VERIFIED")
+                                .font(.system(size: 12, weight: .heavy, design: .monospaced))
+                                .foregroundColor(RetroTheme.textAccent)
+                            Text("Action: Allowed to Inbox (.none)")
+                                .font(.system(size: 10, design: .monospaced))
+                                .foregroundColor(.secondary)
+                        }
 
-                Divider()
+                        Spacer()
 
-                Text("No malicious links, homoglyphs, or known smishing hashes were detected. Message safely delivered to primary inbox.")
-                    .font(.caption)
-                    .foregroundColor(.secondary)
-
-            case .unverified(let url):
-                HStack(spacing: 12) {
-                    Image(systemName: "questionmark.shield.fill")
-                        .font(.title2)
-                        .foregroundColor(.orange)
-
-                    VStack(alignment: .leading, spacing: 2) {
-                        Text("Unverified Link Detected")
-                            .font(.headline)
-                            .foregroundColor(.orange)
-                        Text("Action: Defer to Cloud Filter")
-                            .font(.caption.weight(.semibold))
-                            .foregroundColor(.secondary)
+                        RetroBadge("CLEAN", color: RetroTheme.textAccent, isFilled: true)
                     }
 
-                    Spacer()
+                    Divider()
 
-                    Text("DEFERRED")
-                        .font(.caption2.weight(.bold))
-                        .padding(.horizontal, 8)
-                        .padding(.vertical, 4)
-                        .background(Color.orange.opacity(0.15))
-                        .foregroundColor(.orange)
-                        .cornerRadius(6)
-                }
+                    Text("No deceptive URLs, homoglyphs, or known threat hashes were detected. Message allowed to primary inbox.")
+                        .font(.system(size: 10, design: .monospaced))
+                        .foregroundColor(.secondary)
 
-                Divider()
+                case .unverified(let url):
+                    HStack(spacing: 10) {
+                        Image(systemName: "questionmark.shield.fill")
+                            .font(.system(size: 18, weight: .bold))
+                            .foregroundColor(RetroTheme.amber)
 
-                VStack(alignment: .leading, spacing: 6) {
-                    detailRow(label: "Extracted URL", value: url)
-                    detailRow(label: "Offline Status", value: "Not found in local cache")
-                    detailRow(label: "System Action", value: "Queries cloud backend over HTTPS")
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text("UNVERIFIED LINK DETECTED")
+                                .font(.system(size: 12, weight: .heavy, design: .monospaced))
+                                .foregroundColor(RetroTheme.textAmber)
+                            Text("Action: Defer to cloud check (.allow)")
+                                .font(.system(size: 10, design: .monospaced))
+                                .foregroundColor(.secondary)
+                        }
+
+                        Spacer()
+
+                        RetroBadge("DEFERRED", color: RetroTheme.amber, isFilled: true)
+                    }
+
+                    Divider()
+
+                    VStack(alignment: .leading, spacing: 6) {
+                        simDetailRow(label: "EXTRACTED URL", value: url)
+                        simDetailRow(label: "CACHE STATUS", value: "Hash absent from offline DB")
+                        simDetailRow(label: "NEXT ACTION", value: "Query cloud threat lookup service")
+                    }
                 }
             }
+            .padding(14)
         }
-        .padding(16)
-        .background(Color(.secondarySystemBackground))
-        .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
     }
 
-    private func detailRow(label: String, value: String) -> some View {
+    private func simDetailRow(label: String, value: String) -> some View {
         HStack(alignment: .top) {
             Text(label + ":")
-                .font(.caption.weight(.medium))
+                .font(.system(size: 10, weight: .bold, design: .monospaced))
                 .foregroundColor(.secondary)
             Spacer()
             Text(value)
-                .font(.caption.weight(.semibold))
+                .font(.system(size: 10, weight: .heavy, design: .monospaced))
                 .foregroundColor(.primary)
                 .multilineTextAlignment(.trailing)
         }

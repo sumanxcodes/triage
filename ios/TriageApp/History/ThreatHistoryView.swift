@@ -8,8 +8,8 @@ public struct ThreatHistoryView: View {
     @State private var selectedEvent: ThreatEventRecord?
 
     public enum HistoryFilter: String, CaseIterable, Identifiable {
-        case all = "All"
-        case safari = "Safari"
+        case all = "ALL"
+        case safari = "SAFARI"
         case sms = "SMS"
 
         public var id: String { rawValue }
@@ -19,67 +19,78 @@ public struct ThreatHistoryView: View {
 
     public var body: some View {
         NavigationStack {
-            VStack(spacing: 0) {
-                // Segmented Filter Picker
-                Picker("Filter", selection: $selectedFilter) {
-                    ForEach(HistoryFilter.allCases) { filter in
-                        Text(filter.rawValue).tag(filter)
-                    }
-                }
-                .pickerStyle(.segmented)
-                .padding(.horizontal, 16)
-                .padding(.vertical, 8)
+            ZStack {
+                RetroTheme.background
+                    .ignoresSafeArea()
 
-                if filteredEvents.isEmpty {
-                    emptyStateView
-                } else {
-                    List {
-                        Section {
-                            ForEach(filteredEvents) { event in
-                                eventRow(for: event)
-                                    .contentShape(Rectangle())
-                                    .onTapGesture {
+                VStack(spacing: 0) {
+                    // Retro Segmented Filter Tabs
+                    filterBar
+                        .padding(.horizontal, 16)
+                        .padding(.top, 12)
+                        .padding(.bottom, 10)
+
+                    // Search Input
+                    searchBar
+                        .padding(.horizontal, 16)
+                        .padding(.bottom, 12)
+
+                    if filteredEvents.isEmpty {
+                        emptyStateView
+                    } else {
+                        ScrollView(showsIndicators: false) {
+                            LazyVStack(spacing: 12) {
+                                HStack {
+                                    Text("// \(filteredEvents.count) LOGGED EVENT\(filteredEvents.count == 1 ? "" : "S")")
+                                        .font(.system(size: 11, weight: .bold, design: .monospaced))
+                                        .foregroundColor(.secondary)
+                                    Spacer()
+                                }
+                                .padding(.horizontal, 4)
+
+                                ForEach(filteredEvents) { event in
+                                    Button(action: {
+                                        UIImpactFeedbackGenerator(style: .light).impactOccurred()
                                         selectedEvent = event
+                                    }) {
+                                        eventCard(for: event)
                                     }
+                                    .buttonStyle(.plain)
+                                }
                             }
-                            .onDelete(perform: deleteEvents)
-                        } header: {
-                            Text("\(filteredEvents.count) Blocked Threat\(filteredEvents.count == 1 ? "" : "s")")
-                                .font(.caption)
-                                .foregroundColor(.secondary)
+                            .padding(.horizontal, 16)
+                            .padding(.bottom, 96)
                         }
-                    }
-                    .listStyle(.insetGrouped)
-                    .refreshable {
-                        loadEvents()
+                        .refreshable {
+                            loadEvents()
+                        }
                     }
                 }
             }
-            .navigationTitle("Threat History")
-            .searchable(text: $searchText, prompt: "Search blocked links or senders...")
+            .navigationTitle("AUDIT LOG")
+            .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
                     if !events.isEmpty {
-                        Button(role: .destructive, action: { showingClearConfirmation = true }) {
-                            Text("Clear")
-                                .foregroundColor(.red)
+                        Button(action: { showingClearConfirmation = true }) {
+                            RetroBadge("CLEAR", color: .red, isFilled: false)
                         }
                     }
                 }
             }
             .confirmationDialog(
-                "Clear History",
+                "CLEAR AUDIT LOG",
                 isPresented: $showingClearConfirmation,
                 titleVisibility: .visible
             ) {
-                Button("Clear All Threat History", role: .destructive) {
+                Button("Delete All Threat Logs", role: .destructive) {
                     ThreatDatabase.shared.clearAllEvents()
                     loadEvents()
                     UINotificationFeedbackGenerator().notificationOccurred(.success)
                 }
                 Button("Cancel", role: .cancel) {}
             } message: {
-                Text("This will permanently delete all on-device threat activity logs from your phone.")
+                Text("This permanently deletes all on-device threat activity logs from your iPhone.")
             }
             .sheet(item: $selectedEvent) { event in
                 ThreatEventDetailSheet(event: event)
@@ -92,104 +103,158 @@ public struct ThreatHistoryView: View {
 
     // MARK: - Subviews
 
+    private var filterBar: some View {
+        HStack(spacing: 8) {
+            ForEach(HistoryFilter.allCases) { filter in
+                let isSelected = selectedFilter == filter
+                Button(action: {
+                    UIImpactFeedbackGenerator(style: .light).impactOccurred()
+                    selectedFilter = filter
+                }) {
+                    Text("[ \(filter.rawValue) ]")
+                        .font(.system(size: 11, weight: .heavy, design: .monospaced))
+                        .foregroundColor(isSelected ? .black : .primary)
+                        .padding(.horizontal, 10)
+                        .padding(.vertical, 6)
+                        .background(isSelected ? RetroTheme.volt : RetroTheme.elevatedSurface)
+                        .clipShape(RoundedRectangle(cornerRadius: 6, style: .continuous))
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 6, style: .continuous)
+                                .stroke(RetroTheme.border, lineWidth: isSelected ? 2 : 1)
+                        )
+                }
+            }
+            Spacer()
+        }
+    }
+
+    private var searchBar: some View {
+        HStack(spacing: 8) {
+            Image(systemName: "magnifyingglass")
+                .font(.system(size: 12, weight: .bold))
+                .foregroundColor(.secondary)
+
+            TextField("Filter links, brands, senders...", text: $searchText)
+                .font(.system(size: 12, design: .monospaced))
+                .autocorrectionDisabled()
+                .textInputAutocapitalization(.never)
+
+            if !searchText.isEmpty {
+                Button(action: { searchText = "" }) {
+                    Image(systemName: "xmark.circle.fill")
+                        .font(.system(size: 12))
+                        .foregroundColor(.secondary)
+                }
+            }
+        }
+        .padding(.horizontal, 10)
+        .padding(.vertical, 8)
+        .background(RetroTheme.surface)
+        .clipShape(RoundedRectangle(cornerRadius: 6, style: .continuous))
+        .overlay(
+            RoundedRectangle(cornerRadius: 6, style: .continuous)
+                .stroke(RetroTheme.border, lineWidth: 1)
+        )
+    }
+
     private var emptyStateView: some View {
         VStack(spacing: 16) {
             Spacer()
 
-            ZStack {
-                Circle()
-                    .fill(Color.triageVoltSubtle)
-                    .frame(width: 80, height: 80)
+            RetroCard(cornerRadius: 12) {
+                VStack(spacing: 14) {
+                    ZStack {
+                        Rectangle()
+                            .fill(RetroTheme.elevatedSurface)
+                            .frame(width: 52, height: 52)
+                            .overlay(
+                                Rectangle()
+                                    .stroke(RetroTheme.border, lineWidth: 1.5)
+                            )
 
-                Image(systemName: "checkmark.shield.fill")
-                    .resizable()
-                    .scaledToFit()
-                    .frame(width: 40, height: 40)
-                    .foregroundColor(.triageVolt)
+                        Image(systemName: "shield.lefthalf.filled")
+                            .font(.system(size: 24, weight: .bold))
+                            .foregroundColor(RetroTheme.textAccent)
+                    }
+
+                    VStack(spacing: 6) {
+                        Text(searchText.isEmpty ? "> 0 THREATS LOGGED" : "> NO MATCHING RECORDS")
+                            .font(.system(size: 14, weight: .heavy, design: .monospaced))
+                            .foregroundColor(.primary)
+
+                        Text(searchText.isEmpty ?
+                             "On-device SQLite filter active. Blocked scam texts and malicious Safari links will be cataloged here." :
+                             "Try searching with an alternate keyword or domain query.")
+                            .font(.system(size: 11, weight: .medium, design: .monospaced))
+                            .foregroundColor(.secondary)
+                            .multilineTextAlignment(.center)
+                            .padding(.horizontal, 12)
+                    }
+
+                    RetroBadge("SYSTEM SECURED", color: RetroTheme.textAccent, isFilled: true)
+                }
+                .padding(20)
             }
-
-            VStack(spacing: 6) {
-                Text(searchText.isEmpty ? "No Threats Detected" : "No Matching Events")
-                    .font(.headline)
-                    .fontWeight(.bold)
-
-                Text(searchText.isEmpty ?
-                     "Triage is actively guarding your SMS messages and Safari browsing. Blocked threats will be logged here locally on your device." :
-                     "Try searching with a different term or URL.")
-                    .font(.subheadline)
-                    .foregroundColor(.secondary)
-                    .multilineTextAlignment(.center)
-                    .padding(.horizontal, 36)
-            }
+            .padding(.horizontal, 24)
 
             Spacer()
         }
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .background(Color(.systemGroupedBackground))
     }
 
-    private func eventRow(for event: ThreatEventRecord) -> some View {
-        HStack(alignment: .center, spacing: 12) {
-            // Source Icon Badge
-            ZStack {
-                RoundedRectangle(cornerRadius: 10)
-                    .fill((event.source == "sms" ? Color.triageVoltSubtle : Color.blue.opacity(0.15)))
-                    .frame(width: 38, height: 38)
+    private func eventCard(for event: ThreatEventRecord) -> some View {
+        RetroCard(cornerRadius: 8) {
+            VStack(alignment: .leading, spacing: 10) {
+                HStack(alignment: .top) {
+                    HStack(spacing: 6) {
+                        Image(systemName: event.source == "sms" ? "message.badge.filled.fill" : "safari.fill")
+                            .font(.system(size: 12, weight: .bold))
+                            .foregroundColor(event.source == "sms" ? RetroTheme.textAccent : .blue)
 
-                Image(systemName: event.source == "sms" ? "message.badge.filled.fill" : "safari.fill")
-                    .font(.system(size: 17))
-                    .foregroundColor(event.source == "sms" ? .triageVolt : .blue)
-            }
-
-            // Content
-            VStack(alignment: .leading, spacing: 3) {
-                HStack {
-                    Text(title(for: event))
-                        .font(.subheadline)
-                        .fontWeight(.semibold)
-                        .foregroundColor(.primary)
-                        .lineLimit(1)
+                        Text(title(for: event).uppercased())
+                            .font(.system(size: 12, weight: .heavy, design: .monospaced))
+                            .foregroundColor(.primary)
+                            .lineLimit(1)
+                    }
 
                     Spacer()
 
-                    Text(badgeTitle(for: event))
-                        .font(.caption2.bold())
-                        .padding(.horizontal, 6)
-                        .padding(.vertical, 2)
-                        .background(Color.red.opacity(0.12))
-                        .foregroundColor(.red)
-                        .clipShape(Capsule())
+                    RetroBadge(badgeTitle(for: event), color: .red, isFilled: true)
                 }
 
                 if let sender = event.sender, !sender.isEmpty {
-                    Text("From: \(sender)")
-                        .font(.caption)
-                        .fontWeight(.medium)
+                    Text("FROM: \(sender)")
+                        .font(.system(size: 10, weight: .bold, design: .monospaced))
                         .foregroundColor(.secondary)
                 }
 
                 Text(event.target)
-                    .font(.system(size: 12, design: .monospaced))
-                    .foregroundColor(.secondary)
+                    .font(.system(size: 11, design: .monospaced))
+                    .foregroundColor(.primary)
                     .lineLimit(1)
                     .truncationMode(.middle)
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 5)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .background(RetroTheme.elevatedSurface)
+                    .overlay(
+                        Rectangle()
+                            .stroke(RetroTheme.border, lineWidth: 1)
+                    )
 
                 HStack {
-                    Text("\(event.timestamp, style: .relative) ago")
-                        .font(.caption2)
-                        .foregroundColor(Color(.tertiaryLabel))
-                    Spacer()
-                }
-                .padding(.top, 2)
-            }
+                    Text("\(event.timestamp, style: .relative) ago // \(event.category.uppercased())")
+                        .font(.system(size: 9, weight: .medium, design: .monospaced))
+                        .foregroundColor(.secondary)
 
-            // Subtle disclosure indicator
-            Image(systemName: "chevron.right")
-                .font(.system(size: 13, weight: .semibold))
-                .foregroundColor(Color(.tertiaryLabel))
-                .padding(.leading, 2)
+                    Spacer()
+
+                    Image(systemName: "chevron.right")
+                        .font(.system(size: 10, weight: .bold))
+                        .foregroundColor(.secondary)
+                }
+            }
+            .padding(14)
         }
-        .padding(.vertical, 2)
     }
 
     // MARK: - Helpers
@@ -219,15 +284,6 @@ public struct ThreatHistoryView: View {
 
     private func loadEvents() {
         events = ThreatDatabase.shared.fetchRecentEvents()
-    }
-
-    private func deleteEvents(at offsets: IndexSet) {
-        let itemsToDelete = offsets.map { filteredEvents[$0] }
-        for item in itemsToDelete {
-            ThreatDatabase.shared.deleteEvent(id: item.id)
-        }
-        UIImpactFeedbackGenerator(style: .medium).impactOccurred()
-        loadEvents()
     }
 
     private func title(for event: ThreatEventRecord) -> String {

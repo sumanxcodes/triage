@@ -11,139 +11,138 @@ public struct ThreatEventDetailSheet: View {
 
     public var body: some View {
         NavigationStack {
-            ScrollView {
-                VStack(spacing: 20) {
-                    // Header Icon & Status
-                    VStack(spacing: 12) {
-                        ZStack {
-                            Circle()
-                                .fill(Color.red.opacity(0.12))
-                                .frame(width: 76, height: 76)
+            ZStack {
+                RetroTheme.background
+                    .ignoresSafeArea()
 
-                            Image(systemName: "exclamationmark.shield.fill")
-                                .resizable()
-                                .scaledToFit()
-                                .frame(width: 40, height: 40)
-                                .foregroundColor(.red)
-                        }
-                        .padding(.top, 12)
+                ScrollView {
+                    VStack(spacing: 18) {
+                        // Header Status
+                        VStack(spacing: 10) {
+                            ZStack {
+                                Rectangle()
+                                    .fill(RetroTheme.elevatedSurface)
+                                    .frame(width: 58, height: 58)
+                                    .overlay(
+                                        Rectangle()
+                                            .stroke(RetroTheme.border, lineWidth: 2)
+                                    )
 
-                        Text(event.targetBrand ?? (event.source == "sms" ? "SMS Threat" : "Safari Threat"))
-                            .font(.title2)
-                            .fontWeight(.bold)
-
-                        HStack(spacing: 6) {
-                            Text(event.source == "sms" ? "SMS Phishing" : "Web Phishing")
-                                .font(.caption.bold())
-                                .padding(.horizontal, 8)
-                                .padding(.vertical, 3)
-                                .background(Color.red.opacity(0.12))
-                                .foregroundColor(.red)
-                                .clipShape(Capsule())
-
-                            Text(event.actionTaken == "blocked" ? "Blocked at Navigation" : "Filtered to Junk")
-                                .font(.caption)
-                                .foregroundColor(.secondary)
-                        }
-                    }
-
-                    // Threat Target Details Card
-                    VStack(alignment: .leading, spacing: 14) {
-                        Text("Threat Information")
-                            .font(.headline)
-
-                        if let sender = event.sender, !sender.isEmpty {
-                            detailRow(label: "Sender", value: sender)
-                            Divider()
-                        }
-
-                        VStack(alignment: .leading, spacing: 6) {
-                            Text("Blocked Link")
-                                .font(.caption)
-                                .foregroundColor(.secondary)
-
-                            Text(event.target)
-                                .font(.system(size: 13, design: .monospaced))
-                                .foregroundColor(.primary)
-                                .lineLimit(4)
-                                .padding(12)
-                                .frame(maxWidth: .infinity, alignment: .leading)
-                                .background(Color(.tertiarySystemBackground))
-                                .cornerRadius(10)
-                        }
-
-                        // Full 44pt Touch Target Action Button (Apple HIG Mandate)
-                        Button(action: copyToClipboard) {
-                            HStack(spacing: 6) {
-                                Image(systemName: copiedURL ? "checkmark" : "doc.on.doc")
-                                Text(copiedURL ? "Copied to Clipboard" : "Copy Threat URL")
+                                Image(systemName: "exclamationmark.shield.fill")
+                                    .font(.system(size: 26, weight: .bold))
+                                    .foregroundColor(.red)
                             }
-                            .font(.subheadline.weight(.semibold))
+                            .padding(.top, 8)
+
+                            Text(event.targetBrand ?? (event.source == "sms" ? "SMS THREAT" : "SAFARI THREAT"))
+                                .font(.system(size: 18, weight: .heavy, design: .monospaced))
+                                .foregroundColor(.primary)
+
+                            HStack(spacing: 6) {
+                                RetroBadge(event.source == "sms" ? "SMS PHISHING" : "WEB PHISHING", color: .red, isFilled: true)
+                                RetroBadge(event.actionTaken == "blocked" ? "BLOCKED" : "JUNKED", color: .red, isFilled: false)
+                            }
+                        }
+
+                        // Threat Target Details Card
+                        RetroCard(cornerRadius: 10) {
+                            VStack(alignment: .leading, spacing: 14) {
+                                Text("// THREAT TELEMETRY")
+                                    .font(.system(size: 11, weight: .heavy, design: .monospaced))
+                                    .foregroundColor(.secondary)
+
+                                if let sender = event.sender, !sender.isEmpty {
+                                    detailRow(label: "SENDER", value: sender)
+                                    Divider()
+                                }
+
+                                VStack(alignment: .leading, spacing: 6) {
+                                    Text("TARGET PAYLOAD")
+                                        .font(.system(size: 10, weight: .bold, design: .monospaced))
+                                        .foregroundColor(.secondary)
+
+                                    Text(event.target)
+                                        .font(.system(size: 12, design: .monospaced))
+                                        .foregroundColor(.primary)
+                                        .lineLimit(4)
+                                        .padding(10)
+                                        .frame(maxWidth: .infinity, alignment: .leading)
+                                        .background(RetroTheme.elevatedSurface)
+                                        .overlay(
+                                            Rectangle()
+                                                .stroke(RetroTheme.border, lineWidth: 1)
+                                        )
+                                }
+
+                                Button(action: copyToClipboard) {
+                                    HStack(spacing: 6) {
+                                        Image(systemName: copiedURL ? "checkmark" : "doc.on.doc")
+                                            .font(.system(size: 12, weight: .bold))
+                                        Text(copiedURL ? "COPIED TO CLIPBOARD" : "COPY THREAT URL")
+                                    }
+                                    .frame(maxWidth: .infinity)
+                                }
+                                .buttonStyle(RetroButtonStyle(
+                                    backgroundColor: copiedURL ? RetroTheme.volt : RetroTheme.elevatedSurface,
+                                    foregroundColor: copiedURL ? .black : .primary,
+                                    cornerRadius: 6
+                                ))
+
+                                Divider()
+
+                                detailRow(label: "CATEGORY", value: event.category.uppercased())
+                                Divider()
+                                detailRow(label: "TIMESTAMP", value: event.timestamp.formatted(date: .numeric, time: .standard))
+                            }
+                            .padding(16)
+                        }
+                        .padding(.horizontal, 16)
+
+                        // On-Device Guarantee Card
+                        RetroCard(cornerRadius: 10) {
+                            HStack(alignment: .top, spacing: 12) {
+                                Image(systemName: "lock.shield.fill")
+                                    .foregroundColor(RetroTheme.textAccent)
+                                    .font(.system(size: 18, weight: .bold))
+
+                                VStack(alignment: .leading, spacing: 4) {
+                                    Text("LOCAL AUDIT VERIFIED")
+                                        .font(.system(size: 12, weight: .heavy, design: .monospaced))
+                                        .foregroundColor(.primary)
+
+                                    Text("Evaluated locally using SQLite O(1) hash table. Message content, sender ID, and private browsing data never left this device.")
+                                        .font(.system(size: 10, weight: .medium, design: .monospaced))
+                                        .foregroundColor(.secondary)
+                                }
+                            }
+                            .padding(14)
+                        }
+                        .padding(.horizontal, 16)
+
+                        // Delete Event Action
+                        Button(role: .destructive, action: deleteAndDismiss) {
+                            HStack {
+                                Image(systemName: "trash")
+                                Text("DELETE LOG ENTRY")
+                            }
                             .frame(maxWidth: .infinity)
-                            .frame(height: 44)
-                            .background(copiedURL ? Color.triageVoltSubtle : Color.blue.opacity(0.1))
-                            .foregroundColor(copiedURL ? .triageVolt : .blue)
-                            .cornerRadius(10)
                         }
-
-                        Divider()
-
-                        detailRow(label: "Threat Classification", value: event.category.capitalized)
-                        Divider()
-                        detailRow(label: "Intercepted On", value: event.timestamp.formatted(date: .long, time: .shortened))
+                        .buttonStyle(RetroButtonStyle(
+                            backgroundColor: Color.red.opacity(0.12),
+                            foregroundColor: .red,
+                            cornerRadius: 8
+                        ))
+                        .padding(.horizontal, 16)
+                        .padding(.bottom, 24)
                     }
-                    .padding(16)
-                    .background(Color(.secondarySystemBackground))
-                    .cornerRadius(16)
-                    .padding(.horizontal, 16)
-
-                    // On-Device Guarantee Card
-                    HStack(alignment: .top, spacing: 12) {
-                        Image(systemName: "lock.shield.fill")
-                            .foregroundColor(.indigo)
-                            .font(.title3)
-
-                        VStack(alignment: .leading, spacing: 4) {
-                            Text("On-Device Evaluation")
-                                .font(.subheadline)
-                                .fontWeight(.semibold)
-
-                            Text("Evaluated and logged locally using Triage's on-device SQLite database. No SMS text, sender, or browsing history has ever left your iPhone.")
-                                .font(.caption)
-                                .foregroundColor(.secondary)
-                                .lineSpacing(2)
-                        }
-                    }
-                    .padding(14)
-                    .background(Color(.secondarySystemBackground))
-                    .cornerRadius(16)
-                    .padding(.horizontal, 16)
-
-                    // Delete Event Action
-                    Button(role: .destructive, action: deleteAndDismiss) {
-                        HStack {
-                            Image(systemName: "trash")
-                            Text("Delete Log Entry")
-                        }
-                        .font(.subheadline.weight(.semibold))
-                        .frame(maxWidth: .infinity)
-                        .frame(height: 44)
-                        .background(Color.red.opacity(0.1))
-                        .foregroundColor(.red)
-                        .cornerRadius(12)
-                    }
-                    .padding(.horizontal, 16)
-                    .padding(.bottom, 20)
                 }
             }
+            .navigationTitle("LOG DETAIL")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
                     Button(action: { dismiss() }) {
-                        Image(systemName: "xmark.circle.fill")
-                            .symbolRenderingMode(.hierarchical)
-                            .foregroundColor(.secondary)
-                            .font(.title3)
+                        RetroBadge("CLOSE", color: .secondary, isFilled: false)
                     }
                 }
             }
@@ -153,12 +152,11 @@ public struct ThreatEventDetailSheet: View {
     private func detailRow(label: String, value: String) -> some View {
         HStack {
             Text(label)
-                .font(.subheadline)
+                .font(.system(size: 11, weight: .bold, design: .monospaced))
                 .foregroundColor(.secondary)
             Spacer()
             Text(value)
-                .font(.subheadline)
-                .fontWeight(.medium)
+                .font(.system(size: 11, weight: .heavy, design: .monospaced))
                 .foregroundColor(.primary)
         }
     }

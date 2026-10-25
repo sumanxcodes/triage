@@ -10,82 +10,69 @@ public struct OnboardingView: View {
 
     public var body: some View {
         ZStack {
-            Color(.systemBackground)
+            RetroTheme.background
                 .ignoresSafeArea()
 
             VStack(spacing: 0) {
                 ScrollView(showsIndicators: false) {
-                    VStack(alignment: .leading, spacing: 22) {
-                        // Top Logo Badge
+                    VStack(alignment: .leading, spacing: 20) {
+                        // Top Badge
                         TriageLogoView(size: 64, showsGlow: true)
                             .padding(.top, 16)
 
                         // Eyebrow & Hero Headline
-                        VStack(alignment: .leading, spacing: 6) {
-                            Text("// PRIVATE BY DESIGN")
-                                .font(.system(size: 11, weight: .bold, design: .monospaced))
-                                .foregroundColor(.triageVolt)
-                                .tracking(1.0)
+                        VStack(alignment: .leading, spacing: 8) {
+                            RetroBadge("PRIVATE BY DESIGN // SYSTEM INIT", color: RetroTheme.textAccent, isFilled: true)
 
-                            VStack(alignment: .leading, spacing: 0) {
-                                Text("Your messages.")
+                            VStack(alignment: .leading, spacing: 2) {
+                                Text("YOUR MESSAGES.")
                                     .foregroundColor(.primary)
-                                Text("Your browsing.")
+                                Text("YOUR BROWSING.")
                                     .foregroundColor(.primary)
-                                Text("Protected.")
-                                    .foregroundColor(.triageVolt)
+                                Text("PROTECTED.")
+                                    .foregroundColor(RetroTheme.textAccent)
                             }
-                            .font(.system(size: 34, weight: .heavy, design: .rounded))
-                            .lineSpacing(-2)
+                            .font(.system(size: 30, weight: .heavy, design: .monospaced))
 
-                            Text("Dual-layer protection from scam texts and malicious links, entirely on your iPhone.")
-                                .font(.subheadline)
+                            Text("Dual-layer cyber defense against smishing scams and fraudulent links, evaluated 100% on your iPhone.")
+                                .font(.system(size: 12, design: .monospaced))
                                 .foregroundColor(.secondary)
-                                .padding(.top, 4)
+                                .padding(.top, 2)
                         }
 
-                        Divider()
-                            .padding(.vertical, 4)
-
-                        // Feature Rows
-                        VStack(spacing: 16) {
-                            onboardingRow(
-                                stepNumber: "01",
-                                title: "SMS Smishing Filter",
-                                subtitle: "Silently moves scam texts to Junk.",
+                        // Feature Cards
+                        VStack(spacing: 12) {
+                            featureCard(
+                                stepNumber: "[01]",
+                                title: "SMS SMISHING FILTER",
+                                subtitle: "Silently intercepts unknown scam texts and routes them to Junk before they ring.",
                                 icon: "message.badge.filled.fill",
-                                iconColor: .triageVolt
+                                iconColor: RetroTheme.textAccent
                             )
 
-                            Divider()
-                                .padding(.leading, 32)
-
-                            onboardingRow(
-                                stepNumber: "02",
-                                title: "Safari Web Shield",
-                                subtitle: "Checks dangerous links before they load.",
+                            featureCard(
+                                stepNumber: "[02]",
+                                title: "SAFARI WEB SHIELD",
+                                subtitle: "Cross-checks dangerous links in WebKit against local threat hashes in <1ms.",
                                 icon: "safari.fill",
                                 iconColor: .blue
                             )
 
-                            Divider()
-                                .padding(.leading, 32)
-
-                            onboardingRow(
-                                stepNumber: "03",
-                                title: "Zero Telemetry",
-                                subtitle: "Nothing personal ever leaves your device.",
+                            featureCard(
+                                stepNumber: "[03]",
+                                title: "ZERO TELEMETRY",
+                                subtitle: "No account required. No analytics. Your private data never leaves your device.",
                                 icon: "lock.shield.fill",
-                                iconColor: .purple
+                                iconColor: RetroTheme.textAccent
                             )
                         }
                     }
-                    .padding(.horizontal, 24)
+                    .padding(.horizontal, 20)
                     .padding(.bottom, 24)
                 }
 
                 // Sticky Bottom Action Bar
-                VStack(spacing: 12) {
+                VStack(spacing: 10) {
                     Button(action: {
                         UIImpactFeedbackGenerator(style: .medium).impactOccurred()
                         if let onComplete = onComplete {
@@ -95,80 +82,79 @@ public struct OnboardingView: View {
                         }
                     }) {
                         HStack(spacing: 8) {
-                            Text("SET UP PROTECTION")
-                                .font(.system(size: 15, weight: .heavy, design: .monospaced))
-                                .tracking(0.5)
-
+                            Text("INITIALIZE PROTECTION")
                             Image(systemName: "arrow.right")
-                                .font(.subheadline.weight(.heavy))
                         }
-                        .foregroundColor(.black)
                         .frame(maxWidth: .infinity)
-                        .padding(.vertical, 15)
-                        .background(Color.triageVoltRaw)
-                        .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
                     }
+                    .buttonStyle(RetroButtonStyle(
+                        backgroundColor: RetroTheme.volt,
+                        foregroundColor: .black,
+                        cornerRadius: 8
+                    ))
 
                     HStack(spacing: 6) {
                         Image(systemName: "shield.lefthalf.filled")
-                            .font(.caption2.weight(.semibold))
+                            .font(.system(size: 10, weight: .bold))
                             .foregroundColor(.secondary)
 
-                        Text("On-device processing • No account required")
-                            .font(.system(size: 11, weight: .medium, design: .monospaced))
+                        Text("LOCAL SQLITE // AIR-GAPPED EVALUATION")
+                            .font(.system(size: 10, weight: .bold, design: .monospaced))
                             .foregroundColor(.secondary)
                     }
                     .frame(maxWidth: .infinity)
                 }
-                .padding(.horizontal, 24)
+                .padding(.horizontal, 20)
                 .padding(.top, 12)
-                .padding(.bottom, 16)
-                .background(
-                    Color(.systemBackground)
-                        .shadow(color: Color.black.opacity(0.04), radius: 6, x: 0, y: -3)
-                )
+                .padding(.bottom, 20)
+                .background(RetroTheme.background)
             }
         }
     }
 
-    private func onboardingRow(
+    private func featureCard(
         stepNumber: String,
         title: String,
         subtitle: String,
         icon: String,
         iconColor: Color
     ) -> some View {
-        HStack(alignment: .center, spacing: 14) {
-            Text(stepNumber)
-                .font(.system(size: 12, weight: .bold, design: .monospaced))
-                .foregroundColor(.secondary.opacity(0.7))
-                .frame(width: 22, alignment: .leading)
+        RetroCard(cornerRadius: 8) {
+            HStack(alignment: .top, spacing: 12) {
+                ZStack {
+                    Rectangle()
+                        .fill(RetroTheme.elevatedSurface)
+                        .frame(width: 38, height: 38)
+                        .overlay(
+                            Rectangle()
+                                .stroke(RetroTheme.border, lineWidth: 1.5)
+                        )
 
-            VStack(alignment: .leading, spacing: 2) {
-                Text(title)
-                    .font(.body.weight(.bold))
-                    .foregroundColor(.primary)
+                    Image(systemName: icon)
+                        .font(.system(size: 16, weight: .bold))
+                        .foregroundColor(iconColor)
+                }
 
-                Text(subtitle)
-                    .font(.subheadline)
-                    .foregroundColor(.secondary)
+                VStack(alignment: .leading, spacing: 3) {
+                    HStack {
+                        Text(stepNumber)
+                            .font(.system(size: 10, weight: .bold, design: .monospaced))
+                            .foregroundColor(RetroTheme.textAccent)
+
+                        Text(title)
+                            .font(.system(size: 11, weight: .heavy, design: .monospaced))
+                            .foregroundColor(.primary)
+                    }
+
+                    Text(subtitle)
+                        .font(.system(size: 10, design: .monospaced))
+                        .foregroundColor(.secondary)
+                        .lineSpacing(1.5)
+                }
+
+                Spacer()
             }
-
-            Spacer()
-
-            ZStack {
-                RoundedRectangle(cornerRadius: 10, style: .continuous)
-                    .fill(Color(.secondarySystemBackground))
-                    .frame(width: 38, height: 38)
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 10, style: .continuous)
-                            .stroke(Color.triageCardBorder, lineWidth: 1)
-                    )
-
-                Image(systemName: icon)
-                    .font(.system(size: 18, weight: .semibold))
-                    .foregroundColor(iconColor)
-            }
+            .padding(12)
         }
     }
 }
