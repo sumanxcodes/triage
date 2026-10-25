@@ -5,127 +5,188 @@ import ComponentsKit
 // MARK: - ComponentsKit Official Theme Engine
 
 public struct RetroTheme {
-    /// Canvas Background: Soft retro canvas #F3F1EB in Light Mode, #0C0D0E in Dark Mode
+    /// Canvas Background: Soft retro canvas #F3F1EB in Light Mode, #090F0A in Dark Mode
     public static var background: Color { UniversalColor.background.color }
 
-    /// Card Surface: Exact warm retro cream #FEF3E0 in Light Mode, #25221B in Dark Mode
+    /// Card Surface: Accent Background (#FEF3E0 in Light Mode, #4E2A1A in Dark Mode) as configured in ComponentsKit Demo
     public static var surface: Color { UniversalColor.accentBackground.color }
 
-    /// Elevated Surface for sub-components, inputs, and chips
+    /// Secondary Surface: #FEFDF6 in Light Mode, #101910 in Dark Mode
+    public static var secondarySurface: Color { UniversalColor.secondaryBackground.color }
+
+    /// Elevated Surface for sub-components, inputs, and chips (#FFEED0 in Light Mode, #142415 in Dark Mode)
     public static var elevatedSurface: Color { UniversalColor.content1.color }
 
-    /// Retro Solid Line Border / Divider: #E2D8C6 in Light Mode, #38342C in Dark Mode
+    /// Retro Solid Line Border / Divider: #C2C0BD in Light Mode, #093F24 in Dark Mode
     public static var border: Color { UniversalColor.divider.color }
 
     /// Soft ambient drop shadow matching the ComponentsKit Medium shadow preset
     public static var shadow: Color { Theme.current.layout.shadow.medium.color.color }
 
-    /// Phosphor Cyber Volt Accent (#D4FF3A / #19E58C)
-    public static var volt: Color { UniversalColor.primary.color }
+    /// Phosphor Green Brand Accent (#19E58C in Light Mode, #02FF88 in Dark Mode)
+    public static var volt: Color {
+        UniversalColor.themed(light: .hex("#19E58C"), dark: .hex("#02FF88")).color
+    }
 
-    /// Terminal Text Accent
-    public static var textAccent: Color { UniversalColor.primary.color }
+    /// Terminal Text / Active Accent (#2C974B in Light Mode, #02FF88 in Dark Mode)
+    public static var textAccent: Color {
+        UniversalColor.themed(light: .hex("#2C974B"), dark: .hex("#02FF88")).color
+    }
 
-    /// Terminal Amber Warning Accent (#FFA000)
+    /// Terminal Amber Warning Accent (#FEA800 in Light Mode, #FAD000 in Dark Mode)
     public static var amber: Color { UniversalColor.warning.color }
 
     /// Terminal Amber Text
     public static var textAmber: Color { UniversalColor.warning.color }
 
-    /// Phosphor Red: destructive/critical alert accent
+    /// Phosphor Red / Danger Accent (#FE0133 in Light Mode, #FF3960 in Dark Mode)
     public static var red: Color { UniversalColor.danger.color }
 
-    /// Configures ComponentsKit's global theme engine with the exact attributes and colors
+    /// Primary Foreground Text (#2C2C2C in Light Mode, #02FF88 in Dark Mode)
+    public static var foreground: Color { UniversalColor.foreground.color }
+
+    /// Secondary Foreground Text (#595959 in Light Mode, #66FFCC in Dark Mode)
+    public static var secondaryForeground: Color { UniversalColor.secondaryForeground.color }
+
+    /// Configures ComponentsKit's global theme engine with the exact Retro Theme Palette from the demo
     public static func configureComponentsKit() {
         var palette = Theme.Palette()
 
-        // Canvas Background: #F3F1EB (Light) / #0C0D0E (Dark)
+        // Background: #F3F1EB (Light) / #090F0A (Dark)
         palette.background = .themed(
             light: .hex("#F3F1EB"),
-            dark: .hex("#0C0D0E")
+            dark: .hex("#090F0A")
         )
 
-        // Card Surface / Secondary Background: #FEF3E0 (Light) / #25221B (Dark)
+        // Secondary Background: #FEFDF6 (Light) / #101910 (Dark)
         palette.secondaryBackground = .themed(
-            light: .hex("#FEF3E0"),
-            dark: .hex("#25221B")
+            light: .hex("#FEFDF6"),
+            dark: .hex("#101910")
         )
 
-        // Accent with warm cream background as displayed in ComponentsKit demo
-        palette.accent = .init(
-            main: .universal(.hex("#E29A38")),
-            contrast: .universal(.hex("#000000")),
-            background: .themed(
-                light: .hex("#FEF3E0"),
-                dark: .hex("#25221B")
-            )
-        )
-
-        // Sub-elements / elevated chips
-        palette.content1 = .themed(
-            light: .hex("#F3E6D0"),
-            dark: .hex("#2E2920")
-        )
-        palette.content2 = .themed(
-            light: .hex("#E8D8BF"),
-            dark: .hex("#3B3428")
-        )
-
-        // Primary Text: High-contrast #141414 in Light Mode, Crisp #EDEDED in Dark Mode
+        // Foreground: Primary text #2C2C2C (Light) / Phosphor Green #02FF88 (Dark)
         palette.foreground = .themed(
-            light: .hex("#141414"),
-            dark: .hex("#EDEDED")
+            light: .hex("#2C2C2C"),
+            dark: .hex("#02FF88")
         )
 
-        // Secondary Text: Muted warm gray #595959 in Light Mode, #A0A0A0 in Dark Mode
+        // Secondary Foreground: Muted #595959 (Light) / Phosphor Mint #66FFCC (Dark)
         palette.secondaryForeground = .themed(
             light: .hex("#595959"),
-            dark: .hex("#A0A0A0")
+            dark: .hex("#66FFCC")
         )
 
-        // Border & Divider: #E2D8C6 in Light Mode, #38342C in Dark Mode
+        // Content Swatches:
+        // Content 1: #FFEED0 (Light) / #142415 (Dark)
+        palette.content1 = .themed(
+            light: .hex("#FFEED0"),
+            dark: .hex("#142415")
+        )
+
+        // Content 2: #FED0DB (Light) / #1C1A1D (Dark)
+        palette.content2 = .themed(
+            light: .hex("#FED0DB"),
+            dark: .hex("#1C1A1D")
+        )
+
+        // Content 3: #B2E0FE (Light) / #122032 (Dark)
+        palette.content3 = .themed(
+            light: .hex("#B2E0FE"),
+            dark: .hex("#122032")
+        )
+
+        // Content 4: #D2F9D5 (Light) / #173A28 (Dark)
+        palette.content4 = .themed(
+            light: .hex("#D2F9D5"),
+            dark: .hex("#173A28")
+        )
+
+        // Divider: #C2C0BD (Light) / #093F24 (Dark)
         palette.divider = .themed(
-            light: .hex("#E2D8C6"),
-            dark: .hex("#38342C")
+            light: .hex("#C2C0BD"),
+            dark: .hex("#093F24")
         )
 
-        // Phosphor Volt Brand Accent (#19E58C)
+        // Component: Primary
+        // Main: #000000 (Light) / #02FF88 (Dark)
+        // Background: #FCD24D (Light) / #00442A (Dark)
+        // Contrast: #FFFFFF (Light) / #000000 (Dark)
         palette.primary = .init(
-            main: .universal(.hex("#19E58C")),
-            contrast: .universal(.hex("#000000")),
+            main: .themed(
+                light: .hex("#000000"),
+                dark: .hex("#02FF88")
+            ),
+            contrast: .themed(
+                light: .hex("#FFFFFF"),
+                dark: .hex("#000000")
+            ),
             background: .themed(
-                light: .hex("#E5E2D8"),
-                dark: .hex("#202327")
+                light: .hex("#FCD24D"),
+                dark: .hex("#00442A")
             )
         )
 
-        // Success Emerald
-        palette.success = .init(
-            main: .universal(.hex("#22C55E")),
-            contrast: .universal(.hex("#000000")),
-            background: .themed(
-                light: .hex("#DCFCE7"),
-                dark: .hex("#14532D")
-            )
-        )
-
-        // Terminal Amber Warning
-        palette.warning = .init(
-            main: .universal(.hex("#FFA000")),
-            contrast: .universal(.hex("#000000")),
-            background: .themed(
-                light: .hex("#FEF3C7"),
-                dark: .hex("#451A03")
-            )
-        )
-
-        // Phosphor Red Destructive
-        palette.danger = .init(
-            main: .universal(.hex("#FF3B30")),
+        // Component: Accent
+        // Main: #FF5E00 (Light & Dark)
+        // Background: #FEF3E0 (Light) / #4E2A1A (Dark)
+        // Contrast: #FFFFFF (Light & Dark)
+        palette.accent = .init(
+            main: .universal(.hex("#FF5E00")),
             contrast: .universal(.hex("#FFFFFF")),
             background: .themed(
-                light: .hex("#FEE2E2"),
-                dark: .hex("#451A1A")
+                light: .hex("#FEF3E0"),
+                dark: .hex("#4E2A1A")
+            )
+        )
+
+        // Component: Success
+        // Main: #2C974B (Light) / #4FFA7B (Dark)
+        // Background: #E5FFE7 (Light) / #1C3F26 (Dark)
+        // Contrast: #FFFFFF (Light) / #000000 (Dark)
+        palette.success = .init(
+            main: .themed(
+                light: .hex("#2C974B"),
+                dark: .hex("#4FFA7B")
+            ),
+            contrast: .themed(
+                light: .hex("#FFFFFF"),
+                dark: .hex("#000000")
+            ),
+            background: .themed(
+                light: .hex("#E5FFE7"),
+                dark: .hex("#1C3F26")
+            )
+        )
+
+        // Component: Warning
+        // Main: #FEA800 (Light) / #FAD000 (Dark)
+        // Background: #FFF4D6 (Light) / #4B3A00 (Dark)
+        // Contrast: #000000 (Light & Dark)
+        palette.warning = .init(
+            main: .themed(
+                light: .hex("#FEA800"),
+                dark: .hex("#FAD000")
+            ),
+            contrast: .universal(.hex("#000000")),
+            background: .themed(
+                light: .hex("#FFF4D6"),
+                dark: .hex("#4B3A00")
+            )
+        )
+
+        // Component: Danger
+        // Main: #FE0133 (Light) / #FF3960 (Dark)
+        // Background: #FEE4E5 (Light) / #4C1B1B (Dark)
+        // Contrast: #FFFFFF (Light & Dark)
+        palette.danger = .init(
+            main: .themed(
+                light: .hex("#FE0133"),
+                dark: .hex("#FF3960")
+            ),
+            contrast: .universal(.hex("#FFFFFF")),
+            background: .themed(
+                light: .hex("#FEE4E5"),
+                dark: .hex("#4C1B1B")
             )
         )
 
@@ -134,30 +195,30 @@ public struct RetroTheme {
         layout.componentRadius = .init(small: 6, medium: 8, large: 10)
         layout.borderWidth = .init(small: 0.5, medium: 1.0, large: 2.0)
 
-        // Medium shadow configured with subtle natural elevation matching the preview
+        // Shadow presets matching ComponentsKit demo
         layout.shadow = .init(
             small: .init(
                 radius: 4,
                 offset: CGSize(width: 0, height: 2),
                 color: .themed(
-                    light: .rgba(r: 180, g: 160, b: 130, a: 0.18),
-                    dark: .rgba(r: 0, g: 0, b: 0, a: 0.35)
+                    light: .rgba(r: 0, g: 0, b: 0, a: 0.05),
+                    dark: .rgba(r: 0, g: 0, b: 0, a: 0.30)
                 )
             ),
             medium: .init(
                 radius: 6,
                 offset: CGSize(width: 0, height: 3),
                 color: .themed(
-                    light: .rgba(r: 180, g: 160, b: 130, a: 0.25),
-                    dark: .rgba(r: 0, g: 0, b: 0, a: 0.45)
+                    light: .rgba(r: 0, g: 0, b: 0, a: 0.08),
+                    dark: .rgba(r: 0, g: 0, b: 0, a: 0.40)
                 )
             ),
             large: .init(
                 radius: 12,
                 offset: CGSize(width: 0, height: 6),
                 color: .themed(
-                    light: .rgba(r: 180, g: 160, b: 130, a: 0.35),
-                    dark: .rgba(r: 0, g: 0, b: 0, a: 0.55)
+                    light: .rgba(r: 0, g: 0, b: 0, a: 0.12),
+                    dark: .rgba(r: 0, g: 0, b: 0, a: 0.50)
                 )
             )
         )
