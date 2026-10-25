@@ -73,6 +73,10 @@ public struct TriageLogoView: View {
 
 @main
 struct TriageApp: App {
+    init() {
+        RetroTheme.configureComponentsKit()
+    }
+
     var body: some Scene {
         WindowGroup {
             MainTabView()

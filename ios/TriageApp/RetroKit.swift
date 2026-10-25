@@ -1,5 +1,6 @@
 import SwiftUI
 import UIKit
+import ComponentsKit
 
 // MARK: - ComponentsKit Retro Theme System (Inspired by componentskit.dev)
 
@@ -58,6 +59,52 @@ public struct RetroTheme {
             UIColor(red: 255/255.0, green: 160/255.0, blue: 0/255.0, alpha: 1.0) :
             UIColor(red: 175/255.0, green: 80/255.0, blue: 0/255.0, alpha: 1.0)
     })
+
+    /// Configures ComponentsKit's global theme engine to match the Retro Theme
+    public static func configureComponentsKit() {
+        var palette = Theme.Palette()
+        palette.background = .themed(
+            light: .hex("#F4F2EC"),
+            dark: .hex("#0C0D0E")
+        )
+        palette.secondaryBackground = .themed(
+            light: .hex("#FFFFFF"),
+            dark: .hex("#16181B")
+        )
+        palette.foreground = .themed(
+            light: .hex("#141414"),
+            dark: .hex("#EBEBEB")
+        )
+        palette.divider = .themed(
+            light: .hex("#141414"),
+            dark: .hex("#EBEBEB")
+        )
+        palette.primary = .init(
+            main: .universal(.hex("#19E58C")),
+            contrast: .universal(.hex("#000000")),
+            background: .themed(
+                light: .hex("#E5E2D8"),
+                dark: .hex("#202327")
+            )
+        )
+        palette.accent = .init(
+            main: .universal(.hex("#38BDF8")),
+            contrast: .universal(.hex("#000000")),
+            background: .themed(
+                light: .hex("#E0F2FE"),
+                dark: .hex("#1E293B")
+            )
+        )
+        palette.danger = .init(
+            main: .universal(.hex("#FF3B30")),
+            contrast: .universal(.hex("#FFFFFF")),
+            background: .themed(
+                light: .hex("#FEE2E2"),
+                dark: .hex("#451A1A")
+            )
+        )
+        Theme.current.colors = palette
+    }
 }
 
 // MARK: - Retro UI Components
@@ -89,7 +136,7 @@ public struct RetroCard<Content: View>: View {
 }
 
 /// Retro Button Style: Physically presses into its shadow on touch down
-public struct RetroButtonStyle: ButtonStyle {
+public struct RetroButtonStyle: SwiftUI.ButtonStyle {
     public var backgroundColor: Color
     public var foregroundColor: Color
     public var cornerRadius: CGFloat

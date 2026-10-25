@@ -33,6 +33,7 @@
 		8E5978B8516CFAFE25AFE7E7 /* AppGroup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D6718A1EB1F39E1522C6316 /* AppGroup.swift */; };
 		9294AF2DEFF5FBC7C88F364B /* PaywallView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D884BD5FC508B9767C49DDFB /* PaywallView.swift */; };
 		96087F9BD7785147C69F0080 /* GRDB in Frameworks */ = {isa = PBXBuildFile; productRef = 29B28512974777103A6C5B79 /* GRDB */; };
+		CK0030000000000000000003 /* ComponentsKit in Frameworks */ = {isa = PBXBuildFile; productRef = CK0020000000000000000002 /* ComponentsKit */; };
 		976C4A1F530264007133E72B /* MessageFilterExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C8F49D314B973279AB6DD24 /* MessageFilterExtension.swift */; };
 		9B131B8F29F96B49D6DA40FB /* ThreatEventRecord.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB0331E52B76E54C2EA5B885 /* ThreatEventRecord.swift */; };
 		9D68493918B8B629B6BC9AAA /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 9557448EEDA86B541F70E6DD /* PrivacyInfo.xcprivacy */; };
@@ -131,6 +132,7 @@
 			files = (
 				96087F9BD7785147C69F0080 /* GRDB in Frameworks */,
 				5B03E04DD2B73463A550282F /* StoreKit.framework in Frameworks */,
+				CK0030000000000000000003 /* ComponentsKit in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -333,6 +335,7 @@
 			name = TriageApp;
 			packageProductDependencies = (
 				29B28512974777103A6C5B79 /* GRDB */,
+				CK0020000000000000000002 /* ComponentsKit */,
 			);
 			productName = TriageApp;
 			productReference = C9ACDDD2CA82C16BB7C8F189 /* TriageApp.app */;
@@ -378,6 +381,7 @@
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
 				D7B7578006A2E9F54BF5FC23 /* XCRemoteSwiftPackageReference "GRDB.swift" */,
+				CK0010000000000000000001 /* XCRemoteSwiftPackageReference "ComponentsKit" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = C02D11886386D6206049C072 /* Products */;
@@ -759,6 +763,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		CK0010000000000000000001 /* XCRemoteSwiftPackageReference "ComponentsKit" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/componentskit/ComponentsKit.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.7.1;
+			};
+		};
 		D7B7578006A2E9F54BF5FC23 /* XCRemoteSwiftPackageReference "GRDB.swift" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/groue/GRDB.swift.git";
@@ -770,6 +782,11 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		CK0020000000000000000002 /* ComponentsKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = CK0010000000000000000001 /* XCRemoteSwiftPackageReference "ComponentsKit" */;
+			productName = ComponentsKit;
+		};
 		29B28512974777103A6C5B79 /* GRDB */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = D7B7578006A2E9F54BF5FC23 /* XCRemoteSwiftPackageReference "GRDB.swift" */;
