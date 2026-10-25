@@ -1,5 +1,4 @@
 import SwiftUI
-import UIKit
 
 public struct MainTabView: View {
     @State private var selectedTab: Int = 0
@@ -25,28 +24,43 @@ public struct MainTabView: View {
                 TabView(selection: $selectedTab) {
                     ContentView()
                         .tabItem {
-                            Label("Protection", systemImage: "shield")
+                            Label {
+                                Text("Protection")
+                            } icon: {
+                                Image(systemName: selectedTab == 0 ? "shield.fill" : "shield")
+                                    .environment(\.symbolVariants, .none)
+                            }
+                            .environment(\.symbolVariants, .none)
                         }
-                        .modifier(TabItemImagesModifier(unselected: "shield", selected: "shield.fill"))
                         .tag(0)
 
                     ThreatHistoryView()
                         .tabItem {
-                            Label("History", systemImage: "clock")
+                            Label {
+                                Text("History")
+                            } icon: {
+                                Image(systemName: selectedTab == 1 ? "clock.fill" : "clock")
+                                    .environment(\.symbolVariants, .none)
+                            }
+                            .environment(\.symbolVariants, .none)
                         }
-                        .modifier(TabItemImagesModifier(unselected: "clock", selected: "clock.fill"))
                         .badge(unreadCount > 0 ? unreadCount : 0)
                         .tag(1)
 
                     SettingsView()
                         .tabItem {
-                            Label("Settings", systemImage: "gearshape")
+                            Label {
+                                Text("Settings")
+                            } icon: {
+                                Image(systemName: selectedTab == 2 ? "gearshape.fill" : "gearshape")
+                                    .environment(\.symbolVariants, .none)
+                            }
+                            .environment(\.symbolVariants, .none)
                         }
-                        .modifier(TabItemImagesModifier(unselected: "gearshape", selected: "gearshape.fill"))
                         .tag(2)
                 }
                 .tint(RetroTheme.accent)
-                .background(NativeTabBarConfigurator())
+                .environment(\.symbolVariants, .none)
                 .transition(.opacity)
                 .onAppear {
                     refreshBadge()
@@ -74,93 +88,6 @@ public struct MainTabView: View {
             unreadCount = ThreatDatabase.shared.unreadEventsCount(since: lastDate)
         } else {
             unreadCount = ThreatDatabase.shared.eventsCount()
-        }
-    }
-}
-
-// MARK: - Native Tab Bar Configurator for Outline (Unselected) & Fill (Selected)
-
-private struct NativeTabBarConfigurator: UIViewControllerRepresentable {
-    func makeUIViewController(context: Context) -> UIViewController {
-        let vc = UIViewController()
-        DispatchQueue.main.async {
-            applyTabBarImages(from: vc)
-        }
-        return vc
-    }
-
-    func updateUIViewController(_ uiViewController: UIViewController, context: Context) {
-        DispatchQueue.main.async {
-            applyTabBarImages(from: uiViewController)
-        }
-    }
-
-    private func applyTabBarImages(from vc: UIViewController) {
-        var current: UIViewController? = vc
-        while let parent = current?.parent {
-            if let tbc = parent as? UITabBarController, let items = tbc.tabBar.items, items.count >= 3 {
-                items[0].image = UIImage(systemName: "shield")
-                items[0].selectedImage = UIImage(systemName: "shield.fill")
-
-                items[1].image = UIImage(systemName: "clock")
-                items[1].selectedImage = UIImage(systemName: "clock.fill")
-
-                items[2].image = UIImage(systemName: "gearshape")
-                items[2].selectedImage = UIImage(systemName: "gearshape.fill")
-                return
-            }
-            current = parent
-        }
-    }
-}
-
-private struct TabItemImagesModifier: ViewModifier {
-    let unselected: String
-    let selected: String
-
-    func body(content: Content) -> some View {
-        content.background(
-            TabItemAccessor(unselected: unselected, selected: selected)
-        )
-    }
-}
-
-private struct TabItemAccessor: UIViewControllerRepresentable {
-    let unselected: String
-    let selected: String
-
-    func makeUIViewController(context: Context) -> UIViewController {
-        let vc = UIViewController()
-        DispatchQueue.main.async {
-            apply(from: vc)
-        }
-        return vc
-    }
-
-    func updateUIViewController(_ uiViewController: UIViewController, context: Context) {
-        DispatchQueue.main.async {
-            apply(from: uiViewController)
-        }
-    }
-
-    private func apply(from vc: UIViewController) {
-        var current: UIViewController? = vc
-        while let parent = current?.parent {
-            if let item = parent.tabBarItem {
-                item.image = UIImage(systemName: unselected)
-                item.selectedImage = UIImage(systemName: selected)
-            }
-            if let tbc = parent as? UITabBarController, let items = tbc.tabBar.items, items.count >= 3 {
-                items[0].image = UIImage(systemName: "shield")
-                items[0].selectedImage = UIImage(systemName: "shield.fill")
-
-                items[1].image = UIImage(systemName: "clock")
-                items[1].selectedImage = UIImage(systemName: "clock.fill")
-
-                items[2].image = UIImage(systemName: "gearshape")
-                items[2].selectedImage = UIImage(systemName: "gearshape.fill")
-            }
-            current = parent
         }
     }
 }
