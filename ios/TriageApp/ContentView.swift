@@ -131,15 +131,15 @@ struct ContentView: View {
                         }
                     }
                     .padding(.horizontal, 16)
-                    .padding(.top, 12)
-                    .padding(.bottom, 96)
+                    .padding(.top, 16)
+                    .padding(.bottom, 24)
                 }
                 .refreshable {
                     triggerSync()
                 }
             }
-            .navigationTitle("Protection")
-            .navigationBarTitleDisplayMode(.large)
+            .navigationTitle("")
+            .navigationBarHidden(true)
             .sheet(isPresented: $showingPaywall) {
                 PaywallView()
             }
@@ -192,27 +192,58 @@ struct ContentView: View {
                     Spacer()
                 }
 
-                VStack(alignment: .leading, spacing: 6) {
-                    HStack {
-                        Text("Defense Integrity")
-                            .font(RetroTheme.captionMedium)
-                            .foregroundColor(RetroTheme.secondaryForeground)
+                HStack(spacing: 8) {
+                    shieldStatusChip(
+                        title: "SMS Filter",
+                        isActive: isModuleProtected(smsStatus),
+                        module: .sms
+                    )
 
-                        Spacer()
-
-                        Text(isFullyProtected ? "100%" : "\(activeLayersCount * 50)%")
-                            .font(RetroTheme.captionLarge)
-                            .foregroundColor(isFullyProtected ? RetroTheme.accent : RetroTheme.warning)
-                    }
-
-                    AppBlockMeter(
-                        filled: isFullyProtected ? 16 : (activeLayersCount * 8),
-                        total: 16,
-                        color: isFullyProtected ? .accent : .warning
+                    shieldStatusChip(
+                        title: "Safari Shield",
+                        isActive: isModuleProtected(safariStatus),
+                        module: .safari
                     )
                 }
             }
         }
+    }
+
+    private func shieldStatusChip(title: String, isActive: Bool, module: ModuleType) -> some View {
+        Button(action: {
+            UIImpactFeedbackGenerator(style: .light).impactOccurred()
+            selectedModule = module
+        }) {
+            HStack(spacing: 6) {
+                Image(systemName: isActive ? "checkmark.shield.fill" : "exclamationmark.shield.fill")
+                    .font(.system(size: 13, weight: .semibold))
+                    .foregroundColor(isActive ? RetroTheme.accent : RetroTheme.warning)
+
+                Text(title)
+                    .font(RetroTheme.captionMedium)
+                    .foregroundColor(RetroTheme.foreground)
+
+                Spacer()
+
+                Text(isActive ? "Active" : "Setup")
+                    .font(RetroTheme.captionSmall)
+                    .foregroundColor(isActive ? RetroTheme.accent : RetroTheme.warning)
+            }
+            .padding(.horizontal, 10)
+            .padding(.vertical, 8)
+            .background(
+                RoundedRectangle(cornerRadius: 10, style: .continuous)
+                    .fill(isActive ? RetroTheme.accent.opacity(0.08) : RetroTheme.warning.opacity(0.08))
+            )
+            .overlay(
+                RoundedRectangle(cornerRadius: 10, style: .continuous)
+                    .stroke(
+                        (isActive ? RetroTheme.accent : RetroTheme.warning).opacity(0.18),
+                        lineWidth: 0.5
+                    )
+            )
+        }
+        .buttonStyle(.plain)
     }
 
     private var modulesSection: some View {

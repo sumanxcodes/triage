@@ -98,7 +98,7 @@ public struct ThreatHistoryView: View {
                                 }
                             }
                             .padding(.horizontal, 16)
-                            .padding(.bottom, 96)
+                            .padding(.bottom, 24)
                         }
                         .refreshable {
                             loadEvents()

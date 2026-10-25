@@ -186,7 +186,7 @@ public struct SettingsView: View {
                             .font(RetroTheme.captionSmall)
                             .foregroundColor(RetroTheme.secondaryForeground.opacity(0.7))
                             .padding(.top, 4)
-                            .padding(.bottom, 96)
+                            .padding(.bottom, 24)
                     }
                     .padding(.horizontal, 16)
                     .padding(.top, 12)
