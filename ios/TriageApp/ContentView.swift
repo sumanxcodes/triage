@@ -177,7 +177,7 @@ struct ContentView: View {
                 }
                 .padding(.horizontal, 16)
                 .padding(.top, 10)
-                .padding(.bottom, 28)
+                .padding(.bottom, 96)
             }
             .navigationTitle("Triage")
             .toolbar {
