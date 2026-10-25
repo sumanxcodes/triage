@@ -28,15 +28,15 @@ public struct RetroTheme {
     /// Retro Solid Line Border: 2pt high-contrast outline
     public static let border = Color(uiColor: UIColor { trait in
         trait.userInterfaceStyle == .dark ?
-            UIColor(white: 0.88, alpha: 1.0) :
+            UIColor(white: 0.92, alpha: 1.0) :
             UIColor(white: 0.08, alpha: 1.0)
     })
 
     /// Retro Hard Offset Drop Shadow (unblurred mechanical drop shadow)
     public static let shadow = Color(uiColor: UIColor { trait in
         trait.userInterfaceStyle == .dark ?
-            UIColor.black.withAlphaComponent(0.85) :
-            UIColor(white: 0.08, alpha: 1.0)
+            UIColor(white: 0.92, alpha: 1.0) : // Symmetrical high-contrast white mechanical drop shadow in Dark Mode
+            UIColor(white: 0.08, alpha: 1.0)   // High-contrast black mechanical drop shadow in Light Mode
     })
 
     /// Phosphor Cyber Volt Accent (#D4FF3A)
