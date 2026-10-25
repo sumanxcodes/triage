@@ -1,4 +1,5 @@
 import SwiftUI
+import ComponentsKit
 
 public struct ThreatEventDetailSheet: View {
     let event: ThreatEventRecord
@@ -74,24 +75,20 @@ public struct ThreatEventDetailSheet: View {
                                         )
                                 }
 
-                                Button(action: copyToClipboard) {
-                                    HStack(spacing: 6) {
-                                        Image(systemName: copiedURL ? "checkmark" : "doc.on.doc")
-                                            .font(.system(size: 12, weight: .bold))
-                                        Text(copiedURL ? "COPIED TO CLIPBOARD" : "COPY THREAT URL")
-                                    }
-                                    .frame(maxWidth: .infinity)
+                                SUButton(
+                                    title: copiedURL ? "COPIED TO CLIPBOARD" : "COPY THREAT URL",
+                                    color: copiedURL ? .primary : nil,
+                                    style: copiedURL ? .filled : .light,
+                                    size: .small,
+                                    isFullWidth: true
+                                ) {
+                                    copyToClipboard()
                                 }
-                                .buttonStyle(RetroButtonStyle(
-                                    backgroundColor: copiedURL ? RetroTheme.volt : RetroTheme.elevatedSurface,
-                                    foregroundColor: copiedURL ? .black : .primary,
-                                    cornerRadius: 6
-                                ))
 
-                                Divider()
+                                SUDivider()
 
                                 detailRow(label: "CATEGORY", value: event.category.uppercased())
-                                Divider()
+                                SUDivider()
                                 detailRow(label: "TIMESTAMP", value: event.timestamp.formatted(date: .numeric, time: .standard))
                             }
                             .padding(16)
@@ -120,18 +117,15 @@ public struct ThreatEventDetailSheet: View {
                         .padding(.horizontal, 16)
 
                         // Delete Event Action
-                        Button(role: .destructive, action: deleteAndDismiss) {
-                            HStack {
-                                Image(systemName: "trash")
-                                Text("DELETE LOG ENTRY")
-                            }
-                            .frame(maxWidth: .infinity)
+                        SUButton(
+                            title: "DELETE LOG ENTRY",
+                            color: .danger,
+                            style: .light,
+                            size: .medium,
+                            isFullWidth: true
+                        ) {
+                            deleteAndDismiss()
                         }
-                        .buttonStyle(RetroButtonStyle(
-                            backgroundColor: Color.red.opacity(0.12),
-                            foregroundColor: .red,
-                            cornerRadius: 8
-                        ))
                         .padding(.horizontal, 16)
                         .padding(.bottom, 24)
                     }

@@ -1,4 +1,5 @@
 import SwiftUI
+import ComponentsKit
 
 public struct OnboardingView: View {
     @Environment(\.dismiss) private var dismiss
@@ -73,25 +74,20 @@ public struct OnboardingView: View {
 
                 // Sticky Bottom Action Bar
                 VStack(spacing: 10) {
-                    Button(action: {
+                    SUButton(
+                        title: "INITIALIZE PROTECTION",
+                        color: .primary,
+                        style: .filled,
+                        size: .large,
+                        isFullWidth: true
+                    ) {
                         UIImpactFeedbackGenerator(style: .medium).impactOccurred()
                         if let onComplete = onComplete {
                             onComplete()
                         } else {
                             dismiss()
                         }
-                    }) {
-                        HStack(spacing: 8) {
-                            Text("INITIALIZE PROTECTION")
-                            Image(systemName: "arrow.right")
-                        }
-                        .frame(maxWidth: .infinity)
                     }
-                    .buttonStyle(RetroButtonStyle(
-                        backgroundColor: RetroTheme.volt,
-                        foregroundColor: .black,
-                        cornerRadius: 8
-                    ))
 
                     HStack(spacing: 6) {
                         Image(systemName: "shield.lefthalf.filled")

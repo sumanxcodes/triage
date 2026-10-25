@@ -1,5 +1,6 @@
 import SwiftUI
 import StoreKit
+import ComponentsKit
 
 public struct SettingsView: View {
     @ObservedObject private var subscriptionManager = SubscriptionManager.shared
@@ -56,25 +57,20 @@ public struct SettingsView: View {
                                     }
 
                                     if !subscriptionManager.isProUser {
-                                        Button(action: {
+                                        SUButton(
+                                            title: "UPGRADE TO TRIAGE PRO",
+                                            color: .primary,
+                                            style: .filled,
+                                            size: .medium,
+                                            isFullWidth: true
+                                        ) {
                                             UIImpactFeedbackGenerator(style: .medium).impactOccurred()
                                             showingPaywall = true
-                                        }) {
-                                            HStack {
-                                                Image(systemName: "sparkles")
-                                                Text("UPGRADE TO TRIAGE PRO")
-                                            }
-                                            .frame(maxWidth: .infinity)
                                         }
-                                        .buttonStyle(RetroButtonStyle(
-                                            backgroundColor: RetroTheme.volt,
-                                            foregroundColor: .black,
-                                            cornerRadius: 8
-                                        ))
                                         .padding(.top, 4)
                                     }
 
-                                    Divider()
+                                    SUDivider()
 
                                     HStack {
                                         Button(action: restorePurchases) {
@@ -130,19 +126,19 @@ public struct SettingsView: View {
                                         menuRow(title: "FAQ & ARCHITECTURE", icon: "questionmark.circle.fill", iconColor: .blue)
                                     }
 
-                                    Divider()
+                                    SUDivider()
 
                                     Button(action: reportThreat) {
                                         menuRow(title: "REPORT THREAT / FALSE POSITIVE", icon: "flag.fill", iconColor: .orange)
                                     }
 
-                                    Divider()
+                                    SUDivider()
 
                                     Button(action: contactSupport) {
                                         menuRow(title: "CONTACT SECURITY TEAM", icon: "envelope.fill", iconColor: .secondary)
                                     }
 
-                                    Divider()
+                                    SUDivider()
 
                                     Button(action: {
                                         withAnimation(.spring(response: 0.45, dampingFraction: 0.85)) {
@@ -170,7 +166,7 @@ public struct SettingsView: View {
                                         menuRow(title: "PRIVACY POLICY & ZERO-LOGGING", icon: "lock.shield.fill", iconColor: RetroTheme.textAccent)
                                     }
 
-                                    Divider()
+                                    SUDivider()
 
                                     Button(action: { showingTermsOfService = true }) {
                                         menuRow(title: "TERMS OF SERVICE (EULA)", icon: "doc.text.fill", iconColor: .secondary)
@@ -198,7 +194,7 @@ public struct SettingsView: View {
                                         RetroBadge("SQLITE 3.45 WAL", color: RetroTheme.textAccent, isFilled: true)
                                     }
 
-                                    Divider()
+                                    SUDivider()
 
                                     HStack {
                                         Text("BUILD SPEC")
@@ -210,7 +206,7 @@ public struct SettingsView: View {
                                             .foregroundColor(.primary)
                                     }
 
-                                    Divider()
+                                    SUDivider()
 
                                     HStack {
                                         Text("SANDBOX")

@@ -1,4 +1,5 @@
 import SwiftUI
+import ComponentsKit
 
 public struct ThreatHistoryView: View {
     @State private var events: [ThreatEventRecord] = []

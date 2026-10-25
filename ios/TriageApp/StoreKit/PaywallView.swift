@@ -1,5 +1,6 @@
 import SwiftUI
 import StoreKit
+import ComponentsKit
 
 /// Retro-themed Paywall view presenting Triage Pro subscription tiers and features
 public struct PaywallView: View {
@@ -122,24 +123,16 @@ public struct PaywallView: View {
 
                         // Primary Purchase Button
                         VStack(spacing: 12) {
-                            Button(action: handlePurchase) {
-                                HStack(spacing: 8) {
-                                    if subscriptionManager.isPurchasing {
-                                        ProgressView()
-                                            .tint(.black)
-                                    } else {
-                                        Text(purchaseButtonTitle)
-                                        Image(systemName: "arrow.right")
-                                    }
-                                }
-                                .frame(maxWidth: .infinity)
+                            SUButton(
+                                title: purchaseButtonTitle,
+                                color: .primary,
+                                style: .filled,
+                                size: .large,
+                                isFullWidth: true,
+                                isEnabled: !subscriptionManager.isPurchasing
+                            ) {
+                                handlePurchase()
                             }
-                            .buttonStyle(RetroButtonStyle(
-                                backgroundColor: RetroTheme.volt,
-                                foregroundColor: .black,
-                                cornerRadius: 8
-                            ))
-                            .disabled(subscriptionManager.isPurchasing)
 
                             Button(action: {
                                 Task {

@@ -1,4 +1,5 @@
 import SwiftUI
+import ComponentsKit
 
 // MARK: - Module Types & Status Models
 
@@ -710,18 +711,15 @@ struct ModuleDetailSheet: View {
 
     private var actionSection: some View {
         VStack(spacing: 10) {
-            Button(action: openSettings) {
-                HStack(spacing: 8) {
-                    Image(systemName: "gearshape.fill")
-                    Text("OPEN IPHONE SETTINGS")
-                }
-                .frame(maxWidth: .infinity)
+            SUButton(
+                title: "OPEN IPHONE SETTINGS",
+                color: .primary,
+                style: .filled,
+                size: .medium,
+                isFullWidth: true
+            ) {
+                openSettings()
             }
-            .buttonStyle(RetroButtonStyle(
-                backgroundColor: RetroTheme.volt,
-                foregroundColor: .black,
-                cornerRadius: 8
-            ))
 
             Text("Settings opens on Triage. Tap **‹ Apps** in top-left to reach \(moduleType == .sms ? "Messages" : "Safari").")
                 .font(.system(size: 10, design: .monospaced))
@@ -730,37 +728,29 @@ struct ModuleDetailSheet: View {
                 .padding(.horizontal, 12)
 
             if moduleType == .sms {
-                Button(action: {
+                SUButton(
+                    title: "TEST WITH SMS SIMULATOR",
+                    color: nil,
+                    style: .light,
+                    size: .medium,
+                    isFullWidth: true
+                ) {
                     UIImpactFeedbackGenerator(style: .medium).impactOccurred()
                     showSMSSimulator = true
-                }) {
-                    HStack(spacing: 8) {
-                        Image(systemName: "terminal.fill")
-                        Text("TEST WITH SMS SIMULATOR")
-                    }
-                    .frame(maxWidth: .infinity)
                 }
-                .buttonStyle(RetroButtonStyle(
-                    backgroundColor: RetroTheme.elevatedSurface,
-                    foregroundColor: .primary,
-                    cornerRadius: 8
-                ))
                 .padding(.top, 4)
             }
 
             if moduleType == .safari {
-                Button(action: testInSafari) {
-                    HStack(spacing: 8) {
-                        Image(systemName: "safari")
-                        Text("TEST SAFARI SHIELD")
-                    }
-                    .frame(maxWidth: .infinity)
+                SUButton(
+                    title: "TEST SAFARI SHIELD",
+                    color: nil,
+                    style: .light,
+                    size: .medium,
+                    isFullWidth: true
+                ) {
+                    testInSafari()
                 }
-                .buttonStyle(RetroButtonStyle(
-                    backgroundColor: RetroTheme.elevatedSurface,
-                    foregroundColor: .primary,
-                    cornerRadius: 8
-                ))
                 .padding(.top, 4)
 
                 if let msg = testPromptMessage {
@@ -979,18 +969,15 @@ struct SMSSimulatorSheet: View {
                         }
 
                         // Run Inspection Button
-                        Button(action: runEvaluation) {
-                            HStack(spacing: 8) {
-                                Image(systemName: "play.fill")
-                                Text("EXECUTE THREAT INSPECTION")
-                            }
-                            .frame(maxWidth: .infinity)
+                        SUButton(
+                            title: "EXECUTE THREAT INSPECTION",
+                            color: .primary,
+                            style: .filled,
+                            size: .medium,
+                            isFullWidth: true
+                        ) {
+                            runEvaluation()
                         }
-                        .buttonStyle(RetroButtonStyle(
-                            backgroundColor: RetroTheme.volt,
-                            foregroundColor: .black,
-                            cornerRadius: 8
-                        ))
 
                         // Evaluation Verdict Card
                         if let verdict = evaluationResult {
