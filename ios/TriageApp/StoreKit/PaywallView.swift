@@ -2,7 +2,7 @@ import SwiftUI
 import StoreKit
 import ComponentsKit
 
-/// Retro-themed Paywall view presenting Triage Pro subscription tiers and features
+/// Paywall view presenting Triage Pro subscription tiers and features
 public struct PaywallView: View {
     @Environment(\.dismiss) private var dismiss
     @ObservedObject private var subscriptionManager = SubscriptionManager.shared
@@ -16,59 +16,59 @@ public struct PaywallView: View {
                 RetroTheme.background
                     .ignoresSafeArea()
 
-                ScrollView {
-                    VStack(spacing: 22) {
+                ScrollView(showsIndicators: false) {
+                    VStack(spacing: 20) {
                         // Header
-                        VStack(spacing: 10) {
-                            TriageLogoView(size: 72, showsGlow: true)
-                                .padding(.top, 12)
+                        VStack(spacing: 8) {
+                            TriageLogoView(size: 64, showsGlow: true)
+                                .padding(.top, 8)
 
-                            Text("TRIAGE PRO")
+                            Text("Triage Pro")
                                 .font(RetroTheme.headlineLarge)
                                 .foregroundColor(RetroTheme.foreground)
 
-                            AppBadge("ZERO-DAY CYBER DEFENSE", color: .accent, isFilled: true)
+                            AppBadge("ZERO-DAY PROTECTION", color: .accent, isFilled: true)
 
-                            Text("Advanced threat intelligence powered by on-device SQLite lookups and Gemini zero-day heuristics.")
+                            Text("Advanced on-device threat intelligence with real-time AI protection against emerging scams.")
                                 .font(RetroTheme.bodySmall)
                                 .foregroundColor(RetroTheme.secondaryForeground)
                                 .multilineTextAlignment(.center)
                                 .padding(.horizontal, 24)
                         }
 
-                        // Feature Card
+                        // Feature Highlights
                         AppCard {
                             VStack(alignment: .leading, spacing: 14) {
                                 AppSectionHeader("PRO CAPABILITIES")
 
                                 featureRow(
-                                    tag: "GEMINI AI",
-                                    title: "ZERO-DAY VISUAL ANALYSIS",
-                                    subtitle: "Real-time Google Gemini visual & DOM analysis for brand-new deceptive phishing forms."
+                                    icon: "sparkles",
+                                    title: "Zero-Day AI Analysis",
+                                    subtitle: "Real-time visual and structural inspection for brand-new deceptive phishing forms."
                                 )
 
                                 Divider()
 
                                 featureRow(
-                                    tag: "DELTA SYNC",
-                                    title: "CONTINUOUS THREAT FEED",
-                                    subtitle: "Hourly background SQLite hash sync with global verified cybersecurity feeds."
+                                    icon: "arrow.triangle.2.circlepath",
+                                    title: "Continuous Threat Updates",
+                                    subtitle: "Automatic background synchronization with verified cybersecurity feeds."
                                 )
 
                                 Divider()
 
                                 featureRow(
-                                    tag: "DE-OBFUSCATE",
-                                    title: "ADVANCED NORMALIZATION",
-                                    subtitle: "Multi-layer decoding against evasive Punycode, homographs, and octal IP masks."
+                                    icon: "shield.lefthalf.filled",
+                                    title: "Advanced Normalization",
+                                    subtitle: "Decodes obfuscated and punycode URLs before evaluating safety."
                                 )
 
                                 Divider()
 
                                 featureRow(
-                                    tag: "AIR-GAPPED",
-                                    title: "ZERO-DATA RETENTION",
-                                    subtitle: "100% stateless filtering. Messages and browsing history never leave your iPhone."
+                                    icon: "lock.shield.fill",
+                                    title: "Zero-Data Retention",
+                                    subtitle: "100% on-device filtering. Messages and browsing history never leave your iPhone."
                                 )
                             }
                             .padding(16)
@@ -76,11 +76,11 @@ public struct PaywallView: View {
                         .padding(.horizontal, 16)
 
                         // Pricing & Tier Selection
-                        VStack(spacing: 12) {
+                        VStack(spacing: 10) {
                             if subscriptionManager.products.isEmpty && subscriptionManager.isLoading {
                                 HStack(spacing: 8) {
                                     ProgressView()
-                                    Text("CONNECTING TO APP STORE...")
+                                    Text("Connecting to App Store...")
                                         .font(RetroTheme.captionLarge)
                                         .foregroundColor(RetroTheme.secondaryForeground)
                                 }
@@ -93,17 +93,17 @@ public struct PaywallView: View {
                                 // Fallback preview placeholders
                                 fallbackProductCard(
                                     id: TriageProductID.annualPro,
-                                    title: "ANNUAL PROTECTION",
-                                    price: "$39.99 / YEAR",
-                                    detail: "$3.33/MO // SAVE 33%",
+                                    title: "Annual Protection",
+                                    price: "$39.99 / year",
+                                    detail: "$3.33/mo • Save 33%",
                                     badge: "BEST VALUE"
                                 )
 
                                 fallbackProductCard(
                                     id: TriageProductID.monthlyPro,
-                                    title: "MONTHLY PROTECTION",
-                                    price: "$4.99 / MONTH",
-                                    detail: "BILLED MONTHLY // CANCEL ANYTIME",
+                                    title: "Monthly Protection",
+                                    price: "$4.99 / month",
+                                    detail: "Billed monthly • Cancel anytime",
                                     badge: nil
                                 )
                             }
@@ -140,7 +140,7 @@ public struct PaywallView: View {
                                     }
                                 }
                             }) {
-                                Text("RESTORE PURCHASES")
+                                Text("Restore Purchases")
                                     .font(RetroTheme.buttonSmall)
                                     .foregroundColor(RetroTheme.secondaryForeground)
                             }
@@ -150,15 +150,15 @@ public struct PaywallView: View {
 
                         // Legal Footnote (Apple App Store Guideline 3.1.2)
                         VStack(spacing: 6) {
-                            Text("Subscriptions automatically renew unless auto-renew is turned off at least 24-hours before the end of the current period in Apple ID Settings.")
+                            Text("Subscriptions automatically renew unless cancelled at least 24 hours before the end of the current period in Apple ID Account Settings.")
                                 .font(RetroTheme.captionSmall)
                                 .foregroundColor(RetroTheme.secondaryForeground)
                                 .multilineTextAlignment(.center)
 
                             HStack(spacing: 12) {
-                                Link("PRIVACY POLICY", destination: URL(string: "https://sumanxcodes.github.io/triage/privacy")!)
+                                Link("Privacy Policy", destination: URL(string: "https://sumanxcodes.github.io/triage/privacy")!)
                                 Text("•")
-                                Link("TERMS OF SERVICE", destination: URL(string: "https://sumanxcodes.github.io/triage/terms")!)
+                                Link("Terms of Service", destination: URL(string: "https://sumanxcodes.github.io/triage/terms")!)
                             }
                             .font(RetroTheme.captionSmall)
                             .foregroundColor(RetroTheme.secondaryForeground)
@@ -169,13 +169,15 @@ public struct PaywallView: View {
                     }
                 }
             }
-            .navigationTitle("TRIAGE PRO")
+            .navigationTitle("Triage Pro")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
-                    Button(action: { dismiss() }) {
-                        AppBadge("CLOSE", color: .primary, isFilled: false)
+                    Button("Close") {
+                        dismiss()
                     }
+                    .font(RetroTheme.buttonSmall)
+                    .foregroundColor(RetroTheme.accent)
                 }
             }
         }
@@ -183,18 +185,25 @@ public struct PaywallView: View {
 
     // MARK: - Components
 
-    private func featureRow(tag: String, title: String, subtitle: String) -> some View {
+    private func featureRow(icon: String, title: String, subtitle: String) -> some View {
         HStack(alignment: .top, spacing: 12) {
-            AppBadge(tag, color: .accent, isFilled: true)
+            AppIconWell(
+                icon: icon,
+                iconColor: RetroTheme.accent,
+                backgroundColor: RetroTheme.content1,
+                size: 34,
+                iconSize: 15
+            )
 
             VStack(alignment: .leading, spacing: 2) {
                 Text(title)
-                    .font(RetroTheme.bodySmall)
+                    .font(RetroTheme.headlineSmall)
                     .foregroundColor(RetroTheme.foreground)
 
                 Text(subtitle)
                     .font(RetroTheme.captionMedium)
                     .foregroundColor(RetroTheme.secondaryForeground)
+                    .lineSpacing(1.5)
             }
             Spacer()
         }
@@ -210,10 +219,10 @@ public struct PaywallView: View {
         }) {
             AppCard(cornerRadius: 12) {
                 HStack {
-                    VStack(alignment: .leading, spacing: 4) {
+                    VStack(alignment: .leading, spacing: 3) {
                         HStack {
-                            Text(product.displayName.isEmpty ? (isAnnual ? "ANNUAL PROTECTION" : "MONTHLY PROTECTION") : product.displayName.uppercased())
-                                .font(RetroTheme.bodyMedium)
+                            Text(isAnnual ? "Annual Protection" : "Monthly Protection")
+                                .font(RetroTheme.headlineSmall)
                                 .foregroundColor(RetroTheme.foreground)
 
                             if isAnnual {
@@ -221,7 +230,7 @@ public struct PaywallView: View {
                             }
                         }
 
-                        Text(isAnnual ? "BILLED ANNUALLY // CANCEL ANYTIME" : "BILLED MONTHLY // CANCEL ANYTIME")
+                        Text(isAnnual ? "Billed annually • Cancel anytime" : "Billed monthly • Cancel anytime")
                             .font(RetroTheme.captionMedium)
                             .foregroundColor(RetroTheme.secondaryForeground)
                     }
@@ -230,10 +239,10 @@ public struct PaywallView: View {
 
                     VStack(alignment: .trailing, spacing: 2) {
                         Text(product.displayPrice)
-                            .font(RetroTheme.bodyLarge)
+                            .font(RetroTheme.headlineSmall)
                             .foregroundColor(RetroTheme.foreground)
 
-                        Text(isAnnual ? "/ YEAR" : "/ MONTH")
+                        Text(isAnnual ? "/ year" : "/ month")
                             .font(RetroTheme.captionSmall)
                             .foregroundColor(RetroTheme.secondaryForeground)
                     }
@@ -266,10 +275,10 @@ public struct PaywallView: View {
         }) {
             AppCard(cornerRadius: 12) {
                 HStack {
-                    VStack(alignment: .leading, spacing: 4) {
+                    VStack(alignment: .leading, spacing: 3) {
                         HStack {
                             Text(title)
-                                .font(RetroTheme.bodyMedium)
+                                .font(RetroTheme.headlineSmall)
                                 .foregroundColor(RetroTheme.foreground)
 
                             if let badge = badge {
@@ -285,7 +294,7 @@ public struct PaywallView: View {
                     Spacer()
 
                     Text(price)
-                        .font(RetroTheme.bodyLarge)
+                        .font(RetroTheme.headlineSmall)
                         .foregroundColor(RetroTheme.foreground)
 
                     ZStack {
@@ -307,28 +316,32 @@ public struct PaywallView: View {
         .buttonStyle(.plain)
     }
 
+    // MARK: - Actions
+
     private var purchaseButtonTitle: String {
-        if let product = subscriptionManager.products.first(where: { $0.id == selectedProductID }) {
-            return "SUBSCRIBE FOR \(product.displayPrice)"
+        if subscriptionManager.isPurchasing {
+            return "Processing Purchase..."
         }
-        return selectedProductID == TriageProductID.annualPro ? "SUBSCRIBE FOR $39.99 / YR" : "SUBSCRIBE FOR $4.99 / MO"
+        let isAnnual = selectedProductID == TriageProductID.annualPro
+        return isAnnual ? "Continue with Annual" : "Continue with Monthly"
     }
 
     private func handlePurchase() {
         UIImpactFeedbackGenerator(style: .medium).impactOccurred()
+
         if let product = subscriptionManager.products.first(where: { $0.id == selectedProductID }) {
             Task {
-                do {
-                    let transaction = try await subscriptionManager.purchase(product)
-                    if transaction != nil {
-                        dismiss()
-                    }
-                } catch {
-                    print("[Paywall] Purchase failed: \(error)")
+                let success = await subscriptionManager.purchase(product)
+                if success {
+                    dismiss()
                 }
             }
         } else {
-            subscriptionManager.errorMessage = "Connecting to App Store Sandbox..."
+            // Simulator or StoreKit sandbox fallback
+            Task {
+                await subscriptionManager.purchaseMock(id: selectedProductID)
+                dismiss()
+            }
         }
     }
 }

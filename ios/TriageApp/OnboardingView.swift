@@ -16,14 +16,16 @@ public struct OnboardingView: View {
 
             VStack(spacing: 0) {
                 ScrollView(showsIndicators: false) {
-                    VStack(alignment: .leading, spacing: 20) {
-                        // Top Badge
-                        TriageLogoView(size: 64, showsGlow: true)
-                            .padding(.top, 16)
+                    VStack(alignment: .leading, spacing: 24) {
+                        // Logo & Brand
+                        TriageLogoView(size: 60, showsGlow: true)
+                            .padding(.top, 20)
 
-                        // Eyebrow & Hero Headline
-                        VStack(alignment: .leading, spacing: 8) {
-                            AppBadge("PRIVATE BY DESIGN // SYSTEM INIT", color: .accent, isFilled: true)
+                        // Hero Headline
+                        VStack(alignment: .leading, spacing: 6) {
+                            Text("Private by Design")
+                                .font(RetroTheme.captionLarge)
+                                .foregroundColor(RetroTheme.accent)
 
                             VStack(alignment: .leading, spacing: 2) {
                                 Text("Your Messages.")
@@ -33,39 +35,45 @@ public struct OnboardingView: View {
                                 Text("Protected.")
                                     .foregroundColor(RetroTheme.accent)
                             }
-                            .font(RetroTheme.urbanist(size: 30, weight: .bold))
+                            .font(RetroTheme.urbanist(size: 32, weight: .bold))
 
-                            Text("Dual-layer cyber defense against smishing scams and fraudulent links, evaluated 100% on your iPhone.")
-                                .font(RetroTheme.bodySmall)
+                            Text("Dual-layer protection against scam texts and malicious links, evaluated entirely on your iPhone.")
+                                .font(RetroTheme.bodyMedium)
                                 .foregroundColor(RetroTheme.secondaryForeground)
-                                .padding(.top, 2)
+                                .padding(.top, 4)
                         }
 
-                        // Feature Cards
-                        VStack(spacing: 12) {
-                            featureCard(
-                                stepNumber: "[01]",
-                                title: "SMS SMISHING FILTER",
-                                subtitle: "Silently intercepts unknown scam texts and routes them to Junk before they ring.",
-                                icon: "message.badge.filled.fill",
-                                iconColor: RetroTheme.accent
-                            )
+                        // Grouped Feature Highlights
+                        AppCard {
+                            VStack(spacing: 0) {
+                                featureRow(
+                                    title: "SMS Scam Filter",
+                                    subtitle: "Silently routes fraudulent and unknown smishing texts to Junk.",
+                                    icon: "message.badge.filled.fill",
+                                    iconColor: RetroTheme.accent
+                                )
 
-                            featureCard(
-                                stepNumber: "[02]",
-                                title: "SAFARI WEB SHIELD",
-                                subtitle: "Cross-checks dangerous links in WebKit against local threat hashes in <1ms.",
-                                icon: "safari.fill",
-                                iconColor: RetroTheme.accent
-                            )
+                                Divider()
+                                    .padding(.leading, 52)
 
-                            featureCard(
-                                stepNumber: "[03]",
-                                title: "ZERO TELEMETRY",
-                                subtitle: "No account required. No analytics. Your private data never leaves your device.",
-                                icon: "lock.shield.fill",
-                                iconColor: RetroTheme.accent
-                            )
+                                featureRow(
+                                    title: "Safari Fraud Shield",
+                                    subtitle: "Instantly checks and blocks deceptive links while browsing in Safari.",
+                                    icon: "safari.fill",
+                                    iconColor: RetroTheme.accent
+                                )
+
+                                Divider()
+                                    .padding(.leading, 52)
+
+                                featureRow(
+                                    title: "Zero-Data Privacy",
+                                    subtitle: "No sign-in or account needed. Your private data never leaves your device.",
+                                    icon: "lock.shield.fill",
+                                    iconColor: RetroTheme.accent
+                                )
+                            }
+                            .padding(.vertical, 4)
                         }
                     }
                     .padding(.horizontal, 20)
@@ -73,9 +81,9 @@ public struct OnboardingView: View {
                 }
 
                 // Sticky Bottom Action Bar
-                VStack(spacing: 10) {
+                VStack(spacing: 12) {
                     SUButton(
-                        title: "INITIALIZE PROTECTION",
+                        title: "Get Started",
                         color: .primary,
                         style: .filled,
                         size: .large,
@@ -90,11 +98,11 @@ public struct OnboardingView: View {
                     }
 
                     HStack(spacing: 6) {
-                        Image(systemName: "shield.lefthalf.filled")
+                        Image(systemName: "lock.shield")
                             .font(RetroTheme.captionSmall)
                             .foregroundColor(RetroTheme.secondaryForeground)
 
-                        Text("LOCAL SQLITE // AIR-GAPPED EVALUATION")
+                        Text("On-Device Evaluation • Zero Telemetry")
                             .font(RetroTheme.captionSmall)
                             .foregroundColor(RetroTheme.secondaryForeground)
                     }
@@ -102,49 +110,40 @@ public struct OnboardingView: View {
                 }
                 .padding(.horizontal, 20)
                 .padding(.top, 12)
-                .padding(.bottom, 20)
+                .padding(.bottom, 24)
                 .background(RetroTheme.background)
             }
         }
     }
 
-    private func featureCard(
-        stepNumber: String,
+    private func featureRow(
         title: String,
         subtitle: String,
         icon: String,
         iconColor: Color
     ) -> some View {
-        AppCard {
-            HStack(alignment: .top, spacing: 12) {
-                AppIconWell(
-                    icon: icon,
-                    iconColor: iconColor,
-                    backgroundColor: RetroTheme.content1,
-                    size: 38,
-                    iconSize: 16
-                )
+        HStack(alignment: .top, spacing: 14) {
+            AppIconWell(
+                icon: icon,
+                iconColor: iconColor,
+                backgroundColor: RetroTheme.content1,
+                size: 38,
+                iconSize: 18
+            )
 
-                VStack(alignment: .leading, spacing: 3) {
-                    HStack {
-                        Text(stepNumber)
-                            .font(RetroTheme.captionSmall)
-                            .foregroundColor(RetroTheme.accent)
+            VStack(alignment: .leading, spacing: 3) {
+                Text(title)
+                    .font(RetroTheme.headlineSmall)
+                    .foregroundColor(RetroTheme.foreground)
 
-                        Text(title)
-                            .font(RetroTheme.bodyMedium)
-                            .foregroundColor(RetroTheme.foreground)
-                    }
-
-                    Text(subtitle)
-                        .font(RetroTheme.captionMedium)
-                        .foregroundColor(RetroTheme.secondaryForeground)
-                        .lineSpacing(1.5)
-                }
-
-                Spacer()
+                Text(subtitle)
+                    .font(RetroTheme.captionMedium)
+                    .foregroundColor(RetroTheme.secondaryForeground)
+                    .lineSpacing(2)
             }
-            .padding(12)
+
+            Spacer()
         }
+        .padding(.vertical, 10)
     }
 }
