@@ -27,12 +27,6 @@ public struct TriageLogoView: View {
                     )
                 )
                 .frame(width: size, height: size)
-                .shadow(
-                    color: showsGlow ? RetroTheme.accent.opacity(0.35) : Color.clear,
-                    radius: size * 0.2,
-                    x: 0,
-                    y: size * 0.08
-                )
 
             Image(systemName: "shield.checkered")
                 .font(.system(size: size * 0.48, weight: .semibold))

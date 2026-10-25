@@ -157,28 +157,19 @@ extension Theme {
         )
         $0.layout.shadow = .init(
             small: .init(
-                radius: 6.0,
-                offset: .init(width: 0, height: 4),
-                color: .themed(
-                    light: .rgba(r: 0, g: 0, b: 0, a: 0.08),
-                    dark: .rgba(r: 255, g: 255, b: 255, a: 0.08)
-                )
+                radius: 0.0,
+                offset: .zero,
+                color: .universal(.rgba(r: 0, g: 0, b: 0, a: 0))
             ),
             medium: .init(
-                radius: 12.0,
-                offset: .init(width: 0, height: 6),
-                color: .themed(
-                    light: .rgba(r: 0, g: 0, b: 0, a: 0.12),
-                    dark: .rgba(r: 255, g: 255, b: 255, a: 0.12)
-                )
+                radius: 0.0,
+                offset: .zero,
+                color: .universal(.rgba(r: 0, g: 0, b: 0, a: 0))
             ),
             large: .init(
-                radius: 16.0,
-                offset: .init(width: 0, height: 8),
-                color: .themed(
-                    light: .rgba(r: 0, g: 0, b: 0, a: 0.16),
-                    dark: .rgba(r: 255, g: 255, b: 255, a: 0.16)
-                )
+                radius: 0.0,
+                offset: .zero,
+                color: .universal(.rgba(r: 0, g: 0, b: 0, a: 0))
             )
         )
         $0.layout.borderWidth = .init(
@@ -391,10 +382,10 @@ extension CardVM {
             $0.backgroundColor = .secondaryBackground
             $0.backgroundStyle = .solid
             $0.borderColor = .divider
-            $0.borderWidth = .medium
+            $0.borderWidth = .small
             $0.contentPaddings = .init(padding: 16)
             $0.cornerRadius = .medium
-            $0.shadow = .medium
+            $0.shadow = .none
             $0.isTappable = false
         }
     }
@@ -564,7 +555,9 @@ public struct RetroCard<Content: View>: View {
         onTap: @escaping () -> Void = {},
         @ViewBuilder content: @escaping () -> Content
     ) {
-        self.model = model
+        var m = model
+        m.shadow = .none
+        self.model = m
         self.onTap = onTap
         self.content = content
     }
@@ -668,12 +661,6 @@ public struct RetroButtonStyle: SwiftUI.ButtonStyle {
             .overlay(
                 RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
                     .stroke(UniversalColor.divider.color, lineWidth: Theme.current.layout.borderWidth.small)
-            )
-            .shadow(
-                color: Theme.current.layout.shadow.small.color.color,
-                radius: 4,
-                x: 0,
-                y: 2
             )
             .scaleEffect(configuration.isPressed ? Theme.current.layout.animationScale.medium : 1.0)
             .animation(.easeInOut(duration: 0.1), value: configuration.isPressed)
