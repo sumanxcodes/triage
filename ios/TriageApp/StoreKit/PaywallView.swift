@@ -331,17 +331,17 @@ public struct PaywallView: View {
 
         if let product = subscriptionManager.products.first(where: { $0.id == selectedProductID }) {
             Task {
-                let success = await subscriptionManager.purchase(product)
-                if success {
-                    dismiss()
+                do {
+                    let transaction = try await subscriptionManager.purchase(product)
+                    if transaction != nil {
+                        dismiss()
+                    }
+                } catch {
+                    print("[Paywall] Purchase failed: \(error)")
                 }
             }
         } else {
-            // Simulator or StoreKit sandbox fallback
-            Task {
-                await subscriptionManager.purchaseMock(id: selectedProductID)
-                dismiss()
-            }
+            subscriptionManager.errorMessage = "Connecting to App Store..."
         }
     }
 }
