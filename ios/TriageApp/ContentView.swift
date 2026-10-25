@@ -492,6 +492,7 @@ struct ModuleDetailSheet: View {
     @State private var lastHeartbeatDate: Date?
     @State private var isConfigured: Bool = false
     @State private var testPromptMessage: String?
+    @State private var showSMSSimulator: Bool = false
 
     private var moduleTitle: String {
         switch moduleType {
@@ -571,6 +572,14 @@ struct ModuleDetailSheet: View {
                 if scenePhase == .active {
                     loadState()
                 }
+            }
+            .sheet(isPresented: $showSMSSimulator) {
+                SMSSimulatorSheet(onComplete: {
+                    loadState()
+                    onDismiss?()
+                })
+                .presentationDetents([.fraction(0.88), .large])
+                .presentationDragIndicator(.visible)
             }
         }
     }
@@ -721,6 +730,26 @@ struct ModuleDetailSheet: View {
                 .multilineTextAlignment(.center)
                 .padding(.horizontal, 12)
 
+            if moduleType == .sms {
+                Button(action: {
+                    UIImpactFeedbackGenerator(style: .medium).impactOccurred()
+                    showSMSSimulator = true
+                }) {
+                    HStack(spacing: 8) {
+                        Image(systemName: "shield.lefthalf.filled")
+                            .font(.body.weight(.semibold))
+                        Text("Simulate SMS Inspection")
+                            .fontWeight(.semibold)
+                    }
+                    .frame(maxWidth: .infinity)
+                    .frame(minHeight: 24)
+                }
+                .buttonStyle(.bordered)
+                .controlSize(.large)
+                .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
+                .padding(.top, 4)
+            }
+
             if moduleType == .safari {
                 Button(action: testInSafari) {
                     HStack(spacing: 8) {
@@ -789,6 +818,381 @@ struct ModuleDetailSheet: View {
         testPromptMessage = "Safari opened. If enabled, the extension sends an instant heartbeat. Return to verify."
         if let url = URL(string: "https://example.com") {
             UIApplication.shared.open(url)
+        }
+    }
+}
+
+// MARK: - Native SMS Threat Simulator Sheet
+
+struct SMSSimulatorSheet: View {
+    var onComplete: (() -> Void)? = nil
+    @Environment(\.dismiss) private var dismiss
+
+    struct AttackPreset: Identifiable {
+        let id = UUID()
+        let title: String
+        let icon: String
+        let color: Color
+        let sender: String
+        let message: String
+    }
+
+    private let presets: [AttackPreset] = [
+        AttackPreset(
+            title: "AusPost",
+            icon: "shippingbox.fill",
+            color: .red,
+            sender: "+61 489 123 456",
+            message: "AusPost: Your parcel could not be delivered due to incomplete address details. Update delivery address here: https://example.com/delivery"
+        ),
+        AttackPreset(
+            title: "CommBank",
+            icon: "building.columns.fill",
+            color: .orange,
+            sender: "+61 412 987 654",
+            message: "CommBank: Unusual sign-in attempt detected from an unrecognized device. Verify NetBank identity: https://example.com/auth"
+        ),
+        AttackPreset(
+            title: "Linkt Toll",
+            icon: "car.fill",
+            color: .purple,
+            sender: "+61 400 555 123",
+            message: "Linkt: You have an unpaid toll invoice of $12.40. Avoid late fees by paying now: https://example.com/toll"
+        ),
+        AttackPreset(
+            title: "Clean SMS",
+            icon: "bubble.left.and.bubble.right.fill",
+            color: .green,
+            sender: "+61 491 570 006",
+            message: "Hey! Are you still free for coffee at 2pm today? Let me know!"
+        )
+    ]
+
+    @State private var senderNumber: String = "+61 489 123 456"
+    @State private var messageBody: String = "AusPost: Your parcel could not be delivered due to incomplete address details. Update delivery address here: https://example.com/delivery"
+    @State private var evaluationResult: SimulationVerdict? = nil
+    @State private var selectedPresetIndex: Int? = 0
+
+    enum SimulationVerdict: Equatable {
+        case threat(url: String, brand: String?, category: String)
+        case unverified(url: String)
+        case clean
+    }
+
+    var body: some View {
+        NavigationStack {
+            ScrollView {
+                VStack(spacing: 16) {
+                    // Header Description
+                    HStack(spacing: 12) {
+                        Image(systemName: "shield.lefthalf.filled")
+                            .font(.system(size: 24))
+                            .foregroundColor(.green)
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text("IdentityLookup Evaluation Engine")
+                                .font(.subheadline.weight(.semibold))
+                            Text("Tests message payloads against the on-device threat database without requiring cellular SMS.")
+                                .font(.caption)
+                                .foregroundColor(.secondary)
+                        }
+                    }
+                    .padding(14)
+                    .background(Color(.secondarySystemBackground))
+                    .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
+
+                    // Attack Presets
+                    VStack(alignment: .leading, spacing: 10) {
+                        Text("Sample Test Scenarios")
+                            .font(.caption.weight(.semibold))
+                            .foregroundColor(.secondary)
+                            .textCase(.uppercase)
+
+                        ScrollView(.horizontal, showsIndicators: false) {
+                            HStack(spacing: 8) {
+                                ForEach(Array(presets.enumerated()), id: \.element.id) { index, preset in
+                                    Button(action: {
+                                        selectPreset(index)
+                                    }) {
+                                        HStack(spacing: 6) {
+                                            Image(systemName: preset.icon)
+                                                .font(.caption.weight(.semibold))
+                                                .foregroundColor(preset.color)
+                                            Text(preset.title)
+                                                .font(.subheadline.weight(.medium))
+                                                .foregroundColor(.primary)
+                                        }
+                                        .padding(.horizontal, 12)
+                                        .padding(.vertical, 8)
+                                        .background(selectedPresetIndex == index ? preset.color.opacity(0.18) : Color(.secondarySystemBackground))
+                                        .overlay(
+                                            RoundedRectangle(cornerRadius: 10, style: .continuous)
+                                                .stroke(selectedPresetIndex == index ? preset.color : Color.clear, lineWidth: 1.5)
+                                        )
+                                        .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
+                                    }
+                                    .buttonStyle(.plain)
+                                }
+                            }
+                        }
+                    }
+
+                    // Simulated Message Editor
+                    VStack(alignment: .leading, spacing: 10) {
+                        Text("Simulated Incoming Payload")
+                            .font(.caption.weight(.semibold))
+                            .foregroundColor(.secondary)
+                            .textCase(.uppercase)
+
+                        VStack(alignment: .leading, spacing: 12) {
+                            HStack(spacing: 8) {
+                                Image(systemName: "person.crop.circle")
+                                    .foregroundColor(.secondary)
+                                    .frame(width: 20)
+                                TextField("Sender Number", text: $senderNumber)
+                                    .font(.subheadline)
+                                    .keyboardType(.phonePad)
+                            }
+
+                            Divider()
+
+                            HStack(alignment: .top, spacing: 8) {
+                                Image(systemName: "bubble.left.fill")
+                                    .foregroundColor(.secondary)
+                                    .frame(width: 20)
+                                    .padding(.top, 4)
+                                TextEditor(text: $messageBody)
+                                    .font(.subheadline)
+                                    .frame(minHeight: 70)
+                                    .scrollContentBackground(.hidden)
+                            }
+                        }
+                        .padding(14)
+                        .background(Color(.secondarySystemBackground))
+                        .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
+                    }
+
+                    // Run Inspection Button
+                    Button(action: runEvaluation) {
+                        HStack(spacing: 8) {
+                            Image(systemName: "play.fill")
+                                .font(.body.weight(.semibold))
+                            Text("Run Threat Evaluation")
+                                .fontWeight(.semibold)
+                        }
+                        .frame(maxWidth: .infinity)
+                        .frame(minHeight: 24)
+                    }
+                    .buttonStyle(.borderedProminent)
+                    .controlSize(.large)
+                    .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
+
+                    // Evaluation Verdict Card
+                    if let verdict = evaluationResult {
+                        verdictCard(for: verdict)
+                            .transition(.opacity.combined(with: .move(edge: .bottom)))
+                    }
+                }
+                .padding(.horizontal, 16)
+                .padding(.top, 12)
+                .padding(.bottom, 24)
+            }
+            .navigationTitle("SMS Threat Simulator")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .confirmationAction) {
+                    Button("Done") {
+                        dismiss()
+                    }
+                    .fontWeight(.semibold)
+                }
+            }
+            .onAppear {
+                if ThreatDatabase.shared.count() == 0 {
+                    _ = try? ThreatSyncManager.shared.seedDemoThreats()
+                }
+            }
+        }
+    }
+
+    // MARK: - Verdict Subview
+
+    @ViewBuilder
+    private func verdictCard(for verdict: SimulationVerdict) -> some View {
+        VStack(alignment: .leading, spacing: 12) {
+            switch verdict {
+            case .threat(let url, let brand, let category):
+                HStack(spacing: 12) {
+                    Image(systemName: "shield.slash.fill")
+                        .font(.title2)
+                        .foregroundColor(.red)
+
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text("Smishing Threat Detected")
+                            .font(.headline)
+                            .foregroundColor(.red)
+                        Text("Action: Filtered to Junk (.junk)")
+                            .font(.caption.weight(.semibold))
+                            .foregroundColor(.secondary)
+                    }
+
+                    Spacer()
+
+                    Text("BLOCKED")
+                        .font(.caption2.weight(.bold))
+                        .padding(.horizontal, 8)
+                        .padding(.vertical, 4)
+                        .background(Color.red.opacity(0.15))
+                        .foregroundColor(.red)
+                        .cornerRadius(6)
+                }
+
+                Divider()
+
+                VStack(alignment: .leading, spacing: 6) {
+                    if let b = brand {
+                        detailRow(label: "Brand Impersonated", value: b)
+                    }
+                    detailRow(label: "Threat Category", value: category.capitalized)
+                    detailRow(label: "Extracted URL", value: url)
+                    detailRow(label: "iOS Action", value: "Silently routed to Messages > Junk")
+                    detailRow(label: "Audit Status", value: "Logged to Triage Threat History")
+                }
+
+            case .clean:
+                HStack(spacing: 12) {
+                    Image(systemName: "checkmark.shield.fill")
+                        .font(.title2)
+                        .foregroundColor(.green)
+
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text("Legitimate Message")
+                            .font(.headline)
+                            .foregroundColor(.green)
+                        Text("Action: Allowed to Inbox (.none)")
+                            .font(.caption.weight(.semibold))
+                            .foregroundColor(.secondary)
+                    }
+
+                    Spacer()
+
+                    Text("CLEAN")
+                        .font(.caption2.weight(.bold))
+                        .padding(.horizontal, 8)
+                        .padding(.vertical, 4)
+                        .background(Color.green.opacity(0.15))
+                        .foregroundColor(.green)
+                        .cornerRadius(6)
+                }
+
+                Divider()
+
+                Text("No malicious links, homoglyphs, or known smishing hashes were detected. Message safely delivered to primary inbox.")
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+
+            case .unverified(let url):
+                HStack(spacing: 12) {
+                    Image(systemName: "questionmark.shield.fill")
+                        .font(.title2)
+                        .foregroundColor(.orange)
+
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text("Unverified Link Detected")
+                            .font(.headline)
+                            .foregroundColor(.orange)
+                        Text("Action: Defer to Cloud Filter")
+                            .font(.caption.weight(.semibold))
+                            .foregroundColor(.secondary)
+                    }
+
+                    Spacer()
+
+                    Text("DEFERRED")
+                        .font(.caption2.weight(.bold))
+                        .padding(.horizontal, 8)
+                        .padding(.vertical, 4)
+                        .background(Color.orange.opacity(0.15))
+                        .foregroundColor(.orange)
+                        .cornerRadius(6)
+                }
+
+                Divider()
+
+                VStack(alignment: .leading, spacing: 6) {
+                    detailRow(label: "Extracted URL", value: url)
+                    detailRow(label: "Offline Status", value: "Not found in local cache")
+                    detailRow(label: "System Action", value: "Queries cloud backend over HTTPS")
+                }
+            }
+        }
+        .padding(16)
+        .background(Color(.secondarySystemBackground))
+        .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+    }
+
+    private func detailRow(label: String, value: String) -> some View {
+        HStack(alignment: .top) {
+            Text(label + ":")
+                .font(.caption.weight(.medium))
+                .foregroundColor(.secondary)
+            Spacer()
+            Text(value)
+                .font(.caption.weight(.semibold))
+                .foregroundColor(.primary)
+                .multilineTextAlignment(.trailing)
+        }
+    }
+
+    // MARK: - Simulation Logic
+
+    private func selectPreset(_ index: Int) {
+        UIImpactFeedbackGenerator(style: .light).impactOccurred()
+        selectedPresetIndex = index
+        senderNumber = presets[index].sender
+        messageBody = presets[index].message
+        withAnimation(.spring(response: 0.35, dampingFraction: 0.8)) {
+            evaluationResult = nil
+        }
+    }
+
+    private func runEvaluation() {
+        // Record SMS heartbeat
+        AppGroup.recordSMSHeartbeat()
+        onComplete?()
+
+        // 1. Extract URLs
+        let urls = URLHasher.extractURLs(from: messageBody)
+
+        // 2. Candidate hash inspection via GRDB
+        var threatMatch: (url: URL, brand: String?, category: String)? = nil
+        for url in urls {
+            let candidateHashes = URLHasher.candidateHashes(for: url)
+            if ThreatDatabase.shared.isThreat(candidateHashes: candidateHashes) {
+                let match = ThreatDatabase.shared.findThreat(candidateHashes: candidateHashes)
+                threatMatch = (url, match?.targetBrand, match?.category ?? "smishing")
+                break
+            }
+        }
+
+        withAnimation(.spring(response: 0.35, dampingFraction: 0.8)) {
+            if let threat = threatMatch {
+                ThreatDatabase.shared.recordEvent(
+                    source: "sms",
+                    target: threat.url.absoluteString,
+                    sender: senderNumber.isEmpty ? "Unknown Sender" : senderNumber,
+                    category: threat.category,
+                    targetBrand: threat.brand,
+                    actionTaken: "filtered_to_junk"
+                )
+                evaluationResult = .threat(url: threat.url.absoluteString, brand: threat.brand, category: threat.category)
+                UINotificationFeedbackGenerator().notificationOccurred(.warning)
+            } else if let firstUrl = urls.first {
+                evaluationResult = .unverified(url: firstUrl.absoluteString)
+                UINotificationFeedbackGenerator().notificationOccurred(.warning)
+            } else {
+                evaluationResult = .clean
+                UINotificationFeedbackGenerator().notificationOccurred(.success)
+            }
         }
     }
 }
