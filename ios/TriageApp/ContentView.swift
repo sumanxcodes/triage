@@ -178,13 +178,13 @@ struct ContentView: View {
                 Text("TRIAGE // TERMINAL")
                     .font(.system(size: 13, weight: .heavy, design: .monospaced))
                     .tracking(1.4)
-                    .foregroundColor(.primary)
+                    .foregroundColor(RetroTheme.foreground)
             }
 
             Spacer()
 
             if subscriptionManager.isProUser {
-                RetroBadge("PRO", color: RetroTheme.textAccent, isFilled: true)
+                RetroBadge("PRO", color: .accent, isFilled: true)
             } else {
                 Button(action: {
                     UIImpactFeedbackGenerator(style: .light).impactOccurred()
@@ -198,8 +198,8 @@ struct ContentView: View {
                     }
                     .padding(.horizontal, 9)
                     .padding(.vertical, 5)
-                    .background(RetroTheme.volt)
-                    .foregroundColor(.black)
+                    .background(RetroTheme.primary)
+                    .foregroundColor(RetroTheme.primaryContrast)
                     .clipShape(RoundedRectangle(cornerRadius: 6, style: .continuous))
                     .overlay(
                         RoundedRectangle(cornerRadius: 6, style: .continuous)
@@ -223,7 +223,7 @@ struct ContentView: View {
                 HStack {
                     RetroBadge(
                         isFullyProtected ? "SHIELD: ACTIVE" : "SHIELD: INCOMPLETE",
-                        color: isFullyProtected ? RetroTheme.textAccent : RetroTheme.textAmber,
+                        color: isFullyProtected ? .success : .warning,
                         isFilled: true
                     )
 
@@ -231,7 +231,7 @@ struct ContentView: View {
 
                     Text(isFullyProtected ? "[2/2 ONLINE]" : "[\(activeLayersCount)/2 READY]")
                         .font(.system(size: 11, weight: .bold, design: .monospaced))
-                        .foregroundColor(.secondary)
+                        .foregroundColor(RetroTheme.secondaryForeground)
                 }
 
                 HStack(spacing: 18) {
@@ -240,13 +240,13 @@ struct ContentView: View {
                     VStack(alignment: .leading, spacing: 4) {
                         Text(isFullyProtected ? "SYSTEM SECURED" : "ACTION NEEDED")
                             .font(.system(size: 20, weight: .heavy, design: .monospaced))
-                            .foregroundColor(.primary)
+                            .foregroundColor(RetroTheme.foreground)
 
                         Text(isFullyProtected ?
                              "SMS smishing filter & Safari web shield actively protecting." :
                              "Turn on shields in iPhone Settings to guard messages & web.")
                             .font(.system(size: 12, weight: .medium, design: .monospaced))
-                            .foregroundColor(.secondary)
+                            .foregroundColor(RetroTheme.secondaryForeground)
                             .lineLimit(2)
                     }
 
@@ -257,19 +257,19 @@ struct ContentView: View {
                     HStack {
                         Text("DEFENSE INTEGRITY")
                             .font(.system(size: 10, weight: .heavy, design: .monospaced))
-                            .foregroundColor(.secondary)
+                            .foregroundColor(RetroTheme.secondaryForeground)
 
                         Spacer()
 
                         Text(isFullyProtected ? "100%" : "\(activeLayersCount * 50)%")
                             .font(.system(size: 10, weight: .heavy, design: .monospaced))
-                            .foregroundColor(isFullyProtected ? RetroTheme.textAccent : RetroTheme.textAmber)
+                            .foregroundColor(isFullyProtected ? RetroTheme.success : RetroTheme.warning)
                     }
 
                     RetroBlockMeter(
                         filled: isFullyProtected ? 16 : (activeLayersCount * 8),
                         total: 16,
-                        color: isFullyProtected ? RetroTheme.textAccent : RetroTheme.textAmber
+                        color: isFullyProtected ? .success : .warning
                     )
                 }
             }
@@ -315,7 +315,7 @@ struct ContentView: View {
                 HStack(spacing: 14) {
                     ZStack {
                         Rectangle()
-                            .fill(RetroTheme.elevatedSurface)
+                            .fill(RetroTheme.content1)
                             .frame(width: 44, height: 44)
                             .overlay(
                                 Rectangle()
@@ -330,24 +330,24 @@ struct ContentView: View {
                     VStack(alignment: .leading, spacing: 3) {
                         Text(title)
                             .font(.system(size: 13, weight: .heavy, design: .monospaced))
-                            .foregroundColor(.primary)
+                            .foregroundColor(RetroTheme.foreground)
 
                         Text(subtitle)
                             .font(.system(size: 11, design: .monospaced))
-                            .foregroundColor(.secondary)
+                            .foregroundColor(RetroTheme.secondaryForeground)
                     }
 
                     Spacer()
 
                     RetroBadge(
                         status.badgeText,
-                        color: isModuleProtected(status) ? RetroTheme.textAccent : RetroTheme.textAmber,
+                        color: isModuleProtected(status) ? .success : .warning,
                         isFilled: true
                     )
 
                     Image(systemName: "chevron.right")
                         .font(.system(size: 11, weight: .bold))
-                        .foregroundColor(.secondary)
+                        .foregroundColor(RetroTheme.secondaryForeground)
                 }
                 .padding(14)
             }
@@ -362,22 +362,22 @@ struct ContentView: View {
                     HStack(spacing: 6) {
                         Text(formattedThreatCount)
                             .font(.system(size: 18, weight: .heavy, design: .monospaced))
-                            .foregroundColor(.primary)
+                            .foregroundColor(RetroTheme.foreground)
 
                         Text("SIGNATURES")
                             .font(.system(size: 10, weight: .heavy, design: .monospaced))
-                            .foregroundColor(.secondary)
+                            .foregroundColor(RetroTheme.secondaryForeground)
                             .tracking(0.8)
                     }
 
                     if let lastSync = ThreatSyncManager.shared.lastSyncDate {
                         Text("SYNCED \(lastSync, style: .relative) AGO // O(1) SQLITE")
                             .font(.system(size: 10, weight: .medium, design: .monospaced))
-                            .foregroundColor(.secondary)
+                            .foregroundColor(RetroTheme.secondaryForeground)
                     } else {
                         Text("LOCAL SQLITE // CACHE READY")
                             .font(.system(size: 10, weight: .medium, design: .monospaced))
-                            .foregroundColor(.secondary)
+                            .foregroundColor(RetroTheme.secondaryForeground)
                     }
                 }
 
@@ -388,7 +388,7 @@ struct ContentView: View {
                         if isSyncing {
                             ProgressView()
                                 .scaleEffect(0.7)
-                                .tint(.black)
+                                .tint(RetroTheme.primaryContrast)
                         } else {
                             Image(systemName: "arrow.triangle.2.circlepath")
                                 .font(.system(size: 11, weight: .bold))
@@ -398,7 +398,7 @@ struct ContentView: View {
                             .font(.system(size: 11, weight: .heavy, design: .monospaced))
                     }
                 }
-                .buttonStyle(RetroButtonStyle(backgroundColor: RetroTheme.volt, foregroundColor: .black, cornerRadius: 6))
+                .buttonStyle(RetroButtonStyle(backgroundColor: RetroTheme.primary, foregroundColor: RetroTheme.primaryContrast, cornerRadius: 6))
                 .disabled(isSyncing)
             }
             .padding(14)
@@ -414,20 +414,20 @@ struct ContentView: View {
                 HStack(spacing: 10) {
                     Image(systemName: "terminal.fill")
                         .font(.system(size: 13, weight: .bold))
-                        .foregroundColor(RetroTheme.textAccent)
+                        .foregroundColor(RetroTheme.success)
 
                     Text("> TEST THREAT DETECTION")
                         .font(.system(size: 12, weight: .heavy, design: .monospaced))
-                        .foregroundColor(.primary)
+                        .foregroundColor(RetroTheme.foreground)
                         .tracking(0.5)
 
                     Spacer()
 
-                    RetroBadge("SIM", color: RetroTheme.textAccent, isFilled: false)
+                    RetroBadge("SIM", color: .accent, isFilled: false)
 
                     Image(systemName: "chevron.right")
                         .font(.system(size: 11, weight: .bold))
-                        .foregroundColor(.secondary)
+                        .foregroundColor(RetroTheme.secondaryForeground)
                 }
                 .padding(14)
             }
@@ -444,20 +444,20 @@ struct ContentView: View {
                 HStack(spacing: 12) {
                     Image(systemName: "sparkles")
                         .font(.system(size: 16, weight: .bold))
-                        .foregroundColor(RetroTheme.textAccent)
+                        .foregroundColor(RetroTheme.accent)
 
                     VStack(alignment: .leading, spacing: 2) {
                         Text("UPGRADE TO TRIAGE PRO")
                             .font(.system(size: 12, weight: .heavy, design: .monospaced))
-                            .foregroundColor(.primary)
+                            .foregroundColor(RetroTheme.foreground)
                         Text("Zero-day AI smishing heuristics & delta sync")
                             .font(.system(size: 10, weight: .medium, design: .monospaced))
-                            .foregroundColor(.secondary)
+                            .foregroundColor(RetroTheme.secondaryForeground)
                     }
 
                     Spacer()
 
-                    RetroBadge("PRO", color: RetroTheme.textAccent, isFilled: true)
+                    RetroBadge("PRO", color: .accent, isFilled: true)
                 }
                 .padding(14)
             }
@@ -643,18 +643,18 @@ struct ModuleDetailSheet: View {
                 VStack(alignment: .leading, spacing: 3) {
                     Text(moduleType == .sms ? "SMS SMISHING FILTER" : "SAFARI WEB SHIELD")
                         .font(.system(size: 12, weight: .heavy, design: .monospaced))
-                        .foregroundColor(.primary)
+                        .foregroundColor(RetroTheme.foreground)
 
                     Text(statusDescription)
                         .font(.system(size: 10, design: .monospaced))
-                        .foregroundColor(.secondary)
+                        .foregroundColor(RetroTheme.secondaryForeground)
                 }
 
                 Spacer()
 
                 RetroBadge(
                     currentStatus.badgeText,
-                    color: isModuleProtected(currentStatus) ? RetroTheme.textAccent : RetroTheme.textAmber,
+                    color: isModuleProtected(currentStatus) ? .success : .warning,
                     isFilled: true
                 )
             }
@@ -666,7 +666,7 @@ struct ModuleDetailSheet: View {
         VStack(alignment: .leading, spacing: 8) {
             Text("// ACTIVATION INSTRUCTIONS")
                 .font(.system(size: 10, weight: .heavy, design: .monospaced))
-                .foregroundColor(.secondary)
+                .foregroundColor(RetroTheme.secondaryForeground)
                 .padding(.horizontal, 4)
 
             RetroCard(cornerRadius: 10) {
@@ -698,11 +698,11 @@ struct ModuleDetailSheet: View {
         HStack(alignment: .top, spacing: 10) {
             Text(step)
                 .font(.system(size: 11, weight: .heavy, design: .monospaced))
-                .foregroundColor(RetroTheme.textAccent)
+                .foregroundColor(RetroTheme.success)
 
             Text(text)
                 .font(.system(size: 11, design: .monospaced))
-                .foregroundColor(.primary)
+                .foregroundColor(RetroTheme.foreground)
                 .fixedSize(horizontal: false, vertical: true)
 
             Spacer()
@@ -723,7 +723,7 @@ struct ModuleDetailSheet: View {
 
             Text("Settings opens on Triage. Tap **‹ Apps** in top-left to reach \(moduleType == .sms ? "Messages" : "Safari").")
                 .font(.system(size: 10, design: .monospaced))
-                .foregroundColor(.secondary)
+                .foregroundColor(RetroTheme.secondaryForeground)
                 .multilineTextAlignment(.center)
                 .padding(.horizontal, 12)
 
@@ -884,14 +884,14 @@ struct SMSSimulatorSheet: View {
                             HStack(spacing: 12) {
                                 Image(systemName: "terminal.fill")
                                     .font(.system(size: 20, weight: .bold))
-                                    .foregroundColor(RetroTheme.textAccent)
+                                    .foregroundColor(RetroTheme.success)
                                 VStack(alignment: .leading, spacing: 2) {
                                     Text("IDENTITYLOOKUP SIMULATOR")
                                         .font(.system(size: 11, weight: .heavy, design: .monospaced))
-                                        .foregroundColor(.primary)
+                                        .foregroundColor(RetroTheme.foreground)
                                     Text("Evaluates message candidates against the on-device SQLite database in O(1) time.")
                                         .font(.system(size: 10, design: .monospaced))
-                                        .foregroundColor(.secondary)
+                                        .foregroundColor(RetroTheme.secondaryForeground)
                                 }
                             }
                             .padding(14)
@@ -901,7 +901,7 @@ struct SMSSimulatorSheet: View {
                         VStack(alignment: .leading, spacing: 8) {
                             Text("// SAMPLE ATTACK SCENARIOS")
                                 .font(.system(size: 10, weight: .heavy, design: .monospaced))
-                                .foregroundColor(.secondary)
+                                .foregroundColor(RetroTheme.secondaryForeground)
                                 .padding(.horizontal, 4)
 
                             ScrollView(.horizontal, showsIndicators: false) {
@@ -914,14 +914,14 @@ struct SMSSimulatorSheet: View {
                                             HStack(spacing: 6) {
                                                 Image(systemName: preset.icon)
                                                     .font(.system(size: 10, weight: .bold))
-                                                    .foregroundColor(isSelected ? .black : preset.color)
+                                                    .foregroundColor(isSelected ? RetroTheme.primaryContrast : preset.color)
                                                 Text(preset.title)
                                                     .font(.system(size: 11, weight: .heavy, design: .monospaced))
-                                                    .foregroundColor(isSelected ? .black : .primary)
+                                                    .foregroundColor(isSelected ? RetroTheme.primaryContrast : RetroTheme.foreground)
                                             }
                                             .padding(.horizontal, 10)
                                             .padding(.vertical, 7)
-                                            .background(isSelected ? RetroTheme.volt : RetroTheme.elevatedSurface)
+                                            .background(isSelected ? RetroTheme.primary : RetroTheme.content1)
                                             .clipShape(RoundedRectangle(cornerRadius: 6, style: .continuous))
                                             .overlay(
                                                 RoundedRectangle(cornerRadius: 6, style: .continuous)
@@ -938,7 +938,7 @@ struct SMSSimulatorSheet: View {
                         VStack(alignment: .leading, spacing: 8) {
                             Text("// INCOMING PAYLOAD BUFFER")
                                 .font(.system(size: 10, weight: .heavy, design: .monospaced))
-                                .foregroundColor(.secondary)
+                                .foregroundColor(RetroTheme.secondaryForeground)
                                 .padding(.horizontal, 4)
 
                             RetroCard(cornerRadius: 10) {
@@ -946,9 +946,10 @@ struct SMSSimulatorSheet: View {
                                     HStack(spacing: 8) {
                                         Text("SENDER:")
                                             .font(.system(size: 10, weight: .heavy, design: .monospaced))
-                                            .foregroundColor(.secondary)
+                                            .foregroundColor(RetroTheme.secondaryForeground)
                                         TextField("Sender Number", text: $senderNumber)
                                             .font(.system(size: 11, design: .monospaced))
+                                            .foregroundColor(RetroTheme.foreground)
                                             .keyboardType(.phonePad)
                                     }
 
@@ -957,9 +958,10 @@ struct SMSSimulatorSheet: View {
                                     VStack(alignment: .leading, spacing: 4) {
                                         Text("MESSAGE TEXT:")
                                             .font(.system(size: 10, weight: .heavy, design: .monospaced))
-                                            .foregroundColor(.secondary)
+                                            .foregroundColor(RetroTheme.secondaryForeground)
                                         TextEditor(text: $messageBody)
                                             .font(.system(size: 11, design: .monospaced))
+                                            .foregroundColor(RetroTheme.foreground)
                                             .frame(minHeight: 64)
                                             .scrollContentBackground(.hidden)
                                     }
@@ -995,7 +997,7 @@ struct SMSSimulatorSheet: View {
             .toolbar {
                 ToolbarItem(placement: .confirmationAction) {
                     Button(action: { dismiss() }) {
-                        RetroBadge("DONE", color: .secondary, isFilled: false)
+                        RetroBadge("DONE", color: .primary, isFilled: false)
                     }
                 }
             }
@@ -1018,20 +1020,20 @@ struct SMSSimulatorSheet: View {
                     HStack(spacing: 10) {
                         Image(systemName: "shield.slash.fill")
                             .font(.system(size: 18, weight: .bold))
-                            .foregroundColor(.red)
+                            .foregroundColor(RetroTheme.danger)
 
                         VStack(alignment: .leading, spacing: 2) {
                             Text("MALICIOUS SMISHING DETECTED")
                                 .font(.system(size: 12, weight: .heavy, design: .monospaced))
-                                .foregroundColor(.red)
+                                .foregroundColor(RetroTheme.danger)
                             Text("Action: Filtered to Junk (.junk)")
                                 .font(.system(size: 10, design: .monospaced))
-                                .foregroundColor(.secondary)
+                                .foregroundColor(RetroTheme.secondaryForeground)
                         }
 
                         Spacer()
 
-                        RetroBadge("JUNKED", color: .red, isFilled: true)
+                        RetroBadge("JUNKED", color: .danger, isFilled: true)
                     }
 
                     Divider()
@@ -1050,46 +1052,46 @@ struct SMSSimulatorSheet: View {
                     HStack(spacing: 10) {
                         Image(systemName: "checkmark.shield.fill")
                             .font(.system(size: 18, weight: .bold))
-                            .foregroundColor(RetroTheme.textAccent)
+                            .foregroundColor(RetroTheme.success)
 
                         VStack(alignment: .leading, spacing: 2) {
                             Text("CLEAN MESSAGE VERIFIED")
                                 .font(.system(size: 12, weight: .heavy, design: .monospaced))
-                                .foregroundColor(RetroTheme.textAccent)
+                                .foregroundColor(RetroTheme.success)
                             Text("Action: Allowed to Inbox (.none)")
                                 .font(.system(size: 10, design: .monospaced))
-                                .foregroundColor(.secondary)
+                                .foregroundColor(RetroTheme.secondaryForeground)
                         }
 
                         Spacer()
 
-                        RetroBadge("CLEAN", color: RetroTheme.textAccent, isFilled: true)
+                        RetroBadge("CLEAN", color: .success, isFilled: true)
                     }
 
                     Divider()
 
                     Text("No deceptive URLs, homoglyphs, or known threat hashes were detected. Message allowed to primary inbox.")
                         .font(.system(size: 10, design: .monospaced))
-                        .foregroundColor(.secondary)
+                        .foregroundColor(RetroTheme.secondaryForeground)
 
                 case .unverified(let url):
                     HStack(spacing: 10) {
                         Image(systemName: "questionmark.shield.fill")
                             .font(.system(size: 18, weight: .bold))
-                            .foregroundColor(RetroTheme.amber)
+                            .foregroundColor(RetroTheme.warning)
 
                         VStack(alignment: .leading, spacing: 2) {
                             Text("UNVERIFIED LINK DETECTED")
                                 .font(.system(size: 12, weight: .heavy, design: .monospaced))
-                                .foregroundColor(RetroTheme.textAmber)
+                                .foregroundColor(RetroTheme.warning)
                             Text("Action: Defer to cloud check (.allow)")
                                 .font(.system(size: 10, design: .monospaced))
-                                .foregroundColor(.secondary)
+                                .foregroundColor(RetroTheme.secondaryForeground)
                         }
 
                         Spacer()
 
-                        RetroBadge("DEFERRED", color: RetroTheme.amber, isFilled: true)
+                        RetroBadge("DEFERRED", color: .warning, isFilled: true)
                     }
 
                     Divider()
@@ -1109,11 +1111,11 @@ struct SMSSimulatorSheet: View {
         HStack(alignment: .top) {
             Text(label + ":")
                 .font(.system(size: 10, weight: .bold, design: .monospaced))
-                .foregroundColor(.secondary)
+                .foregroundColor(RetroTheme.secondaryForeground)
             Spacer()
             Text(value)
                 .font(.system(size: 10, weight: .heavy, design: .monospaced))
-                .foregroundColor(.primary)
+                .foregroundColor(RetroTheme.foreground)
                 .multilineTextAlignment(.trailing)
         }
     }

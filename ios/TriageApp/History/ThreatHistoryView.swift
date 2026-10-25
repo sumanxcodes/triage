@@ -44,7 +44,7 @@ public struct ThreatHistoryView: View {
                                 HStack {
                                     Text("// \(filteredEvents.count) LOGGED EVENT\(filteredEvents.count == 1 ? "" : "S")")
                                         .font(.system(size: 11, weight: .bold, design: .monospaced))
-                                        .foregroundColor(.secondary)
+                                        .foregroundColor(RetroTheme.secondaryForeground)
                                     Spacer()
                                 }
                                 .padding(.horizontal, 4)
@@ -74,7 +74,7 @@ public struct ThreatHistoryView: View {
                 ToolbarItem(placement: .topBarTrailing) {
                     if !events.isEmpty {
                         Button(action: { showingClearConfirmation = true }) {
-                            RetroBadge("CLEAR", color: .red, isFilled: false)
+                            RetroBadge("CLEAR", color: .danger, isFilled: false)
                         }
                     }
                 }
@@ -114,10 +114,10 @@ public struct ThreatHistoryView: View {
                 }) {
                     Text("[ \(filter.rawValue) ]")
                         .font(.system(size: 11, weight: .heavy, design: .monospaced))
-                        .foregroundColor(isSelected ? .black : .primary)
+                        .foregroundColor(isSelected ? RetroTheme.primaryContrast : RetroTheme.foreground)
                         .padding(.horizontal, 10)
                         .padding(.vertical, 6)
-                        .background(isSelected ? RetroTheme.volt : RetroTheme.elevatedSurface)
+                        .background(isSelected ? RetroTheme.primary : RetroTheme.content1)
                         .clipShape(RoundedRectangle(cornerRadius: 6, style: .continuous))
                         .overlay(
                             RoundedRectangle(cornerRadius: 6, style: .continuous)
@@ -133,10 +133,11 @@ public struct ThreatHistoryView: View {
         HStack(spacing: 8) {
             Image(systemName: "magnifyingglass")
                 .font(.system(size: 12, weight: .bold))
-                .foregroundColor(.secondary)
+                .foregroundColor(RetroTheme.secondaryForeground)
 
             TextField("Filter links, brands, senders...", text: $searchText)
                 .font(.system(size: 12, design: .monospaced))
+                .foregroundColor(RetroTheme.foreground)
                 .autocorrectionDisabled()
                 .textInputAutocapitalization(.never)
 
@@ -144,7 +145,7 @@ public struct ThreatHistoryView: View {
                 Button(action: { searchText = "" }) {
                     Image(systemName: "xmark.circle.fill")
                         .font(.system(size: 12))
-                        .foregroundColor(.secondary)
+                        .foregroundColor(RetroTheme.secondaryForeground)
                 }
             }
         }
@@ -166,7 +167,7 @@ public struct ThreatHistoryView: View {
                 VStack(spacing: 14) {
                     ZStack {
                         Rectangle()
-                            .fill(RetroTheme.elevatedSurface)
+                            .fill(RetroTheme.content1)
                             .frame(width: 52, height: 52)
                             .overlay(
                                 Rectangle()
@@ -175,24 +176,24 @@ public struct ThreatHistoryView: View {
 
                         Image(systemName: "shield.lefthalf.filled")
                             .font(.system(size: 24, weight: .bold))
-                            .foregroundColor(RetroTheme.textAccent)
+                            .foregroundColor(RetroTheme.success)
                     }
 
                     VStack(spacing: 6) {
                         Text(searchText.isEmpty ? "> 0 THREATS LOGGED" : "> NO MATCHING RECORDS")
                             .font(.system(size: 14, weight: .heavy, design: .monospaced))
-                            .foregroundColor(.primary)
+                            .foregroundColor(RetroTheme.foreground)
 
                         Text(searchText.isEmpty ?
                              "On-device SQLite filter active. Blocked scam texts and malicious Safari links will be cataloged here." :
                              "Try searching with an alternate keyword or domain query.")
                             .font(.system(size: 11, weight: .medium, design: .monospaced))
-                            .foregroundColor(.secondary)
+                            .foregroundColor(RetroTheme.secondaryForeground)
                             .multilineTextAlignment(.center)
                             .padding(.horizontal, 12)
                     }
 
-                    RetroBadge("SYSTEM SECURED", color: RetroTheme.textAccent, isFilled: true)
+                    RetroBadge("SYSTEM SECURED", color: .success, isFilled: true)
                 }
                 .padding(20)
             }
@@ -209,34 +210,34 @@ public struct ThreatHistoryView: View {
                     HStack(spacing: 6) {
                         Image(systemName: event.source == "sms" ? "message.badge.filled.fill" : "safari.fill")
                             .font(.system(size: 12, weight: .bold))
-                            .foregroundColor(event.source == "sms" ? RetroTheme.textAccent : .blue)
+                            .foregroundColor(event.source == "sms" ? RetroTheme.success : .blue)
 
                         Text(title(for: event).uppercased())
                             .font(.system(size: 12, weight: .heavy, design: .monospaced))
-                            .foregroundColor(.primary)
+                            .foregroundColor(RetroTheme.foreground)
                             .lineLimit(1)
                     }
 
                     Spacer()
 
-                    RetroBadge(badgeTitle(for: event), color: .red, isFilled: true)
+                    RetroBadge(badgeTitle(for: event), color: .danger, isFilled: true)
                 }
 
                 if let sender = event.sender, !sender.isEmpty {
                     Text("FROM: \(sender)")
                         .font(.system(size: 10, weight: .bold, design: .monospaced))
-                        .foregroundColor(.secondary)
+                        .foregroundColor(RetroTheme.secondaryForeground)
                 }
 
                 Text(event.target)
                     .font(.system(size: 11, design: .monospaced))
-                    .foregroundColor(.primary)
+                    .foregroundColor(RetroTheme.foreground)
                     .lineLimit(1)
                     .truncationMode(.middle)
                     .padding(.horizontal, 8)
                     .padding(.vertical, 5)
                     .frame(maxWidth: .infinity, alignment: .leading)
-                    .background(RetroTheme.elevatedSurface)
+                    .background(RetroTheme.content1)
                     .overlay(
                         Rectangle()
                             .stroke(RetroTheme.border, lineWidth: 1)
@@ -245,13 +246,13 @@ public struct ThreatHistoryView: View {
                 HStack {
                     Text("\(event.timestamp, style: .relative) ago // \(event.category.uppercased())")
                         .font(.system(size: 9, weight: .medium, design: .monospaced))
-                        .foregroundColor(.secondary)
+                        .foregroundColor(RetroTheme.secondaryForeground)
 
                     Spacer()
 
                     Image(systemName: "chevron.right")
                         .font(.system(size: 10, weight: .bold))
-                        .foregroundColor(.secondary)
+                        .foregroundColor(RetroTheme.secondaryForeground)
                 }
             }
             .padding(14)

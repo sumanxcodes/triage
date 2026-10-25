@@ -2,238 +2,345 @@ import SwiftUI
 import UIKit
 import ComponentsKit
 
-// MARK: - ComponentsKit Official Theme Engine
+import SwiftUI
+import UIKit
+import CoreText
+import ComponentsKit
+
+// MARK: - Dynamic Font Loader (CoreText Registration)
+
+public enum FontLoader {
+    private static var hasRegistered = false
+
+    public static func registerFonts() {
+        guard !hasRegistered else { return }
+        hasRegistered = true
+
+        let fontFiles = [
+            "Urbanist-Regular",
+            "Urbanist-Medium",
+            "Urbanist-SemiBold",
+            "Urbanist-Semibold",
+            "Urbanist-Bold"
+        ]
+
+        for name in fontFiles {
+            if let fontURL = Bundle.main.url(forResource: name, withExtension: "ttf") {
+                var error: Unmanaged<CFError>?
+                CTFontManagerRegisterFontsForURL(fontURL as CFURL, .process, &error)
+            }
+        }
+
+        if let urls = Bundle.main.urls(forResourcesWithExtension: "ttf", subdirectory: nil) {
+            for url in urls {
+                var error: Unmanaged<CFError>?
+                CTFontManagerRegisterFontsForURL(url as CFURL, .process, &error)
+            }
+        }
+    }
+}
+
+// MARK: - ComponentsKit Modern Theme
+
+extension Theme {
+    public static let modern: Self = .init {
+        $0.colors.background = .themed(
+            light: .hex("F6F9FC"),
+            dark: .hex("0A0B0D")
+        )
+        $0.colors.secondaryBackground = .themed(
+            light: .hex("FFFFFF"),
+            dark: .hex("1A1B1F")
+        )
+        $0.colors.foreground = .themed(
+            light: .hex("0A2540"),
+            dark: .hex("FFFFFF")
+        )
+        $0.colors.secondaryForeground = .themed(
+            light: .hex("425466"),
+            dark: .hex("BCCCDC")
+        )
+        $0.colors.content1 = .themed(
+            light: .hex("E9F0FB"),
+            dark: .hex("1C2C40")
+        )
+        $0.colors.content2 = .themed(
+            light: .hex("D6E4F0"),
+            dark: .hex("253B59")
+        )
+        $0.colors.content3 = .themed(
+            light: .hex("B3C7E6"),
+            dark: .hex("32537C")
+        )
+        $0.colors.content4 = .themed(
+            light: .hex("8CA8D8"),
+            dark: .hex("4D6BA3")
+        )
+        $0.colors.divider = .themed(
+            light: .rgba(r: 10, g: 37, b: 64, a: 0.1),
+            dark: .rgba(r: 255, g: 255, b: 255, a: 0.1)
+        )
+        $0.colors.accent = .init(
+            main: .themed(
+                light: .hex("635BFF"),
+                dark: .hex("9E95FF")
+            ),
+            contrast: .themed(
+                light: .hex("FFFFFF"),
+                dark: .hex("0A0B0D")
+            ),
+            background: .themed(
+                light: .hex("E7E5FF"),
+                dark: .hex("3B388C")
+            )
+        )
+        $0.colors.primary = .init(
+            main: .themed(
+                light: .hex("#0B0C0E"),
+                dark: .hex("#FFFFFF")
+            ),
+            contrast: .themed(
+                light: .hex("#FFFFFF"),
+                dark: .hex("#0B0C0E")
+            ),
+            background: .themed(
+                light: .hex("#D9D9D9"),
+                dark: .hex("#515253")
+            )
+        )
+        $0.colors.success = .init(
+            main: .themed(
+                light: .hex("00B86B"),
+                dark: .hex("00D487")
+            ),
+            contrast: .themed(
+                light: .hex("FFFFFF"),
+                dark: .hex("0A0B0D")
+            ),
+            background: .themed(
+                light: .hex("D8F5EC"),
+                dark: .hex("1E3C34")
+            )
+        )
+        $0.colors.warning = .init(
+            main: .themed(
+                light: .hex("FFB020"),
+                dark: .hex("FFC94A")
+            ),
+            contrast: .universal(.hex("0A2540")),
+            background: .themed(
+                light: .hex("FFF4D6"),
+                dark: .hex("4E3E1C")
+            )
+        )
+        $0.colors.danger = .init(
+            main: .themed(
+                light: .hex("FF5A5F"),
+                dark: .hex("FF7B84")
+            ),
+            contrast: .universal(.hex("FFFFFF")),
+            background: .themed(
+                light: .hex("FFEAEA"),
+                dark: .hex("4A2C2C")
+            )
+        )
+        $0.layout.disabledOpacity = 0.5
+        $0.layout.componentRadius = .init(
+            small: 8.0,
+            medium: 12.0,
+            large: 16.0
+        )
+        $0.layout.containerRadius = .init(
+            small: 12.0,
+            medium: 16.0,
+            large: 20.0
+        )
+        $0.layout.shadow = .init(
+            small: .init(
+                radius: 6.0,
+                offset: .init(width: 0, height: 4),
+                color: .themed(
+                    light: .rgba(r: 0, g: 0, b: 0, a: 0.08),
+                    dark: .rgba(r: 255, g: 255, b: 255, a: 0.08)
+                )
+            ),
+            medium: .init(
+                radius: 12.0,
+                offset: .init(width: 0, height: 6),
+                color: .themed(
+                    light: .rgba(r: 0, g: 0, b: 0, a: 0.12),
+                    dark: .rgba(r: 255, g: 255, b: 255, a: 0.12)
+                )
+            ),
+            large: .init(
+                radius: 16.0,
+                offset: .init(width: 0, height: 8),
+                color: .themed(
+                    light: .rgba(r: 0, g: 0, b: 0, a: 0.16),
+                    dark: .rgba(r: 255, g: 255, b: 255, a: 0.16)
+                )
+            )
+        )
+        $0.layout.borderWidth = .init(
+            small: 0.5,
+            medium: 1.0,
+            large: 2.0
+        )
+        $0.layout.animationScale = .init(
+            small: 0.99,
+            medium: 0.97,
+            large: 0.95
+        )
+        $0.layout.typography.headline = .init(
+            small: .custom(name: "Urbanist-Medium", size: 16),
+            medium: .custom(name: "Urbanist-Semibold", size: 20),
+            large: .custom(name: "Urbanist-Bold", size: 24)
+        )
+        $0.layout.typography.body = .init(
+            small: .custom(name: "Urbanist-Regular", size: 14),
+            medium: .custom(name: "Urbanist-Regular", size: 16),
+            large: .custom(name: "Urbanist-Regular", size: 18)
+        )
+        $0.layout.typography.button = .init(
+            small: .custom(name: "Urbanist-Medium", size: 14),
+            medium: .custom(name: "Urbanist-Medium", size: 16),
+            large: .custom(name: "Urbanist-Medium", size: 20)
+        )
+        $0.layout.typography.caption = .init(
+            small: .custom(name: "Urbanist-Regular", size: 10),
+            medium: .custom(name: "Urbanist-Regular", size: 12),
+            large: .custom(name: "Urbanist-Regular", size: 14)
+        )
+    }
+}
+
+// MARK: - ComponentsKit Official Theme System
+
+public typealias AppTheme = RetroTheme
 
 public struct RetroTheme {
-    /// Canvas Background: Soft retro canvas #F3F1EB in Light Mode, #090F0A in Dark Mode
+    // MARK: - 1. Backgrounds
+    /// Primary Background: Main screen/page canvas (#F6F9FC in Light, #0A0B0D in Dark)
     public static var background: Color { UniversalColor.background.color }
+    public static var bgPrimary: Color { UniversalColor.background.color }
 
-    /// Card Surface: Accent Background (#FEF3E0 in Light Mode, #4E2A1A in Dark Mode) as configured in ComponentsKit Demo
-    public static var surface: Color { UniversalColor.accentBackground.color }
+    /// Secondary Background: Container wells & cards (#FFFFFF in Light, #1A1B1F in Dark)
+    public static var secondaryBackground: Color { UniversalColor.secondaryBackground.color }
+    public static var bgSecondary: Color { UniversalColor.secondaryBackground.color }
 
-    /// Secondary Surface: #FEFDF6 in Light Mode, #101910 in Dark Mode
-    public static var secondarySurface: Color { UniversalColor.secondaryBackground.color }
+    /// Card Surface Background (#FFFFFF in Light, #1A1B1F in Dark)
+    public static var surface: Color { UniversalColor.secondaryBackground.color }
+    public static var cardBackground: Color { UniversalColor.secondaryBackground.color }
+    public static var accentSurface: Color { UniversalColor.accentBackground.color }
 
-    /// Elevated Surface for sub-components, inputs, and chips (#FFEED0 in Light Mode, #142415 in Dark Mode)
+    // MARK: - 2. Foregrounds
+    /// Primary Foreground Text: Headings and titles (#0A2540 in Light, #FFFFFF in Dark)
+    public static var foreground: Color { UniversalColor.foreground.color }
+    public static var fgPrimary: Color { UniversalColor.foreground.color }
+
+    /// Secondary Foreground Text: Subtitles and captions (#425466 in Light, #BCCCDC in Dark)
+    public static var secondaryForeground: Color { UniversalColor.secondaryForeground.color }
+    public static var fgSecondary: Color { UniversalColor.secondaryForeground.color }
+
+    // MARK: - 3. Content
+    /// Content 1: First content background / elevated badge / chip well (#E9F0FB in Light, #1C2C40 in Dark)
+    public static var content1: Color { UniversalColor.content1.color }
     public static var elevatedSurface: Color { UniversalColor.content1.color }
 
-    /// Retro Solid Line Border / Divider: #C2C0BD in Light Mode, #093F24 in Dark Mode
+    /// Content 2: Second content background (#D6E4F0 in Light, #253B59 in Dark)
+    public static var content2: Color { UniversalColor.content2.color }
+
+    /// Content 3: Third content background (#B3C7E6 in Light, #32537C in Dark)
+    public static var content3: Color { UniversalColor.content3.color }
+
+    /// Content 4: Fourth content background (#8CA8D8 in Light, #4D6BA3 in Dark)
+    public static var content4: Color { UniversalColor.content4.color }
+
+    /// Divider & Borders: Line separators and borders (rgba(10,37,64,0.1) in Light, rgba(255,255,255,0.1) in Dark)
+    public static var divider: Color { UniversalColor.divider.color }
     public static var border: Color { UniversalColor.divider.color }
 
     /// Soft ambient drop shadow matching the ComponentsKit Medium shadow preset
     public static var shadow: Color { Theme.current.layout.shadow.medium.color.color }
 
-    /// Phosphor Green Brand Accent (#19E58C in Light Mode, #02FF88 in Dark Mode)
-    public static var volt: Color {
-        UniversalColor.themed(light: .hex("#19E58C"), dark: .hex("#02FF88")).color
-    }
+    // MARK: - 4. Components
+    /// Component: Primary (#0B0C0E in Light, #FFFFFF in Dark)
+    public static var primary: Color { UniversalColor.primary.color }
+    public static var primaryBackground: Color { UniversalColor.primaryBackground.color }
+    public static var primaryContrast: Color { UniversalColor.primaryContrast.color }
 
-    /// Terminal Text / Active Accent (#2C974B in Light Mode, #02FF88 in Dark Mode)
-    public static var textAccent: Color {
-        UniversalColor.themed(light: .hex("#2C974B"), dark: .hex("#02FF88")).color
-    }
+    /// Component: Accent (#635BFF in Light, #9E95FF in Dark)
+    public static var accent: Color { UniversalColor.accent.color }
+    public static var accentBackground: Color { UniversalColor.accentBackground.color }
+    public static var accentContrast: Color { UniversalColor.accentContrast.color }
 
-    /// Terminal Amber Warning Accent (#FEA800 in Light Mode, #FAD000 in Dark Mode)
+    /// Component: Success (#00B86B in Light, #00D487 in Dark)
+    public static var success: Color { UniversalColor.success.color }
+    public static var successBackground: Color { UniversalColor.successBackground.color }
+    public static var successContrast: Color { UniversalColor.successContrast.color }
+
+    /// Component: Warning (#FFB020 in Light, #FFC94A in Dark)
+    public static var warning: Color { UniversalColor.warning.color }
+    public static var warningBackground: Color { UniversalColor.warningBackground.color }
+    public static var warningContrast: Color { UniversalColor.warningContrast.color }
+
+    /// Component: Danger (#FF5A5F in Light, #FF7B84 in Dark)
+    public static var danger: Color { UniversalColor.danger.color }
+    public static var dangerBackground: Color { UniversalColor.dangerBackground.color }
+    public static var dangerContrast: Color { UniversalColor.dangerContrast.color }
+
+    // Backward compatibility aliases
+    public static var volt: Color { UniversalColor.primary.color }
+    public static var textAccent: Color { UniversalColor.success.color }
     public static var amber: Color { UniversalColor.warning.color }
-
-    /// Terminal Amber Text
     public static var textAmber: Color { UniversalColor.warning.color }
-
-    /// Phosphor Red / Danger Accent (#FE0133 in Light Mode, #FF3960 in Dark Mode)
     public static var red: Color { UniversalColor.danger.color }
 
-    /// Primary Foreground Text (#2C2C2C in Light Mode, #02FF88 in Dark Mode)
-    public static var foreground: Color { UniversalColor.foreground.color }
+    // MARK: - 5. Typography (Urbanist Font Family)
+    public static var headlineSmall: Font { UniversalFont.smHeadline.font }
+    public static var headlineMedium: Font { UniversalFont.mdHeadline.font }
+    public static var headlineLarge: Font { UniversalFont.lgHeadline.font }
 
-    /// Secondary Foreground Text (#595959 in Light Mode, #66FFCC in Dark Mode)
-    public static var secondaryForeground: Color { UniversalColor.secondaryForeground.color }
+    public static var bodySmall: Font { UniversalFont.smBody.font }
+    public static var bodyMedium: Font { UniversalFont.mdBody.font }
+    public static var bodyLarge: Font { UniversalFont.lgBody.font }
 
-    /// Configures ComponentsKit's global theme engine with the exact Retro Theme Palette from the demo
+    public static var buttonSmall: Font { UniversalFont.smButton.font }
+    public static var buttonMedium: Font { UniversalFont.mdButton.font }
+    public static var buttonLarge: Font { UniversalFont.lgButton.font }
+
+    public static var captionSmall: Font { UniversalFont.smCaption.font }
+    public static var captionMedium: Font { UniversalFont.mdCaption.font }
+    public static var captionLarge: Font { UniversalFont.lgCaption.font }
+
+    public static func urbanist(size: CGFloat, weight: Font.Weight = .regular) -> Font {
+        let fontName: String
+        switch weight {
+        case .bold, .heavy, .black:
+            fontName = "Urbanist-Bold"
+        case .semibold:
+            fontName = "Urbanist-Semibold"
+        case .medium:
+            fontName = "Urbanist-Medium"
+        default:
+            fontName = "Urbanist-Regular"
+        }
+        return .custom(fontName, size: size)
+    }
+
+    /// Configures ComponentsKit's global theme engine with Theme.modern
     public static func configureComponentsKit() {
-        var palette = Theme.Palette()
-
-        // Background: #F3F1EB (Light) / #090F0A (Dark)
-        palette.background = .themed(
-            light: .hex("#F3F1EB"),
-            dark: .hex("#090F0A")
-        )
-
-        // Secondary Background: #FEFDF6 (Light) / #101910 (Dark)
-        palette.secondaryBackground = .themed(
-            light: .hex("#FEFDF6"),
-            dark: .hex("#101910")
-        )
-
-        // Foreground: Primary text #2C2C2C (Light) / Phosphor Green #02FF88 (Dark)
-        palette.foreground = .themed(
-            light: .hex("#2C2C2C"),
-            dark: .hex("#02FF88")
-        )
-
-        // Secondary Foreground: Muted #595959 (Light) / Phosphor Mint #66FFCC (Dark)
-        palette.secondaryForeground = .themed(
-            light: .hex("#595959"),
-            dark: .hex("#66FFCC")
-        )
-
-        // Content Swatches:
-        // Content 1: #FFEED0 (Light) / #142415 (Dark)
-        palette.content1 = .themed(
-            light: .hex("#FFEED0"),
-            dark: .hex("#142415")
-        )
-
-        // Content 2: #FED0DB (Light) / #1C1A1D (Dark)
-        palette.content2 = .themed(
-            light: .hex("#FED0DB"),
-            dark: .hex("#1C1A1D")
-        )
-
-        // Content 3: #B2E0FE (Light) / #122032 (Dark)
-        palette.content3 = .themed(
-            light: .hex("#B2E0FE"),
-            dark: .hex("#122032")
-        )
-
-        // Content 4: #D2F9D5 (Light) / #173A28 (Dark)
-        palette.content4 = .themed(
-            light: .hex("#D2F9D5"),
-            dark: .hex("#173A28")
-        )
-
-        // Divider: #C2C0BD (Light) / #093F24 (Dark)
-        palette.divider = .themed(
-            light: .hex("#C2C0BD"),
-            dark: .hex("#093F24")
-        )
-
-        // Component: Primary
-        // Main: #000000 (Light) / #02FF88 (Dark)
-        // Background: #FCD24D (Light) / #00442A (Dark)
-        // Contrast: #FFFFFF (Light) / #000000 (Dark)
-        palette.primary = .init(
-            main: .themed(
-                light: .hex("#000000"),
-                dark: .hex("#02FF88")
-            ),
-            contrast: .themed(
-                light: .hex("#FFFFFF"),
-                dark: .hex("#000000")
-            ),
-            background: .themed(
-                light: .hex("#FCD24D"),
-                dark: .hex("#00442A")
-            )
-        )
-
-        // Component: Accent
-        // Main: #FF5E00 (Light & Dark)
-        // Background: #FEF3E0 (Light) / #4E2A1A (Dark)
-        // Contrast: #FFFFFF (Light & Dark)
-        palette.accent = .init(
-            main: .universal(.hex("#FF5E00")),
-            contrast: .universal(.hex("#FFFFFF")),
-            background: .themed(
-                light: .hex("#FEF3E0"),
-                dark: .hex("#4E2A1A")
-            )
-        )
-
-        // Component: Success
-        // Main: #2C974B (Light) / #4FFA7B (Dark)
-        // Background: #E5FFE7 (Light) / #1C3F26 (Dark)
-        // Contrast: #FFFFFF (Light) / #000000 (Dark)
-        palette.success = .init(
-            main: .themed(
-                light: .hex("#2C974B"),
-                dark: .hex("#4FFA7B")
-            ),
-            contrast: .themed(
-                light: .hex("#FFFFFF"),
-                dark: .hex("#000000")
-            ),
-            background: .themed(
-                light: .hex("#E5FFE7"),
-                dark: .hex("#1C3F26")
-            )
-        )
-
-        // Component: Warning
-        // Main: #FEA800 (Light) / #FAD000 (Dark)
-        // Background: #FFF4D6 (Light) / #4B3A00 (Dark)
-        // Contrast: #000000 (Light & Dark)
-        palette.warning = .init(
-            main: .themed(
-                light: .hex("#FEA800"),
-                dark: .hex("#FAD000")
-            ),
-            contrast: .universal(.hex("#000000")),
-            background: .themed(
-                light: .hex("#FFF4D6"),
-                dark: .hex("#4B3A00")
-            )
-        )
-
-        // Component: Danger
-        // Main: #FE0133 (Light) / #FF3960 (Dark)
-        // Background: #FEE4E5 (Light) / #4C1B1B (Dark)
-        // Contrast: #FFFFFF (Light & Dark)
-        palette.danger = .init(
-            main: .themed(
-                light: .hex("#FE0133"),
-                dark: .hex("#FF3960")
-            ),
-            contrast: .universal(.hex("#FFFFFF")),
-            background: .themed(
-                light: .hex("#FEE4E5"),
-                dark: .hex("#4C1B1B")
-            )
-        )
-
-        var layout = Theme.Layout()
-        layout.containerRadius = .init(small: 8, medium: 10, large: 14)
-        layout.componentRadius = .init(small: 6, medium: 8, large: 10)
-        layout.borderWidth = .init(small: 0.5, medium: 1.0, large: 2.0)
-
-        // Shadow presets matching ComponentsKit demo
-        layout.shadow = .init(
-            small: .init(
-                radius: 4,
-                offset: CGSize(width: 0, height: 2),
-                color: .themed(
-                    light: .rgba(r: 0, g: 0, b: 0, a: 0.05),
-                    dark: .rgba(r: 0, g: 0, b: 0, a: 0.30)
-                )
-            ),
-            medium: .init(
-                radius: 6,
-                offset: CGSize(width: 0, height: 3),
-                color: .themed(
-                    light: .rgba(r: 0, g: 0, b: 0, a: 0.08),
-                    dark: .rgba(r: 0, g: 0, b: 0, a: 0.40)
-                )
-            ),
-            large: .init(
-                radius: 12,
-                offset: CGSize(width: 0, height: 6),
-                color: .themed(
-                    light: .rgba(r: 0, g: 0, b: 0, a: 0.12),
-                    dark: .rgba(r: 0, g: 0, b: 0, a: 0.50)
-                )
-            )
-        )
-
-        Theme.current.colors = palette
-        Theme.current.layout = layout
+        FontLoader.registerFonts()
+        Theme.current = .modern
     }
 }
 
 // MARK: - ComponentsKit Card Model Presets
 
 extension CardVM {
-    /// CardVM configured with the EXACT attributes from the ComponentsKit Card demo:
+    /// CardVM configured with the EXACT attributes from ComponentsKit Card specification:
     /// - Animation Scale: Medium
-    /// - Background Color: Accent Background
+    /// - Background Color: Secondary Background
     /// - Background Style: Solid
     /// - Border Color: Divider
     /// - Border Width: Medium
@@ -244,7 +351,7 @@ extension CardVM {
     public static var configured: CardVM {
         CardVM {
             $0.animationScale = .medium
-            $0.backgroundColor = .accentBackground
+            $0.backgroundColor = .secondaryBackground
             $0.backgroundStyle = .solid
             $0.borderColor = .divider
             $0.borderWidth = .medium
@@ -255,15 +362,16 @@ extension CardVM {
         }
     }
 
-    /// CardVM configured with the exact attributes, with optional tap interactivity
+    /// CardVM configured with the exact attributes, with optional tap interactivity and custom background
     public static func configured(
         isTappable: Bool = false,
         padding: CGFloat = 16,
-        cornerRadius: ContainerRadius = .medium
+        cornerRadius: ContainerRadius = .medium,
+        backgroundColor: UniversalColor? = .secondaryBackground
     ) -> CardVM {
         CardVM {
             $0.animationScale = .medium
-            $0.backgroundColor = .accentBackground
+            $0.backgroundColor = backgroundColor
             $0.backgroundStyle = .solid
             $0.borderColor = .divider
             $0.borderWidth = .medium
@@ -308,7 +416,7 @@ extension SUCard {
 }
 
 extension SUBadge {
-    /// Convenience initializer for retro status badges
+    /// Convenience initializer for status badges
     public init(
         _ title: String,
         color: ComponentColor = .primary,
@@ -319,7 +427,7 @@ extension SUBadge {
             $0.color = color
             $0.style = style
             $0.cornerRadius = .small
-            $0.font = .system(size: 11, weight: .bold)
+            $0.font = .custom(name: "Urbanist-Bold", size: 11)
             $0.paddings = .init(top: 4, leading: 8, bottom: 4, trailing: 8)
         })
     }
@@ -379,16 +487,18 @@ public struct RetroCard<Content: View>: View {
     public let content: () -> Content
 
     public init(
-        cornerRadius: CGFloat = 10,
+        cornerRadius: CGFloat = 16,
         padding: CGFloat = 16,
         isTappable: Bool = false,
+        backgroundColor: UniversalColor? = .secondaryBackground,
         onTap: @escaping () -> Void = {},
         @ViewBuilder content: @escaping () -> Content
     ) {
         self.model = CardVM.configured(
             isTappable: isTappable,
             padding: padding,
-            cornerRadius: .custom(cornerRadius)
+            cornerRadius: .custom(cornerRadius),
+            backgroundColor: backgroundColor
         )
         self.onTap = onTap
         self.content = content
@@ -409,6 +519,24 @@ public struct RetroCard<Content: View>: View {
     }
 }
 
+// MARK: - ComponentColor Extended Presets
+
+extension ComponentColor {
+    /// Secondary muted component tone
+    public static var secondary: Self {
+        .init(
+            main: UniversalColor.secondaryForeground,
+            contrast: UniversalColor.background,
+            background: UniversalColor.content1
+        )
+    }
+
+    /// Red tone aliased to danger
+    public static var red: Self {
+        .danger
+    }
+}
+
 /// RetroBadge powered by ComponentsKit SUBadge
 public struct RetroBadge: View {
     public let text: String
@@ -421,19 +549,13 @@ public struct RetroBadge: View {
         self.isFilled = isFilled
     }
 
-    public init(_ text: String, color: Color, isFilled: Bool = false) {
-        self.text = text
-        self.color = .primary
-        self.isFilled = isFilled
-    }
-
     public var body: some View {
         SUBadge(model: BadgeVM {
             $0.title = text.uppercased()
             $0.color = color
             $0.style = isFilled ? .filled : .light
             $0.cornerRadius = .small
-            $0.font = .system(size: 11, weight: .bold)
+            $0.font = .custom(name: "Urbanist-Bold", size: 11)
             $0.paddings = .init(top: 4, leading: 8, bottom: 4, trailing: 8)
         })
     }
@@ -449,12 +571,6 @@ public struct RetroBlockMeter: View {
         self.filled = filled
         self.total = total
         self.color = color
-    }
-
-    public init(filled: Int = 12, total: Int = 16, color: Color) {
-        self.filled = filled
-        self.total = total
-        self.color = .primary
     }
 
     public var body: some View {
@@ -476,9 +592,9 @@ public struct RetroButtonStyle: SwiftUI.ButtonStyle {
     public var cornerRadius: CGFloat
 
     public init(
-        backgroundColor: Color = RetroTheme.volt,
-        foregroundColor: Color = .black,
-        cornerRadius: CGFloat = 8
+        backgroundColor: Color = RetroTheme.primary,
+        foregroundColor: Color = RetroTheme.primaryContrast,
+        cornerRadius: CGFloat = 10
     ) {
         self.backgroundColor = backgroundColor
         self.foregroundColor = foregroundColor
@@ -487,23 +603,23 @@ public struct RetroButtonStyle: SwiftUI.ButtonStyle {
 
     public func makeBody(configuration: Configuration) -> some View {
         configuration.label
-            .font(.system(size: 13, weight: .heavy, design: .monospaced))
+            .font(.custom("Urbanist-Medium", size: 14))
             .foregroundColor(foregroundColor)
-            .padding(.horizontal, 14)
-            .padding(.vertical, 11)
+            .padding(.horizontal, 16)
+            .padding(.vertical, 12)
             .background(backgroundColor)
             .clipShape(RoundedRectangle(cornerRadius: cornerRadius, style: .continuous))
             .overlay(
                 RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
-                    .stroke(UniversalColor.divider.color, lineWidth: Theme.current.layout.borderWidth.medium)
+                    .stroke(UniversalColor.divider.color, lineWidth: Theme.current.layout.borderWidth.small)
             )
             .shadow(
-                color: Theme.current.layout.shadow.medium.color.color,
+                color: Theme.current.layout.shadow.small.color.color,
                 radius: 4,
                 x: 0,
                 y: 2
             )
-            .offset(x: configuration.isPressed ? 1 : 0, y: configuration.isPressed ? 1 : 0)
-            .animation(.easeInOut(duration: 0.08), value: configuration.isPressed)
+            .scaleEffect(configuration.isPressed ? Theme.current.layout.animationScale.medium : 1.0)
+            .animation(.easeInOut(duration: 0.1), value: configuration.isPressed)
     }
 }

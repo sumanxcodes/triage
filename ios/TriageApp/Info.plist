@@ -33,6 +33,14 @@
 	<array>
 		<string>armv7</string>
 	</array>
+	<key>UIAppFonts</key>
+	<array>
+		<string>Urbanist-Regular.ttf</string>
+		<string>Urbanist-Medium.ttf</string>
+		<string>Urbanist-SemiBold.ttf</string>
+		<string>Urbanist-Semibold.ttf</string>
+		<string>Urbanist-Bold.ttf</string>
+	</array>
 	<key>UISupportedInterfaceOrientations</key>
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>

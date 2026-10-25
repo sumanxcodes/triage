@@ -23,21 +23,21 @@ public struct OnboardingView: View {
 
                         // Eyebrow & Hero Headline
                         VStack(alignment: .leading, spacing: 8) {
-                            RetroBadge("PRIVATE BY DESIGN // SYSTEM INIT", color: RetroTheme.textAccent, isFilled: true)
+                            RetroBadge("PRIVATE BY DESIGN // SYSTEM INIT", color: .accent, isFilled: true)
 
                             VStack(alignment: .leading, spacing: 2) {
                                 Text("YOUR MESSAGES.")
-                                    .foregroundColor(.primary)
+                                    .foregroundColor(RetroTheme.foreground)
                                 Text("YOUR BROWSING.")
-                                    .foregroundColor(.primary)
+                                    .foregroundColor(RetroTheme.foreground)
                                 Text("PROTECTED.")
-                                    .foregroundColor(RetroTheme.textAccent)
+                                    .foregroundColor(RetroTheme.success)
                             }
                             .font(.system(size: 30, weight: .heavy, design: .monospaced))
 
                             Text("Dual-layer cyber defense against smishing scams and fraudulent links, evaluated 100% on your iPhone.")
                                 .font(.system(size: 12, design: .monospaced))
-                                .foregroundColor(.secondary)
+                                .foregroundColor(RetroTheme.secondaryForeground)
                                 .padding(.top, 2)
                         }
 
@@ -92,11 +92,11 @@ public struct OnboardingView: View {
                     HStack(spacing: 6) {
                         Image(systemName: "shield.lefthalf.filled")
                             .font(.system(size: 10, weight: .bold))
-                            .foregroundColor(.secondary)
+                            .foregroundColor(RetroTheme.secondaryForeground)
 
                         Text("LOCAL SQLITE // AIR-GAPPED EVALUATION")
                             .font(.system(size: 10, weight: .bold, design: .monospaced))
-                            .foregroundColor(.secondary)
+                            .foregroundColor(RetroTheme.secondaryForeground)
                     }
                     .frame(maxWidth: .infinity)
                 }
@@ -119,7 +119,7 @@ public struct OnboardingView: View {
             HStack(alignment: .top, spacing: 12) {
                 ZStack {
                     Rectangle()
-                        .fill(RetroTheme.elevatedSurface)
+                        .fill(RetroTheme.content1)
                         .frame(width: 38, height: 38)
                         .overlay(
                             Rectangle()
@@ -135,16 +135,16 @@ public struct OnboardingView: View {
                     HStack {
                         Text(stepNumber)
                             .font(.system(size: 10, weight: .bold, design: .monospaced))
-                            .foregroundColor(RetroTheme.textAccent)
+                            .foregroundColor(RetroTheme.success)
 
                         Text(title)
                             .font(.system(size: 11, weight: .heavy, design: .monospaced))
-                            .foregroundColor(.primary)
+                            .foregroundColor(RetroTheme.foreground)
                     }
 
                     Text(subtitle)
                         .font(.system(size: 10, design: .monospaced))
-                        .foregroundColor(.secondary)
+                        .foregroundColor(RetroTheme.secondaryForeground)
                         .lineSpacing(1.5)
                 }
 
