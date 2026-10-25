@@ -10,48 +10,74 @@ public struct ThreatEventDetailSheet: View {
         self.event = event
     }
 
+    private var headerTitle: String {
+        if let brand = event.targetBrand, !brand.isEmpty {
+            return brand
+        } else if let host = URL(string: event.target)?.host, !host.isEmpty {
+            return host
+        } else {
+            return event.source == "sms" ? "Scam Message" : "Deceptive Link"
+        }
+    }
+
     public var body: some View {
         NavigationStack {
             ZStack {
                 RetroTheme.background
                     .ignoresSafeArea()
 
-                ScrollView {
-                    VStack(spacing: 18) {
-                        // Header Status
+                ScrollView(showsIndicators: false) {
+                    VStack(spacing: 20) {
+                        // Hero Header
                         VStack(spacing: 10) {
                             AppIconWell(
                                 icon: "exclamationmark.shield.fill",
                                 iconColor: RetroTheme.danger,
                                 backgroundColor: RetroTheme.dangerBackground,
-                                size: 58,
-                                iconSize: 26
+                                size: 56,
+                                iconSize: 24
                             )
                             .padding(.top, 8)
 
-                            Text(event.targetBrand ?? (event.source == "sms" ? "SMS Threat" : "Safari Threat"))
+                            Text(headerTitle)
                                 .font(RetroTheme.headlineMedium)
                                 .foregroundColor(RetroTheme.foreground)
+                                .multilineTextAlignment(.center)
 
-                            HStack(spacing: 6) {
-                                AppBadge(event.source == "sms" ? "SMS PHISHING" : "WEB PHISHING", color: .danger, isFilled: true)
-                                AppBadge(event.actionTaken == "blocked" ? "BLOCKED" : "JUNKED", color: .danger, isFilled: false)
+                            Text(event.actionTaken == "blocked" ? "Blocked in Safari" : "Filtered to Junk Messages")
+                                .font(RetroTheme.captionLarge)
+                                .foregroundColor(RetroTheme.secondaryForeground)
+                        }
+                        .padding(.top, 8)
+
+                        // Section 1: Incident Details
+                        VStack(alignment: .leading, spacing: 8) {
+                            AppSectionHeader("INCIDENT DETAILS")
+
+                            AppCard {
+                                VStack(spacing: 12) {
+                                    AppDetailRow(label: "Source", value: event.source == "sms" ? "SMS Filter" : "Safari Shield")
+                                    Divider()
+                                    if let sender = event.sender, !sender.isEmpty {
+                                        AppDetailRow(label: "Sender", value: sender)
+                                        Divider()
+                                    }
+                                    AppDetailRow(label: "Category", value: event.category.capitalized)
+                                    Divider()
+                                    AppDetailRow(label: "Action", value: event.actionTaken == "blocked" ? "Blocked" : "Filtered to Junk")
+                                    Divider()
+                                    AppDetailRow(label: "Detected", value: event.timestamp.formatted(date: .abbreviated, time: .shortened))
+                                }
                             }
                         }
+                        .padding(.horizontal, 16)
 
-                        // Threat Target Details Card
-                        AppCard {
-                            VStack(alignment: .leading, spacing: 14) {
-                                AppSectionHeader("THREAT TELEMETRY")
+                        // Section 2: Suspicious Target
+                        VStack(alignment: .leading, spacing: 8) {
+                            AppSectionHeader("SUSPICIOUS TARGET")
 
-                                if let sender = event.sender, !sender.isEmpty {
-                                    AppDetailRow(label: "SENDER", value: sender)
-                                    Divider()
-                                }
-
-                                VStack(alignment: .leading, spacing: 6) {
-                                    AppSectionHeader("TARGET PAYLOAD")
-
+                            AppCard {
+                                VStack(alignment: .leading, spacing: 12) {
                                     Text(event.target)
                                         .font(RetroTheme.captionMedium)
                                         .foregroundColor(RetroTheme.foreground)
@@ -60,79 +86,70 @@ public struct ThreatEventDetailSheet: View {
                                         .frame(maxWidth: .infinity, alignment: .leading)
                                         .background(RetroTheme.content1)
                                         .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
-                                        .overlay(
-                                            RoundedRectangle(cornerRadius: 8, style: .continuous)
-                                                .stroke(RetroTheme.border, lineWidth: 1)
-                                        )
+
+                                    SUButton(
+                                        title: copiedURL ? "Copied to Clipboard" : "Copy Target URL",
+                                        color: copiedURL ? .primary : nil,
+                                        style: copiedURL ? .filled : .light,
+                                        size: .small,
+                                        isFullWidth: true
+                                    ) {
+                                        copyToClipboard()
+                                    }
                                 }
-
-                                SUButton(
-                                    title: copiedURL ? "COPIED TO CLIPBOARD" : "COPY THREAT URL",
-                                    color: copiedURL ? .primary : nil,
-                                    style: copiedURL ? .filled : .light,
-                                    size: .small,
-                                    isFullWidth: true
-                                ) {
-                                    copyToClipboard()
-                                }
-
-                                SUDivider()
-
-                                AppDetailRow(label: "CATEGORY", value: event.category.capitalized)
-                                SUDivider()
-                                AppDetailRow(label: "TIMESTAMP", value: event.timestamp.formatted(date: .numeric, time: .standard))
                             }
-                            .padding(16)
                         }
                         .padding(.horizontal, 16)
 
-                        // On-Device Guarantee Card
+                        // Section 3: Privacy Guarantee
                         AppCard {
                             HStack(alignment: .top, spacing: 12) {
                                 AppIconWell(
                                     icon: "lock.shield.fill",
                                     iconColor: RetroTheme.accent,
                                     backgroundColor: RetroTheme.content1,
-                                    size: 40,
-                                    iconSize: 18
+                                    size: 38,
+                                    iconSize: 17
                                 )
 
-                                VStack(alignment: .leading, spacing: 4) {
-                                    Text("LOCAL AUDIT VERIFIED")
+                                VStack(alignment: .leading, spacing: 3) {
+                                    Text("Evaluated On-Device")
                                         .font(RetroTheme.bodyMedium)
                                         .foregroundColor(RetroTheme.foreground)
 
-                                    Text("Evaluated locally using SQLite O(1) hash table. Message content, sender ID, and private browsing data never left this device.")
+                                    Text("This threat was analyzed locally on your iPhone. Your messages and browsing activity were never shared or uploaded.")
                                         .font(RetroTheme.captionMedium)
                                         .foregroundColor(RetroTheme.secondaryForeground)
                                 }
                             }
-                            .padding(14)
                         }
                         .padding(.horizontal, 16)
 
-                        // Delete Event Action
-                        SUButton(
-                            title: "DELETE LOG ENTRY",
-                            color: .danger,
-                            style: .light,
-                            size: .medium,
-                            isFullWidth: true
-                        ) {
-                            deleteAndDismiss()
+                        // Section 4: Delete Record Action
+                        Button(role: .destructive, action: deleteAndDismiss) {
+                            Text("Delete Threat Record")
+                                .font(RetroTheme.buttonMedium)
+                                .foregroundColor(RetroTheme.danger)
+                                .frame(maxWidth: .infinity)
+                                .padding(.vertical, 14)
+                                .background(RetroTheme.dangerBackground)
+                                .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
                         }
+                        .buttonStyle(.plain)
                         .padding(.horizontal, 16)
                         .padding(.bottom, 24)
                     }
                 }
             }
-            .navigationTitle("LOG DETAIL")
+            .navigationTitle("Threat Details")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
-                    Button(action: { dismiss() }) {
-                        AppBadge("CLOSE", color: .secondary, isFilled: false)
+                    Button("Done") {
+                        dismiss()
                     }
+                    .font(RetroTheme.buttonSmall)
+                    .foregroundColor(RetroTheme.accent)
                 }
             }
         }

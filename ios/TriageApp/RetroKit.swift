@@ -825,16 +825,25 @@ public struct AppDetailRow: View {
     }
 
     public var body: some View {
-        HStack(alignment: .top) {
-            Text(label.uppercased() + ":")
-                .font(RetroTheme.captionSmall)
+        HStack(alignment: .top, spacing: 12) {
+            Text(label)
+                .font(RetroTheme.bodySmall)
                 .foregroundColor(RetroTheme.secondaryForeground)
             Spacer()
             Text(value)
-                .font(RetroTheme.captionLarge)
+                .font(RetroTheme.bodySmall)
                 .foregroundColor(RetroTheme.foreground)
                 .multilineTextAlignment(.trailing)
         }
+    }
+}
+
+extension Date {
+    /// Localized relative date description (e.g. "2 min. ago", "1 hr. ago")
+    public var relativeFormatted: String {
+        let formatter = RelativeDateTimeFormatter()
+        formatter.unitsStyle = .short
+        return formatter.localizedString(for: self, relativeTo: Date())
     }
 }
 

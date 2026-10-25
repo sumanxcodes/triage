@@ -9,11 +9,13 @@ public struct ThreatHistoryView: View {
     @State private var selectedEvent: ThreatEventRecord?
 
     public enum HistoryFilter: String, CaseIterable, Identifiable {
-        case all = "ALL"
-        case safari = "SAFARI"
+        case all = "All"
+        case safari = "Safari"
         case sms = "SMS"
 
         public var id: String { rawValue }
+
+        public var title: String { rawValue }
     }
 
     public init() {}
@@ -25,38 +27,74 @@ public struct ThreatHistoryView: View {
                     .ignoresSafeArea()
 
                 VStack(spacing: 0) {
-                    // Retro Segmented Filter Tabs
-                    filterBar
-                        .padding(.horizontal, 16)
-                        .padding(.top, 12)
-                        .padding(.bottom, 10)
-
-                    // Search Input
-                    AppSearchField("Filter links, brands, senders...", text: $searchText)
-                        .padding(.horizontal, 16)
-                        .padding(.bottom, 12)
+                    // Segmented Filter Control
+                    Picker("Filter", selection: $selectedFilter) {
+                        ForEach(HistoryFilter.allCases) { filter in
+                            Text(filter.title).tag(filter)
+                        }
+                    }
+                    .pickerStyle(.segmented)
+                    .padding(.horizontal, 16)
+                    .padding(.top, 4)
+                    .padding(.bottom, 12)
 
                     if filteredEvents.isEmpty {
                         emptyStateView
                     } else {
                         ScrollView(showsIndicators: false) {
-                            LazyVStack(spacing: 12) {
-                                HStack {
-                                    Text("\(filteredEvents.count) LOGGED EVENT\(filteredEvents.count == 1 ? "" : "S")")
-                                        .font(RetroTheme.captionSmall)
-                                        .foregroundColor(RetroTheme.secondaryForeground)
-                                    Spacer()
-                                }
-                                .padding(.horizontal, 4)
+                            VStack(alignment: .leading, spacing: 10) {
+                                AppSectionHeader("LOGGED THREATS (\(filteredEvents.count))")
+                                    .padding(.horizontal, 4)
 
-                                ForEach(filteredEvents) { event in
-                                    Button(action: {
-                                        UIImpactFeedbackGenerator(style: .light).impactOccurred()
-                                        selectedEvent = event
-                                    }) {
-                                        eventCard(for: event)
+                                AppCard {
+                                    VStack(spacing: 0) {
+                                        ForEach(Array(filteredEvents.enumerated()), id: \.element.id) { index, event in
+                                            if index > 0 {
+                                                Divider()
+                                                    .padding(.leading, 56)
+                                            }
+
+                                            Button(action: {
+                                                UIImpactFeedbackGenerator(style: .light).impactOccurred()
+                                                selectedEvent = event
+                                            }) {
+                                                HStack(spacing: 12) {
+                                                    AppIconWell(
+                                                        icon: event.source == "sms" ? "message.badge.filled.fill" : "safari.fill",
+                                                        iconColor: RetroTheme.accent,
+                                                        backgroundColor: RetroTheme.content1,
+                                                        size: 40,
+                                                        iconSize: 18
+                                                    )
+
+                                                    VStack(alignment: .leading, spacing: 3) {
+                                                        Text(title(for: event))
+                                                            .font(RetroTheme.headlineSmall)
+                                                            .foregroundColor(RetroTheme.foreground)
+                                                            .lineLimit(1)
+
+                                                        Text(subtitle(for: event))
+                                                            .font(RetroTheme.captionMedium)
+                                                            .foregroundColor(RetroTheme.secondaryForeground)
+                                                            .lineLimit(1)
+                                                    }
+
+                                                    Spacer()
+
+                                                    Text(event.actionTaken == "blocked" ? "Blocked" : "Junked")
+                                                        .font(RetroTheme.captionLarge)
+                                                        .foregroundColor(RetroTheme.secondaryForeground)
+
+                                                    Image(systemName: "chevron.right")
+                                                        .font(RetroTheme.captionSmall)
+                                                        .foregroundColor(RetroTheme.secondaryForeground)
+                                                }
+                                                .padding(.vertical, 10)
+                                                .contentShape(Rectangle())
+                                            }
+                                            .buttonStyle(.plain)
+                                        }
                                     }
-                                    .buttonStyle(.plain)
                                 }
                             }
                             .padding(.horizontal, 16)
@@ -68,30 +106,35 @@ public struct ThreatHistoryView: View {
                     }
                 }
             }
-            .navigationTitle("AUDIT LOG")
-            .navigationBarTitleDisplayMode(.inline)
+            .navigationTitle("History")
+            .navigationBarTitleDisplayMode(.large)
+            .searchable(text: $searchText, prompt: "Search links, senders, or brands")
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
                     if !events.isEmpty {
-                        Button(action: { showingClearConfirmation = true }) {
-                            AppBadge("CLEAR", color: .danger, isFilled: false)
+                        Button(role: .destructive) {
+                            showingClearConfirmation = true
+                        } label: {
+                            Text("Clear")
+                                .font(RetroTheme.buttonSmall)
+                                .foregroundColor(RetroTheme.danger)
                         }
                     }
                 }
             }
             .confirmationDialog(
-                "CLEAR AUDIT LOG",
+                "Clear History",
                 isPresented: $showingClearConfirmation,
                 titleVisibility: .visible
             ) {
-                Button("Delete All Threat Logs", role: .destructive) {
+                Button("Delete All History", role: .destructive) {
                     ThreatDatabase.shared.clearAllEvents()
                     loadEvents()
                     UINotificationFeedbackGenerator().notificationOccurred(.success)
                 }
                 Button("Cancel", role: .cancel) {}
             } message: {
-                Text("This permanently deletes all on-device threat activity logs from your iPhone.")
+                Text("This permanently deletes all logged threats from your device.")
             }
             .sheet(item: $selectedEvent) { event in
                 ThreatEventDetailSheet(event: event)
@@ -104,98 +147,14 @@ public struct ThreatHistoryView: View {
 
     // MARK: - Subviews
 
-    private var filterBar: some View {
-        HStack(spacing: 8) {
-            ForEach(HistoryFilter.allCases) { filter in
-                let isSelected = selectedFilter == filter
-                Button(action: {
-                    UIImpactFeedbackGenerator(style: .light).impactOccurred()
-                    selectedFilter = filter
-                }) {
-                    Text(filter.rawValue)
-                        .font(RetroTheme.buttonSmall)
-                        .foregroundColor(isSelected ? RetroTheme.primaryContrast : RetroTheme.foreground)
-                        .padding(.horizontal, 12)
-                        .padding(.vertical, 7)
-                        .background(isSelected ? RetroTheme.primary : RetroTheme.content1)
-                        .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 8, style: .continuous)
-                                .stroke(RetroTheme.border, lineWidth: 1)
-                        )
-                }
-            }
-            Spacer()
-        }
-    }
-
     private var emptyStateView: some View {
         AppEmptyState(
-            icon: "shield.lefthalf.filled",
-            title: searchText.isEmpty ? "0 Threats Logged" : "No Matching Records",
+            icon: searchText.isEmpty ? "shield.checkered" : "magnifyingglass",
+            title: searchText.isEmpty ? "No Threats Detected" : "No Results Found",
             subtitle: searchText.isEmpty ?
-                 "On-device SQLite filter active. Blocked scam texts and malicious Safari links will be cataloged here." :
-                 "Try searching with an alternate keyword or domain query.",
-            badgeText: "SYSTEM SECURED",
-            badgeColor: .accent
+                 "Blocked scam messages and deceptive websites will appear here." :
+                 "No logged threats match \"\(searchText)\". Try another search term."
         )
-    }
-
-    private func eventCard(for event: ThreatEventRecord) -> some View {
-        AppCard {
-            VStack(alignment: .leading, spacing: 10) {
-                HStack(alignment: .top) {
-                    HStack(spacing: 6) {
-                        Image(systemName: event.source == "sms" ? "message.badge.filled.fill" : "safari.fill")
-                            .font(RetroTheme.captionLarge)
-                            .foregroundColor(RetroTheme.accent)
-
-                        Text(title(for: event))
-                            .font(RetroTheme.bodyMedium)
-                            .foregroundColor(RetroTheme.foreground)
-                            .lineLimit(1)
-                    }
-
-                    Spacer()
-
-                    AppBadge(badgeTitle(for: event), color: .danger, isFilled: true)
-                }
-
-                if let sender = event.sender, !sender.isEmpty {
-                    Text("FROM: \(sender)")
-                        .font(RetroTheme.captionSmall)
-                        .foregroundColor(RetroTheme.secondaryForeground)
-                }
-
-                Text(event.target)
-                    .font(RetroTheme.captionMedium)
-                    .foregroundColor(RetroTheme.foreground)
-                    .lineLimit(1)
-                    .truncationMode(.middle)
-                    .padding(.horizontal, 8)
-                    .padding(.vertical, 6)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .background(RetroTheme.content1)
-                    .clipShape(RoundedRectangle(cornerRadius: 6, style: .continuous))
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 6, style: .continuous)
-                            .stroke(RetroTheme.border, lineWidth: 1)
-                    )
-
-                HStack {
-                    Text("\(event.timestamp, style: .relative) ago // \(event.category.uppercased())")
-                        .font(RetroTheme.captionSmall)
-                        .foregroundColor(RetroTheme.secondaryForeground)
-
-                    Spacer()
-
-                    Image(systemName: "chevron.right")
-                        .font(RetroTheme.captionSmall)
-                        .foregroundColor(RetroTheme.secondaryForeground)
-                }
-            }
-            .padding(14)
-        }
     }
 
     // MARK: - Helpers
@@ -232,15 +191,20 @@ public struct ThreatHistoryView: View {
             let cleanBrand = brand
                 .replacingOccurrences(of: " (Domain Test)", with: "")
                 .replacingOccurrences(of: " (URL Test)", with: "")
-            return "\(cleanBrand) Phishing"
+            return cleanBrand
         } else if let url = URL(string: event.target), let host = url.host, !host.isEmpty {
             return host
         } else {
-            return event.source == "sms" ? "Suspicious SMS" : "Malicious Website"
+            return event.source == "sms" ? "Scam Message" : "Deceptive Website"
         }
     }
 
-    private func badgeTitle(for event: ThreatEventRecord) -> String {
-        return event.source == "sms" ? "JUNK" : "BLOCKED"
+    private func subtitle(for event: ThreatEventRecord) -> String {
+        let timeStr = event.timestamp.relativeFormatted
+        if let sender = event.sender, !sender.isEmpty {
+            return "\(sender) · \(timeStr)"
+        } else {
+            return "\(event.category.capitalized) · \(timeStr)"
+        }
     }
 }
