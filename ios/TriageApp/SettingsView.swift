@@ -24,12 +24,12 @@ public struct SettingsView: View {
                     VStack(spacing: 20) {
                         // MARK: - 1. Subscription & Plan
                         VStack(alignment: .leading, spacing: 8) {
-                            Text("// MEMBERSHIP & ACCESS")
-                                .font(.system(size: 11, weight: .heavy, design: .monospaced))
+                            Text("MEMBERSHIP & ACCESS")
+                                .font(RetroTheme.captionSmall)
                                 .foregroundColor(RetroTheme.secondaryForeground)
                                 .padding(.horizontal, 4)
 
-                            RetroCard(cornerRadius: 10) {
+                            RetroCard {
                                 VStack(spacing: 12) {
                                     HStack(spacing: 14) {
                                         TriageLogoView(size: 44, showsGlow: subscriptionManager.isProUser)
@@ -37,7 +37,7 @@ public struct SettingsView: View {
                                         VStack(alignment: .leading, spacing: 3) {
                                             HStack(spacing: 6) {
                                                 Text(subscriptionManager.isProUser ? "TRIAGE PRO" : "TRIAGE FREE")
-                                                    .font(.system(size: 14, weight: .heavy, design: .monospaced))
+                                                    .font(RetroTheme.headlineSmall)
                                                     .foregroundColor(RetroTheme.foreground)
 
                                                 RetroBadge(
@@ -50,7 +50,7 @@ public struct SettingsView: View {
                                             Text(subscriptionManager.isProUser ?
                                                  "Zero-Day AI inspection & continuous threat sync enabled." :
                                                  "Standard on-device SQLite SMS & Safari defense.")
-                                                .font(.system(size: 11, design: .monospaced))
+                                                .font(RetroTheme.captionMedium)
                                                 .foregroundColor(RetroTheme.secondaryForeground)
                                         }
                                         Spacer()
@@ -80,10 +80,10 @@ public struct SettingsView: View {
                                                         .scaleEffect(0.7)
                                                 } else {
                                                     Image(systemName: "arrow.clockwise")
-                                                        .font(.system(size: 11, weight: .bold))
+                                                        .font(RetroTheme.captionMedium)
                                                 }
                                                 Text("RESTORE PURCHASES")
-                                                    .font(.system(size: 11, weight: .heavy, design: .monospaced))
+                                                    .font(RetroTheme.buttonSmall)
                                             }
                                             .foregroundColor(RetroTheme.foreground)
                                         }
@@ -94,9 +94,9 @@ public struct SettingsView: View {
                                         Button(action: openAppleSubscriptions) {
                                             HStack(spacing: 4) {
                                                 Text("MANAGE")
-                                                    .font(.system(size: 11, weight: .heavy, design: .monospaced))
+                                                    .font(RetroTheme.captionMedium)
                                                 Image(systemName: "arrow.up.forward")
-                                                    .font(.system(size: 10, weight: .bold))
+                                                    .font(RetroTheme.captionSmall)
                                             }
                                             .foregroundColor(RetroTheme.secondaryForeground)
                                         }
@@ -104,7 +104,7 @@ public struct SettingsView: View {
 
                                     if let msg = restoreStatusMessage {
                                         Text(msg)
-                                            .font(.system(size: 10, design: .monospaced))
+                                            .font(RetroTheme.captionMedium)
                                             .foregroundColor(RetroTheme.success)
                                             .frame(maxWidth: .infinity, alignment: .leading)
                                     }
@@ -115,15 +115,15 @@ public struct SettingsView: View {
 
                         // MARK: - 2. Help & Support
                         VStack(alignment: .leading, spacing: 8) {
-                            Text("// KNOWLEDGE & SUPPORT")
-                                .font(.system(size: 11, weight: .heavy, design: .monospaced))
+                            Text("KNOWLEDGE & SUPPORT")
+                                .font(RetroTheme.captionSmall)
                                 .foregroundColor(RetroTheme.secondaryForeground)
                                 .padding(.horizontal, 4)
 
-                            RetroCard(cornerRadius: 10) {
+                            RetroCard {
                                 VStack(spacing: 0) {
                                     NavigationLink(destination: FAQView()) {
-                                        menuRow(title: "FAQ & ARCHITECTURE", icon: "questionmark.circle.fill", iconColor: .blue)
+                                        menuRow(title: "FAQ & ARCHITECTURE", icon: "questionmark.circle.fill", iconColor: RetroTheme.accent)
                                     }
 
                                     SUDivider()
@@ -155,12 +155,12 @@ public struct SettingsView: View {
 
                         // MARK: - 3. Privacy & Legal
                         VStack(alignment: .leading, spacing: 8) {
-                            Text("// COMPLIANCE & PRIVACY")
-                                .font(.system(size: 11, weight: .heavy, design: .monospaced))
+                            Text("COMPLIANCE & PRIVACY")
+                                .font(RetroTheme.captionSmall)
                                 .foregroundColor(RetroTheme.secondaryForeground)
                                 .padding(.horizontal, 4)
 
-                            RetroCard(cornerRadius: 10) {
+                            RetroCard {
                                 VStack(spacing: 0) {
                                     Button(action: { showingPrivacyPolicy = true }) {
                                         menuRow(title: "PRIVACY POLICY & ZERO-LOGGING", icon: "lock.shield.fill", iconColor: RetroTheme.success)
@@ -179,16 +179,16 @@ public struct SettingsView: View {
 
                         // MARK: - 4. About & Engine Metrics
                         VStack(alignment: .leading, spacing: 8) {
-                            Text("// ENGINE SPECIFICATION")
-                                .font(.system(size: 11, weight: .heavy, design: .monospaced))
+                            Text("ENGINE SPECIFICATION")
+                                .font(RetroTheme.captionSmall)
                                 .foregroundColor(RetroTheme.secondaryForeground)
                                 .padding(.horizontal, 4)
 
-                            RetroCard(cornerRadius: 10) {
+                            RetroCard {
                                 VStack(spacing: 12) {
                                     HStack {
                                         Text("CORE ENGINE")
-                                            .font(.system(size: 11, weight: .bold, design: .monospaced))
+                                            .font(RetroTheme.captionLarge)
                                             .foregroundColor(RetroTheme.secondaryForeground)
                                         Spacer()
                                         RetroBadge("SQLITE 3.45 WAL", color: .accent, isFilled: true)
@@ -198,11 +198,11 @@ public struct SettingsView: View {
 
                                     HStack {
                                         Text("BUILD SPEC")
-                                            .font(.system(size: 11, weight: .bold, design: .monospaced))
+                                            .font(RetroTheme.captionLarge)
                                             .foregroundColor(RetroTheme.secondaryForeground)
                                         Spacer()
                                         Text("v1.0.0 (Build 1)")
-                                            .font(.system(size: 11, weight: .heavy, design: .monospaced))
+                                            .font(RetroTheme.bodySmall)
                                             .foregroundColor(RetroTheme.foreground)
                                     }
 
@@ -210,7 +210,7 @@ public struct SettingsView: View {
 
                                     HStack {
                                         Text("SANDBOX")
-                                            .font(.system(size: 11, weight: .bold, design: .monospaced))
+                                            .font(RetroTheme.captionLarge)
                                             .foregroundColor(RetroTheme.secondaryForeground)
                                         Spacer()
                                         RetroBadge("IDENTITYLOOKUP / WEBKIT", color: .primary, isFilled: false)
@@ -221,7 +221,7 @@ public struct SettingsView: View {
                         }
 
                         Text("TRIAGE SECURITY // ZERO TELEMETRY // APPLE HIG COMPLIANT")
-                            .font(.system(size: 9, weight: .bold, design: .monospaced))
+                            .font(RetroTheme.captionSmall)
                             .foregroundColor(RetroTheme.secondaryForeground.opacity(0.6))
                             .padding(.top, 4)
                             .padding(.bottom, 96)
@@ -247,18 +247,18 @@ public struct SettingsView: View {
     private func menuRow(title: String, icon: String, iconColor: Color) -> some View {
         HStack(spacing: 12) {
             Image(systemName: icon)
-                .font(.system(size: 13, weight: .bold))
+                .font(RetroTheme.bodyMedium)
                 .foregroundColor(iconColor)
                 .frame(width: 20)
 
             Text(title)
-                .font(.system(size: 11, weight: .heavy, design: .monospaced))
+                .font(RetroTheme.bodySmall)
                 .foregroundColor(RetroTheme.foreground)
 
             Spacer()
 
             Image(systemName: "chevron.right")
-                .font(.system(size: 10, weight: .bold))
+                .font(RetroTheme.captionSmall)
                 .foregroundColor(RetroTheme.secondaryForeground)
         }
         .padding(.vertical, 12)
@@ -338,14 +338,14 @@ struct FAQView: View {
             ScrollView {
                 VStack(spacing: 14) {
                     ForEach(faqs) { item in
-                        RetroCard(cornerRadius: 8) {
+                        RetroCard {
                             VStack(alignment: .leading, spacing: 8) {
                                 Text(item.question)
-                                    .font(.system(size: 11, weight: .heavy, design: .monospaced))
+                                    .font(RetroTheme.bodyMedium)
                                     .foregroundColor(RetroTheme.foreground)
 
                                 Text(item.answer)
-                                    .font(.system(size: 11, design: .monospaced))
+                                    .font(RetroTheme.bodySmall)
                                     .foregroundColor(RetroTheme.secondaryForeground)
                                     .lineSpacing(2)
                             }
@@ -376,25 +376,21 @@ struct PrivacyPolicySheet: View {
                     VStack(alignment: .leading, spacing: 16) {
                         HStack(spacing: 12) {
                             ZStack {
-                                Rectangle()
+                                RoundedRectangle(cornerRadius: 12, style: .continuous)
                                     .fill(RetroTheme.content1)
                                     .frame(width: 44, height: 44)
-                                    .overlay(
-                                        Rectangle()
-                                            .stroke(RetroTheme.border, lineWidth: 1.5)
-                                    )
 
                                 Image(systemName: "lock.shield.fill")
-                                    .font(.system(size: 20, weight: .bold))
+                                    .font(RetroTheme.headlineSmall)
                                     .foregroundColor(RetroTheme.success)
                             }
 
                             VStack(alignment: .leading, spacing: 2) {
                                 Text("PRIVACY POLICY")
-                                    .font(.system(size: 16, weight: .heavy, design: .monospaced))
+                                    .font(RetroTheme.headlineMedium)
                                     .foregroundColor(RetroTheme.foreground)
                                 Text("Zero-Telemetry Guarantee • Audited Apple Manifest")
-                                    .font(.system(size: 10, design: .monospaced))
+                                    .font(RetroTheme.captionSmall)
                                     .foregroundColor(RetroTheme.secondaryForeground)
                             }
                         }
@@ -441,13 +437,13 @@ struct PrivacyPolicySheet: View {
     }
 
     private func policyBlock(title: String, body: String) -> some View {
-        RetroCard(cornerRadius: 8) {
+        RetroCard {
             VStack(alignment: .leading, spacing: 6) {
                 Text(title)
-                    .font(.system(size: 11, weight: .heavy, design: .monospaced))
+                    .font(RetroTheme.bodyMedium)
                     .foregroundColor(RetroTheme.foreground)
                 Text(body)
-                    .font(.system(size: 11, design: .monospaced))
+                    .font(RetroTheme.bodySmall)
                     .foregroundColor(RetroTheme.secondaryForeground)
                     .lineSpacing(2)
             }
@@ -470,12 +466,12 @@ struct TermsOfServiceSheet: View {
                 ScrollView {
                     VStack(alignment: .leading, spacing: 16) {
                         Text("TERMS OF SERVICE")
-                            .font(.system(size: 16, weight: .heavy, design: .monospaced))
+                            .font(RetroTheme.headlineMedium)
                             .foregroundColor(RetroTheme.foreground)
                             .padding(.top, 8)
 
                         Text("Standard Apple EULA & Subscription Terms")
-                            .font(.system(size: 10, design: .monospaced))
+                            .font(RetroTheme.captionSmall)
                             .foregroundColor(RetroTheme.secondaryForeground)
 
                         termsBlock(
@@ -519,13 +515,13 @@ struct TermsOfServiceSheet: View {
     }
 
     private func termsBlock(title: String, body: String) -> some View {
-        RetroCard(cornerRadius: 8) {
+        RetroCard {
             VStack(alignment: .leading, spacing: 6) {
                 Text(title)
-                    .font(.system(size: 11, weight: .heavy, design: .monospaced))
+                    .font(RetroTheme.bodyMedium)
                     .foregroundColor(RetroTheme.foreground)
                 Text(body)
-                    .font(.system(size: 11, design: .monospaced))
+                    .font(RetroTheme.bodySmall)
                     .foregroundColor(RetroTheme.secondaryForeground)
                     .lineSpacing(2)
             }

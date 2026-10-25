@@ -42,8 +42,8 @@ public struct ThreatHistoryView: View {
                         ScrollView(showsIndicators: false) {
                             LazyVStack(spacing: 12) {
                                 HStack {
-                                    Text("// \(filteredEvents.count) LOGGED EVENT\(filteredEvents.count == 1 ? "" : "S")")
-                                        .font(.system(size: 11, weight: .bold, design: .monospaced))
+                                    Text("\(filteredEvents.count) LOGGED EVENT\(filteredEvents.count == 1 ? "" : "S")")
+                                        .font(RetroTheme.captionSmall)
                                         .foregroundColor(RetroTheme.secondaryForeground)
                                     Spacer()
                                 }
@@ -112,16 +112,16 @@ public struct ThreatHistoryView: View {
                     UIImpactFeedbackGenerator(style: .light).impactOccurred()
                     selectedFilter = filter
                 }) {
-                    Text("[ \(filter.rawValue) ]")
-                        .font(.system(size: 11, weight: .heavy, design: .monospaced))
+                    Text(filter.rawValue)
+                        .font(RetroTheme.buttonSmall)
                         .foregroundColor(isSelected ? RetroTheme.primaryContrast : RetroTheme.foreground)
-                        .padding(.horizontal, 10)
-                        .padding(.vertical, 6)
+                        .padding(.horizontal, 12)
+                        .padding(.vertical, 7)
                         .background(isSelected ? RetroTheme.primary : RetroTheme.content1)
-                        .clipShape(RoundedRectangle(cornerRadius: 6, style: .continuous))
+                        .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
                         .overlay(
-                            RoundedRectangle(cornerRadius: 6, style: .continuous)
-                                .stroke(RetroTheme.border, lineWidth: isSelected ? 2 : 1)
+                            RoundedRectangle(cornerRadius: 8, style: .continuous)
+                                .stroke(RetroTheme.border, lineWidth: 1)
                         )
                 }
             }
@@ -132,11 +132,11 @@ public struct ThreatHistoryView: View {
     private var searchBar: some View {
         HStack(spacing: 8) {
             Image(systemName: "magnifyingglass")
-                .font(.system(size: 12, weight: .bold))
+                .font(RetroTheme.captionLarge)
                 .foregroundColor(RetroTheme.secondaryForeground)
 
             TextField("Filter links, brands, senders...", text: $searchText)
-                .font(.system(size: 12, design: .monospaced))
+                .font(RetroTheme.bodySmall)
                 .foregroundColor(RetroTheme.foreground)
                 .autocorrectionDisabled()
                 .textInputAutocapitalization(.never)
@@ -144,17 +144,17 @@ public struct ThreatHistoryView: View {
             if !searchText.isEmpty {
                 Button(action: { searchText = "" }) {
                     Image(systemName: "xmark.circle.fill")
-                        .font(.system(size: 12))
+                        .font(RetroTheme.captionLarge)
                         .foregroundColor(RetroTheme.secondaryForeground)
                 }
             }
         }
-        .padding(.horizontal, 10)
-        .padding(.vertical, 8)
-        .background(RetroTheme.surface)
-        .clipShape(RoundedRectangle(cornerRadius: 6, style: .continuous))
+        .padding(.horizontal, 12)
+        .padding(.vertical, 9)
+        .background(RetroTheme.content1)
+        .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
         .overlay(
-            RoundedRectangle(cornerRadius: 6, style: .continuous)
+            RoundedRectangle(cornerRadius: 10, style: .continuous)
                 .stroke(RetroTheme.border, lineWidth: 1)
         )
     }
@@ -163,31 +163,27 @@ public struct ThreatHistoryView: View {
         VStack(spacing: 16) {
             Spacer()
 
-            RetroCard(cornerRadius: 12) {
+            RetroCard {
                 VStack(spacing: 14) {
                     ZStack {
-                        Rectangle()
+                        RoundedRectangle(cornerRadius: 14, style: .continuous)
                             .fill(RetroTheme.content1)
                             .frame(width: 52, height: 52)
-                            .overlay(
-                                Rectangle()
-                                    .stroke(RetroTheme.border, lineWidth: 1.5)
-                            )
 
                         Image(systemName: "shield.lefthalf.filled")
-                            .font(.system(size: 24, weight: .bold))
+                            .font(RetroTheme.headlineLarge)
                             .foregroundColor(RetroTheme.success)
                     }
 
                     VStack(spacing: 6) {
-                        Text(searchText.isEmpty ? "> 0 THREATS LOGGED" : "> NO MATCHING RECORDS")
-                            .font(.system(size: 14, weight: .heavy, design: .monospaced))
+                        Text(searchText.isEmpty ? "0 Threats Logged" : "No Matching Records")
+                            .font(RetroTheme.headlineSmall)
                             .foregroundColor(RetroTheme.foreground)
 
                         Text(searchText.isEmpty ?
                              "On-device SQLite filter active. Blocked scam texts and malicious Safari links will be cataloged here." :
                              "Try searching with an alternate keyword or domain query.")
-                            .font(.system(size: 11, weight: .medium, design: .monospaced))
+                            .font(RetroTheme.bodySmall)
                             .foregroundColor(RetroTheme.secondaryForeground)
                             .multilineTextAlignment(.center)
                             .padding(.horizontal, 12)
@@ -204,16 +200,16 @@ public struct ThreatHistoryView: View {
     }
 
     private func eventCard(for event: ThreatEventRecord) -> some View {
-        RetroCard(cornerRadius: 8) {
+        RetroCard {
             VStack(alignment: .leading, spacing: 10) {
                 HStack(alignment: .top) {
                     HStack(spacing: 6) {
                         Image(systemName: event.source == "sms" ? "message.badge.filled.fill" : "safari.fill")
-                            .font(.system(size: 12, weight: .bold))
-                            .foregroundColor(event.source == "sms" ? RetroTheme.success : .blue)
+                            .font(RetroTheme.captionLarge)
+                            .foregroundColor(RetroTheme.accent)
 
-                        Text(title(for: event).uppercased())
-                            .font(.system(size: 12, weight: .heavy, design: .monospaced))
+                        Text(title(for: event))
+                            .font(RetroTheme.bodyMedium)
                             .foregroundColor(RetroTheme.foreground)
                             .lineLimit(1)
                     }
@@ -225,33 +221,34 @@ public struct ThreatHistoryView: View {
 
                 if let sender = event.sender, !sender.isEmpty {
                     Text("FROM: \(sender)")
-                        .font(.system(size: 10, weight: .bold, design: .monospaced))
+                        .font(RetroTheme.captionSmall)
                         .foregroundColor(RetroTheme.secondaryForeground)
                 }
 
                 Text(event.target)
-                    .font(.system(size: 11, design: .monospaced))
+                    .font(RetroTheme.captionMedium)
                     .foregroundColor(RetroTheme.foreground)
                     .lineLimit(1)
                     .truncationMode(.middle)
                     .padding(.horizontal, 8)
-                    .padding(.vertical, 5)
+                    .padding(.vertical, 6)
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .background(RetroTheme.content1)
+                    .clipShape(RoundedRectangle(cornerRadius: 6, style: .continuous))
                     .overlay(
-                        Rectangle()
+                        RoundedRectangle(cornerRadius: 6, style: .continuous)
                             .stroke(RetroTheme.border, lineWidth: 1)
                     )
 
                 HStack {
                     Text("\(event.timestamp, style: .relative) ago // \(event.category.uppercased())")
-                        .font(.system(size: 9, weight: .medium, design: .monospaced))
+                        .font(RetroTheme.captionSmall)
                         .foregroundColor(RetroTheme.secondaryForeground)
 
                     Spacer()
 
                     Image(systemName: "chevron.right")
-                        .font(.system(size: 10, weight: .bold))
+                        .font(RetroTheme.captionSmall)
                         .foregroundColor(RetroTheme.secondaryForeground)
                 }
             }

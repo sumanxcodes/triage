@@ -26,17 +26,17 @@ public struct OnboardingView: View {
                             RetroBadge("PRIVATE BY DESIGN // SYSTEM INIT", color: .accent, isFilled: true)
 
                             VStack(alignment: .leading, spacing: 2) {
-                                Text("YOUR MESSAGES.")
+                                Text("Your Messages.")
                                     .foregroundColor(RetroTheme.foreground)
-                                Text("YOUR BROWSING.")
+                                Text("Your Browsing.")
                                     .foregroundColor(RetroTheme.foreground)
-                                Text("PROTECTED.")
+                                Text("Protected.")
                                     .foregroundColor(RetroTheme.success)
                             }
-                            .font(.system(size: 30, weight: .heavy, design: .monospaced))
+                            .font(RetroTheme.urbanist(size: 30, weight: .bold))
 
                             Text("Dual-layer cyber defense against smishing scams and fraudulent links, evaluated 100% on your iPhone.")
-                                .font(.system(size: 12, design: .monospaced))
+                                .font(RetroTheme.bodySmall)
                                 .foregroundColor(RetroTheme.secondaryForeground)
                                 .padding(.top, 2)
                         }
@@ -48,7 +48,7 @@ public struct OnboardingView: View {
                                 title: "SMS SMISHING FILTER",
                                 subtitle: "Silently intercepts unknown scam texts and routes them to Junk before they ring.",
                                 icon: "message.badge.filled.fill",
-                                iconColor: RetroTheme.textAccent
+                                iconColor: RetroTheme.accent
                             )
 
                             featureCard(
@@ -56,7 +56,7 @@ public struct OnboardingView: View {
                                 title: "SAFARI WEB SHIELD",
                                 subtitle: "Cross-checks dangerous links in WebKit against local threat hashes in <1ms.",
                                 icon: "safari.fill",
-                                iconColor: .blue
+                                iconColor: RetroTheme.accent
                             )
 
                             featureCard(
@@ -64,7 +64,7 @@ public struct OnboardingView: View {
                                 title: "ZERO TELEMETRY",
                                 subtitle: "No account required. No analytics. Your private data never leaves your device.",
                                 icon: "lock.shield.fill",
-                                iconColor: RetroTheme.textAccent
+                                iconColor: RetroTheme.success
                             )
                         }
                     }
@@ -91,11 +91,11 @@ public struct OnboardingView: View {
 
                     HStack(spacing: 6) {
                         Image(systemName: "shield.lefthalf.filled")
-                            .font(.system(size: 10, weight: .bold))
+                            .font(RetroTheme.captionSmall)
                             .foregroundColor(RetroTheme.secondaryForeground)
 
                         Text("LOCAL SQLITE // AIR-GAPPED EVALUATION")
-                            .font(.system(size: 10, weight: .bold, design: .monospaced))
+                            .font(RetroTheme.captionSmall)
                             .foregroundColor(RetroTheme.secondaryForeground)
                     }
                     .frame(maxWidth: .infinity)
@@ -115,35 +115,35 @@ public struct OnboardingView: View {
         icon: String,
         iconColor: Color
     ) -> some View {
-        RetroCard(cornerRadius: 8) {
+        RetroCard {
             HStack(alignment: .top, spacing: 12) {
                 ZStack {
-                    Rectangle()
+                    RoundedRectangle(cornerRadius: 10, style: .continuous)
                         .fill(RetroTheme.content1)
                         .frame(width: 38, height: 38)
                         .overlay(
-                            Rectangle()
-                                .stroke(RetroTheme.border, lineWidth: 1.5)
+                            RoundedRectangle(cornerRadius: 10, style: .continuous)
+                                .stroke(RetroTheme.border, lineWidth: 1)
                         )
 
                     Image(systemName: icon)
-                        .font(.system(size: 16, weight: .bold))
+                        .font(RetroTheme.headlineSmall)
                         .foregroundColor(iconColor)
                 }
 
                 VStack(alignment: .leading, spacing: 3) {
                     HStack {
                         Text(stepNumber)
-                            .font(.system(size: 10, weight: .bold, design: .monospaced))
-                            .foregroundColor(RetroTheme.success)
+                            .font(RetroTheme.captionSmall)
+                            .foregroundColor(RetroTheme.accent)
 
                         Text(title)
-                            .font(.system(size: 11, weight: .heavy, design: .monospaced))
+                            .font(RetroTheme.bodyMedium)
                             .foregroundColor(RetroTheme.foreground)
                     }
 
                     Text(subtitle)
-                        .font(.system(size: 10, design: .monospaced))
+                        .font(RetroTheme.captionMedium)
                         .foregroundColor(RetroTheme.secondaryForeground)
                         .lineSpacing(1.5)
                 }

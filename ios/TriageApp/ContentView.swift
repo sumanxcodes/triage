@@ -176,7 +176,7 @@ struct ContentView: View {
                     .frame(width: 8, height: 8)
 
                 Text("TRIAGE")
-                    .font(RetroTheme.urbanist(size: 16, weight: .bold))
+                    .font(RetroTheme.headlineSmall)
                     .foregroundColor(RetroTheme.foreground)
             }
 
@@ -191,9 +191,9 @@ struct ContentView: View {
                 }) {
                     HStack(spacing: 5) {
                         Image(systemName: "sparkles")
-                            .font(.system(size: 11, weight: .semibold))
+                            .font(RetroTheme.captionSmall)
                         Text("UPGRADE")
-                            .font(RetroTheme.urbanist(size: 11, weight: .bold))
+                            .font(RetroTheme.buttonSmall)
                     }
                     .padding(.horizontal, 11)
                     .padding(.vertical, 6)
@@ -220,7 +220,7 @@ struct ContentView: View {
                     Spacer()
 
                     Text(isFullyProtected ? "2/2 ONLINE" : "\(activeLayersCount)/2 READY")
-                        .font(RetroTheme.urbanist(size: 12, weight: .semibold))
+                        .font(RetroTheme.captionLarge)
                         .foregroundColor(RetroTheme.secondaryForeground)
                 }
 
@@ -246,13 +246,13 @@ struct ContentView: View {
                 VStack(alignment: .leading, spacing: 6) {
                     HStack {
                         Text("DEFENSE INTEGRITY")
-                            .font(RetroTheme.urbanist(size: 11, weight: .bold))
+                            .font(RetroTheme.captionMedium)
                             .foregroundColor(RetroTheme.secondaryForeground)
 
                         Spacer()
 
                         Text(isFullyProtected ? "100%" : "\(activeLayersCount * 50)%")
-                            .font(RetroTheme.urbanist(size: 11, weight: .bold))
+                            .font(RetroTheme.captionMedium)
                             .foregroundColor(isFullyProtected ? RetroTheme.success : RetroTheme.warning)
                     }
 
@@ -271,8 +271,6 @@ struct ContentView: View {
             moduleCard(
                 type: .sms,
                 icon: "message.badge.filled.fill",
-                iconColor: RetroTheme.accent,
-                iconBg: RetroTheme.accentBackground,
                 title: "SMS Filter",
                 subtitle: "On-Device Message Guard",
                 status: smsStatus
@@ -281,8 +279,6 @@ struct ContentView: View {
             moduleCard(
                 type: .safari,
                 icon: "safari.fill",
-                iconColor: RetroTheme.accent,
-                iconBg: RetroTheme.content1,
                 title: "Safari Shield",
                 subtitle: "WebKit Phishing Blocker",
                 status: safariStatus
@@ -293,8 +289,6 @@ struct ContentView: View {
     private func moduleCard(
         type: ModuleType,
         icon: String,
-        iconColor: Color,
-        iconBg: Color,
         title: String,
         subtitle: String,
         status: ModuleStatus
@@ -303,21 +297,21 @@ struct ContentView: View {
             UIImpactFeedbackGenerator(style: .light).impactOccurred()
             selectedModule = type
         }) {
-            RetroCard {
+            RetroCard(isTappable: true) {
                 HStack(spacing: 14) {
                     ZStack {
                         RoundedRectangle(cornerRadius: 12, style: .continuous)
-                            .fill(iconBg)
+                            .fill(RetroTheme.content1)
                             .frame(width: 44, height: 44)
 
                         Image(systemName: icon)
-                            .font(.system(size: 18, weight: .semibold))
-                            .foregroundColor(iconColor)
+                            .font(RetroTheme.headlineSmall)
+                            .foregroundColor(RetroTheme.accent)
                     }
 
                     VStack(alignment: .leading, spacing: 3) {
                         Text(title)
-                            .font(RetroTheme.urbanist(size: 15, weight: .semibold))
+                            .font(RetroTheme.headlineSmall)
                             .foregroundColor(RetroTheme.foreground)
 
                         Text(subtitle)
@@ -334,7 +328,7 @@ struct ContentView: View {
                     )
 
                     Image(systemName: "chevron.right")
-                        .font(.system(size: 12, weight: .semibold))
+                        .font(RetroTheme.captionSmall)
                         .foregroundColor(RetroTheme.secondaryForeground)
                 }
             }
@@ -348,11 +342,11 @@ struct ContentView: View {
                 VStack(alignment: .leading, spacing: 3) {
                     HStack(spacing: 6) {
                         Text(formattedThreatCount)
-                            .font(RetroTheme.urbanist(size: 18, weight: .bold))
+                            .font(RetroTheme.headlineMedium)
                             .foregroundColor(RetroTheme.foreground)
 
                         Text("SIGNATURES")
-                            .font(RetroTheme.urbanist(size: 11, weight: .bold))
+                            .font(RetroTheme.captionSmall)
                             .foregroundColor(RetroTheme.secondaryForeground)
                             .tracking(0.5)
                     }
@@ -378,18 +372,19 @@ struct ContentView: View {
                                 .tint(RetroTheme.primaryContrast)
                         } else {
                             Image(systemName: "arrow.triangle.2.circlepath")
-                                .font(.system(size: 12, weight: .bold))
+                                .font(RetroTheme.captionSmall)
                         }
 
                         Text(isSyncing ? "SYNCING" : "SYNC")
-                            .font(RetroTheme.urbanist(size: 12, weight: .bold))
+                            .font(RetroTheme.buttonSmall)
                     }
+                    .padding(.horizontal, 14)
+                    .padding(.vertical, 8)
+                    .background(RetroTheme.primary)
+                    .foregroundColor(RetroTheme.primaryContrast)
+                    .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
                 }
-                .buttonStyle(RetroButtonStyle(
-                    backgroundColor: RetroTheme.primary,
-                    foregroundColor: RetroTheme.primaryContrast,
-                    cornerRadius: 10
-                ))
+                .buttonStyle(.plain)
                 .disabled(isSyncing)
             }
         }
@@ -400,7 +395,7 @@ struct ContentView: View {
             UIImpactFeedbackGenerator(style: .medium).impactOccurred()
             showThreatSimulator = true
         }) {
-            RetroCard {
+            RetroCard(isTappable: true) {
                 HStack(spacing: 12) {
                     ZStack {
                         RoundedRectangle(cornerRadius: 10, style: .continuous)
@@ -408,13 +403,13 @@ struct ContentView: View {
                             .frame(width: 36, height: 36)
 
                         Image(systemName: "shield.lefthalf.filled")
-                            .font(.system(size: 15, weight: .bold))
+                            .font(RetroTheme.bodyMedium)
                             .foregroundColor(RetroTheme.accent)
                     }
 
                     VStack(alignment: .leading, spacing: 2) {
                         Text("Test Threat Detection")
-                            .font(RetroTheme.urbanist(size: 14, weight: .semibold))
+                            .font(RetroTheme.bodyMedium)
                             .foregroundColor(RetroTheme.foreground)
 
                         Text("Simulate live attacks on-device")
@@ -427,7 +422,7 @@ struct ContentView: View {
                     RetroBadge("SIM", color: .accent, isFilled: false)
 
                     Image(systemName: "chevron.right")
-                        .font(.system(size: 12, weight: .semibold))
+                        .font(RetroTheme.captionSmall)
                         .foregroundColor(RetroTheme.secondaryForeground)
                 }
             }
@@ -440,7 +435,7 @@ struct ContentView: View {
             UIImpactFeedbackGenerator(style: .medium).impactOccurred()
             showingPaywall = true
         }) {
-            RetroCard {
+            RetroCard(isTappable: true) {
                 HStack(spacing: 12) {
                     ZStack {
                         RoundedRectangle(cornerRadius: 10, style: .continuous)
@@ -448,13 +443,13 @@ struct ContentView: View {
                             .frame(width: 36, height: 36)
 
                         Image(systemName: "sparkles")
-                            .font(.system(size: 16, weight: .bold))
+                            .font(RetroTheme.bodyMedium)
                             .foregroundColor(RetroTheme.accent)
                     }
 
                     VStack(alignment: .leading, spacing: 2) {
                         Text("Upgrade to Triage Pro")
-                            .font(RetroTheme.urbanist(size: 14, weight: .semibold))
+                            .font(RetroTheme.bodyMedium)
                             .foregroundColor(RetroTheme.foreground)
 
                         Text("Zero-day AI smishing heuristics & delta sync")
@@ -635,13 +630,13 @@ struct ModuleDetailSheet: View {
                         .frame(width: 44, height: 44)
 
                     Image(systemName: moduleIcon)
-                        .font(.system(size: 18, weight: .bold))
+                        .font(RetroTheme.headlineSmall)
                         .foregroundColor(moduleColor)
                 }
 
                 VStack(alignment: .leading, spacing: 3) {
                     Text(moduleType == .sms ? "SMS Smishing Filter" : "Safari Web Shield")
-                        .font(RetroTheme.urbanist(size: 15, weight: .semibold))
+                        .font(RetroTheme.headlineSmall)
                         .foregroundColor(RetroTheme.foreground)
 
                     Text(statusDescription)
@@ -663,7 +658,7 @@ struct ModuleDetailSheet: View {
     private var instructionsCard: some View {
         VStack(alignment: .leading, spacing: 8) {
             Text("ACTIVATION INSTRUCTIONS")
-                .font(RetroTheme.urbanist(size: 11, weight: .bold))
+                .font(RetroTheme.captionSmall)
                 .foregroundColor(RetroTheme.secondaryForeground)
                 .padding(.horizontal, 4)
 
@@ -694,7 +689,7 @@ struct ModuleDetailSheet: View {
     private func retroStepRow(step: String, text: LocalizedStringKey) -> some View {
         HStack(alignment: .top, spacing: 10) {
             Text(step)
-                .font(RetroTheme.urbanist(size: 12, weight: .bold))
+                .font(RetroTheme.captionSmall)
                 .foregroundColor(RetroTheme.accent)
 
             Text(text)
@@ -880,11 +875,11 @@ struct SMSSimulatorSheet: View {
                         RetroCard {
                             HStack(spacing: 12) {
                                 Image(systemName: "shield.lefthalf.filled")
-                                    .font(.system(size: 20, weight: .bold))
+                                    .font(RetroTheme.headlineSmall)
                                     .foregroundColor(RetroTheme.accent)
                                 VStack(alignment: .leading, spacing: 2) {
                                     Text("Threat Inspection Simulator")
-                                        .font(RetroTheme.urbanist(size: 14, weight: .semibold))
+                                        .font(RetroTheme.bodyMedium)
                                         .foregroundColor(RetroTheme.foreground)
                                     Text("Evaluates message candidates against the on-device SQLite database.")
                                         .font(RetroTheme.captionMedium)
@@ -896,7 +891,7 @@ struct SMSSimulatorSheet: View {
                         // Attack Presets
                         VStack(alignment: .leading, spacing: 8) {
                             Text("SAMPLE ATTACK SCENARIOS")
-                                .font(RetroTheme.urbanist(size: 11, weight: .bold))
+                                .font(RetroTheme.captionSmall)
                                 .foregroundColor(RetroTheme.secondaryForeground)
                                 .padding(.horizontal, 4)
 
@@ -909,10 +904,10 @@ struct SMSSimulatorSheet: View {
                                         }) {
                                             HStack(spacing: 6) {
                                                 Image(systemName: preset.icon)
-                                                    .font(.system(size: 11, weight: .bold))
+                                                    .font(RetroTheme.captionSmall)
                                                     .foregroundColor(isSelected ? RetroTheme.accentContrast : preset.color)
                                                 Text(preset.title)
-                                                    .font(RetroTheme.urbanist(size: 12, weight: .semibold))
+                                                    .font(RetroTheme.captionLarge)
                                                     .foregroundColor(isSelected ? RetroTheme.accentContrast : RetroTheme.foreground)
                                             }
                                             .padding(.horizontal, 12)
@@ -929,7 +924,7 @@ struct SMSSimulatorSheet: View {
                         // Simulated Message Editor
                         VStack(alignment: .leading, spacing: 8) {
                             Text("INCOMING PAYLOAD BUFFER")
-                                .font(RetroTheme.urbanist(size: 11, weight: .bold))
+                                .font(RetroTheme.captionSmall)
                                 .foregroundColor(RetroTheme.secondaryForeground)
                                 .padding(.horizontal, 4)
 
@@ -937,7 +932,7 @@ struct SMSSimulatorSheet: View {
                                 VStack(alignment: .leading, spacing: 10) {
                                     HStack(spacing: 8) {
                                         Text("SENDER:")
-                                            .font(RetroTheme.urbanist(size: 11, weight: .bold))
+                                            .font(RetroTheme.captionSmall)
                                             .foregroundColor(RetroTheme.secondaryForeground)
                                         TextField("Sender Number", text: $senderNumber)
                                             .font(RetroTheme.bodySmall)
@@ -949,7 +944,7 @@ struct SMSSimulatorSheet: View {
 
                                     VStack(alignment: .leading, spacing: 4) {
                                         Text("MESSAGE TEXT:")
-                                            .font(RetroTheme.urbanist(size: 11, weight: .bold))
+                                            .font(RetroTheme.captionSmall)
                                             .foregroundColor(RetroTheme.secondaryForeground)
                                         TextEditor(text: $messageBody)
                                             .font(RetroTheme.bodySmall)
@@ -1010,12 +1005,12 @@ struct SMSSimulatorSheet: View {
                 case .threat(let url, let brand, let category):
                     HStack(spacing: 10) {
                         Image(systemName: "shield.slash.fill")
-                            .font(.system(size: 18, weight: .bold))
+                            .font(RetroTheme.headlineSmall)
                             .foregroundColor(RetroTheme.danger)
 
                         VStack(alignment: .leading, spacing: 2) {
                             Text("Malicious Smishing Detected")
-                                .font(RetroTheme.urbanist(size: 14, weight: .bold))
+                                .font(RetroTheme.headlineSmall)
                                 .foregroundColor(RetroTheme.danger)
                             Text("Action: Filtered to Junk (.junk)")
                                 .font(RetroTheme.captionMedium)
@@ -1042,12 +1037,12 @@ struct SMSSimulatorSheet: View {
                 case .clean:
                     HStack(spacing: 10) {
                         Image(systemName: "checkmark.shield.fill")
-                            .font(.system(size: 18, weight: .bold))
+                            .font(RetroTheme.headlineSmall)
                             .foregroundColor(RetroTheme.success)
 
                         VStack(alignment: .leading, spacing: 2) {
                             Text("Clean Message Verified")
-                                .font(RetroTheme.urbanist(size: 14, weight: .bold))
+                                .font(RetroTheme.headlineSmall)
                                 .foregroundColor(RetroTheme.success)
                             Text("Action: Allowed to Inbox (.none)")
                                 .font(RetroTheme.captionMedium)
@@ -1068,12 +1063,12 @@ struct SMSSimulatorSheet: View {
                 case .unverified(let url):
                     HStack(spacing: 10) {
                         Image(systemName: "questionmark.shield.fill")
-                            .font(.system(size: 18, weight: .bold))
+                            .font(RetroTheme.headlineSmall)
                             .foregroundColor(RetroTheme.warning)
 
                         VStack(alignment: .leading, spacing: 2) {
                             Text("Unverified Link Detected")
-                                .font(RetroTheme.urbanist(size: 14, weight: .bold))
+                                .font(RetroTheme.headlineSmall)
                                 .foregroundColor(RetroTheme.warning)
                             Text("Action: Defer to cloud check (.allow)")
                                 .font(RetroTheme.captionMedium)
@@ -1100,11 +1095,11 @@ struct SMSSimulatorSheet: View {
     private func simDetailRow(label: String, value: String) -> some View {
         HStack(alignment: .top) {
             Text(label + ":")
-                .font(RetroTheme.urbanist(size: 11, weight: .bold))
+                .font(RetroTheme.captionSmall)
                 .foregroundColor(RetroTheme.secondaryForeground)
             Spacer()
             Text(value)
-                .font(RetroTheme.urbanist(size: 12, weight: .semibold))
+                .font(RetroTheme.captionLarge)
                 .foregroundColor(RetroTheme.foreground)
                 .multilineTextAlignment(.trailing)
         }

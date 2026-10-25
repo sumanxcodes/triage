@@ -24,23 +24,23 @@ public struct PaywallView: View {
                                 .padding(.top, 12)
 
                             Text("TRIAGE PRO")
-                                .font(.system(size: 24, weight: .heavy, design: .monospaced))
+                                .font(RetroTheme.headlineLarge)
                                 .foregroundColor(RetroTheme.foreground)
 
                             RetroBadge("ZERO-DAY CYBER DEFENSE", color: .accent, isFilled: true)
 
                             Text("Advanced threat intelligence powered by on-device SQLite lookups and Gemini zero-day heuristics.")
-                                .font(.system(size: 11, design: .monospaced))
+                                .font(RetroTheme.bodySmall)
                                 .foregroundColor(RetroTheme.secondaryForeground)
                                 .multilineTextAlignment(.center)
                                 .padding(.horizontal, 24)
                         }
 
                         // Feature Card
-                        RetroCard(cornerRadius: 10) {
+                        RetroCard {
                             VStack(alignment: .leading, spacing: 14) {
                                 Text("// PRO CAPABILITIES")
-                                    .font(.system(size: 10, weight: .heavy, design: .monospaced))
+                                    .font(RetroTheme.captionSmall)
                                     .foregroundColor(RetroTheme.secondaryForeground)
 
                                 featureRow(
@@ -83,7 +83,7 @@ public struct PaywallView: View {
                                 HStack(spacing: 8) {
                                     ProgressView()
                                     Text("CONNECTING TO APP STORE...")
-                                        .font(.system(size: 11, weight: .bold, design: .monospaced))
+                                        .font(RetroTheme.captionLarge)
                                         .foregroundColor(RetroTheme.secondaryForeground)
                                 }
                                 .padding()
@@ -115,7 +115,7 @@ public struct PaywallView: View {
                         // Error Banner if present
                         if let error = subscriptionManager.errorMessage {
                             Text(error)
-                                .font(.system(size: 11, design: .monospaced))
+                                .font(RetroTheme.captionMedium)
                                 .foregroundColor(RetroTheme.danger)
                                 .multilineTextAlignment(.center)
                                 .padding(.horizontal, 16)
@@ -142,8 +142,8 @@ public struct PaywallView: View {
                                     }
                                 }
                             }) {
-                                Text("[ RESTORE PURCHASES ]")
-                                    .font(.system(size: 11, weight: .bold, design: .monospaced))
+                                Text("RESTORE PURCHASES")
+                                    .font(RetroTheme.buttonSmall)
                                     .foregroundColor(RetroTheme.secondaryForeground)
                             }
                             .padding(.top, 4)
@@ -153,7 +153,7 @@ public struct PaywallView: View {
                         // Legal Footnote (Apple App Store Guideline 3.1.2)
                         VStack(spacing: 6) {
                             Text("Subscriptions automatically renew unless auto-renew is turned off at least 24-hours before the end of the current period in Apple ID Settings.")
-                                .font(.system(size: 10, design: .monospaced))
+                                .font(RetroTheme.captionSmall)
                                 .foregroundColor(RetroTheme.secondaryForeground)
                                 .multilineTextAlignment(.center)
 
@@ -162,7 +162,7 @@ public struct PaywallView: View {
                                 Text("•")
                                 Link("TERMS OF SERVICE", destination: URL(string: "https://sumanxcodes.github.io/triage/terms")!)
                             }
-                            .font(.system(size: 10, weight: .bold, design: .monospaced))
+                            .font(RetroTheme.captionSmall)
                             .foregroundColor(RetroTheme.secondaryForeground)
                             .padding(.top, 4)
                         }
@@ -191,11 +191,11 @@ public struct PaywallView: View {
 
             VStack(alignment: .leading, spacing: 2) {
                 Text(title)
-                    .font(.system(size: 11, weight: .heavy, design: .monospaced))
+                    .font(RetroTheme.bodySmall)
                     .foregroundColor(RetroTheme.foreground)
 
                 Text(subtitle)
-                    .font(.system(size: 10, design: .monospaced))
+                    .font(RetroTheme.captionMedium)
                     .foregroundColor(RetroTheme.secondaryForeground)
             }
             Spacer()
@@ -210,12 +210,12 @@ public struct PaywallView: View {
             UIImpactFeedbackGenerator(style: .light).impactOccurred()
             selectedProductID = product.id
         }) {
-            RetroCard(cornerRadius: 8) {
+            RetroCard(cornerRadius: 12) {
                 HStack {
                     VStack(alignment: .leading, spacing: 4) {
                         HStack {
                             Text(product.displayName.isEmpty ? (isAnnual ? "ANNUAL PROTECTION" : "MONTHLY PROTECTION") : product.displayName.uppercased())
-                                .font(.system(size: 12, weight: .heavy, design: .monospaced))
+                                .font(RetroTheme.bodyMedium)
                                 .foregroundColor(RetroTheme.foreground)
 
                             if isAnnual {
@@ -224,7 +224,7 @@ public struct PaywallView: View {
                         }
 
                         Text(isAnnual ? "BILLED ANNUALLY // CANCEL ANYTIME" : "BILLED MONTHLY // CANCEL ANYTIME")
-                            .font(.system(size: 10, design: .monospaced))
+                            .font(RetroTheme.captionMedium)
                             .foregroundColor(RetroTheme.secondaryForeground)
                     }
 
@@ -232,28 +232,28 @@ public struct PaywallView: View {
 
                     VStack(alignment: .trailing, spacing: 2) {
                         Text(product.displayPrice)
-                            .font(.system(size: 14, weight: .heavy, design: .monospaced))
+                            .font(RetroTheme.bodyLarge)
                             .foregroundColor(RetroTheme.foreground)
 
                         Text(isAnnual ? "/ YEAR" : "/ MONTH")
-                            .font(.system(size: 9, design: .monospaced))
+                            .font(RetroTheme.captionSmall)
                             .foregroundColor(RetroTheme.secondaryForeground)
                     }
 
                     ZStack {
-                        Rectangle()
-                            .stroke(RetroTheme.border, lineWidth: 1.5)
+                        Circle()
+                            .stroke(isSelected ? RetroTheme.accent : RetroTheme.border, lineWidth: 1.5)
                             .frame(width: 18, height: 18)
                         if isSelected {
-                            Rectangle()
-                                .fill(RetroTheme.primary)
+                            Circle()
+                                .fill(RetroTheme.accent)
                                 .frame(width: 10, height: 10)
                         }
                     }
                     .padding(.leading, 8)
                 }
                 .padding(14)
-                .background(isSelected ? RetroTheme.primary.opacity(0.08) : Color.clear)
+                .background(isSelected ? RetroTheme.accent.opacity(0.08) : Color.clear)
             }
         }
         .buttonStyle(.plain)
@@ -266,12 +266,12 @@ public struct PaywallView: View {
             UIImpactFeedbackGenerator(style: .light).impactOccurred()
             selectedProductID = id
         }) {
-            RetroCard(cornerRadius: 8) {
+            RetroCard(cornerRadius: 12) {
                 HStack {
                     VStack(alignment: .leading, spacing: 4) {
                         HStack {
                             Text(title)
-                                .font(.system(size: 12, weight: .heavy, design: .monospaced))
+                                .font(RetroTheme.bodyMedium)
                                 .foregroundColor(RetroTheme.foreground)
 
                             if let badge = badge {
@@ -280,30 +280,30 @@ public struct PaywallView: View {
                         }
 
                         Text(detail)
-                            .font(.system(size: 10, design: .monospaced))
+                            .font(RetroTheme.captionMedium)
                             .foregroundColor(RetroTheme.secondaryForeground)
                     }
 
                     Spacer()
 
                     Text(price)
-                        .font(.system(size: 13, weight: .heavy, design: .monospaced))
+                        .font(RetroTheme.bodyLarge)
                         .foregroundColor(RetroTheme.foreground)
 
                     ZStack {
-                        Rectangle()
-                            .stroke(RetroTheme.border, lineWidth: 1.5)
+                        Circle()
+                            .stroke(isSelected ? RetroTheme.accent : RetroTheme.border, lineWidth: 1.5)
                             .frame(width: 18, height: 18)
                         if isSelected {
-                            Rectangle()
-                                .fill(RetroTheme.primary)
+                            Circle()
+                                .fill(RetroTheme.accent)
                                 .frame(width: 10, height: 10)
                         }
                     }
                     .padding(.leading, 8)
                 }
                 .padding(14)
-                .background(isSelected ? RetroTheme.primary.opacity(0.08) : Color.clear)
+                .background(isSelected ? RetroTheme.accent.opacity(0.08) : Color.clear)
             }
         }
         .buttonStyle(.plain)

@@ -21,36 +21,36 @@ public struct ThreatEventDetailSheet: View {
                         // Header Status
                         VStack(spacing: 10) {
                             ZStack {
-                                Rectangle()
-                                    .fill(RetroTheme.elevatedSurface)
+                                RoundedRectangle(cornerRadius: 14, style: .continuous)
+                                    .fill(RetroTheme.dangerBackground)
                                     .frame(width: 58, height: 58)
                                     .overlay(
-                                        Rectangle()
-                                            .stroke(RetroTheme.border, lineWidth: 2)
+                                        RoundedRectangle(cornerRadius: 14, style: .continuous)
+                                            .stroke(RetroTheme.border, lineWidth: 1)
                                     )
 
                                 Image(systemName: "exclamationmark.shield.fill")
-                                    .font(.system(size: 26, weight: .bold))
-                                    .foregroundColor(.red)
+                                    .font(RetroTheme.headlineLarge)
+                                    .foregroundColor(RetroTheme.danger)
                             }
                             .padding(.top, 8)
 
-                            Text(event.targetBrand ?? (event.source == "sms" ? "SMS THREAT" : "SAFARI THREAT"))
-                                .font(.system(size: 18, weight: .heavy, design: .monospaced))
-                                .foregroundColor(.primary)
+                            Text(event.targetBrand ?? (event.source == "sms" ? "SMS Threat" : "Safari Threat"))
+                                .font(RetroTheme.headlineMedium)
+                                .foregroundColor(RetroTheme.foreground)
 
                             HStack(spacing: 6) {
-                                RetroBadge(event.source == "sms" ? "SMS PHISHING" : "WEB PHISHING", color: .red, isFilled: true)
-                                RetroBadge(event.actionTaken == "blocked" ? "BLOCKED" : "JUNKED", color: .red, isFilled: false)
+                                RetroBadge(event.source == "sms" ? "SMS PHISHING" : "WEB PHISHING", color: .danger, isFilled: true)
+                                RetroBadge(event.actionTaken == "blocked" ? "BLOCKED" : "JUNKED", color: .danger, isFilled: false)
                             }
                         }
 
                         // Threat Target Details Card
-                        RetroCard(cornerRadius: 10) {
+                        RetroCard {
                             VStack(alignment: .leading, spacing: 14) {
-                                Text("// THREAT TELEMETRY")
-                                    .font(.system(size: 11, weight: .heavy, design: .monospaced))
-                                    .foregroundColor(.secondary)
+                                Text("THREAT TELEMETRY")
+                                    .font(RetroTheme.captionSmall)
+                                    .foregroundColor(RetroTheme.secondaryForeground)
 
                                 if let sender = event.sender, !sender.isEmpty {
                                     detailRow(label: "SENDER", value: sender)
@@ -59,18 +59,19 @@ public struct ThreatEventDetailSheet: View {
 
                                 VStack(alignment: .leading, spacing: 6) {
                                     Text("TARGET PAYLOAD")
-                                        .font(.system(size: 10, weight: .bold, design: .monospaced))
-                                        .foregroundColor(.secondary)
+                                        .font(RetroTheme.captionSmall)
+                                        .foregroundColor(RetroTheme.secondaryForeground)
 
                                     Text(event.target)
-                                        .font(.system(size: 12, design: .monospaced))
-                                        .foregroundColor(.primary)
+                                        .font(RetroTheme.captionMedium)
+                                        .foregroundColor(RetroTheme.foreground)
                                         .lineLimit(4)
                                         .padding(10)
                                         .frame(maxWidth: .infinity, alignment: .leading)
-                                        .background(RetroTheme.elevatedSurface)
+                                        .background(RetroTheme.content1)
+                                        .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
                                         .overlay(
-                                            Rectangle()
+                                            RoundedRectangle(cornerRadius: 8, style: .continuous)
                                                 .stroke(RetroTheme.border, lineWidth: 1)
                                         )
                                 }
@@ -87,7 +88,7 @@ public struct ThreatEventDetailSheet: View {
 
                                 SUDivider()
 
-                                detailRow(label: "CATEGORY", value: event.category.uppercased())
+                                detailRow(label: "CATEGORY", value: event.category.capitalized)
                                 SUDivider()
                                 detailRow(label: "TIMESTAMP", value: event.timestamp.formatted(date: .numeric, time: .standard))
                             }
@@ -96,20 +97,20 @@ public struct ThreatEventDetailSheet: View {
                         .padding(.horizontal, 16)
 
                         // On-Device Guarantee Card
-                        RetroCard(cornerRadius: 10) {
+                        RetroCard {
                             HStack(alignment: .top, spacing: 12) {
                                 Image(systemName: "lock.shield.fill")
-                                    .foregroundColor(RetroTheme.textAccent)
-                                    .font(.system(size: 18, weight: .bold))
+                                    .foregroundColor(RetroTheme.success)
+                                    .font(RetroTheme.headlineSmall)
 
                                 VStack(alignment: .leading, spacing: 4) {
                                     Text("LOCAL AUDIT VERIFIED")
-                                        .font(.system(size: 12, weight: .heavy, design: .monospaced))
-                                        .foregroundColor(.primary)
+                                        .font(RetroTheme.bodyMedium)
+                                        .foregroundColor(RetroTheme.foreground)
 
                                     Text("Evaluated locally using SQLite O(1) hash table. Message content, sender ID, and private browsing data never left this device.")
-                                        .font(.system(size: 10, weight: .medium, design: .monospaced))
-                                        .foregroundColor(.secondary)
+                                        .font(RetroTheme.captionMedium)
+                                        .foregroundColor(RetroTheme.secondaryForeground)
                                 }
                             }
                             .padding(14)
@@ -146,12 +147,12 @@ public struct ThreatEventDetailSheet: View {
     private func detailRow(label: String, value: String) -> some View {
         HStack {
             Text(label)
-                .font(.system(size: 11, weight: .bold, design: .monospaced))
-                .foregroundColor(.secondary)
+                .font(RetroTheme.captionSmall)
+                .foregroundColor(RetroTheme.secondaryForeground)
             Spacer()
             Text(value)
-                .font(.system(size: 11, weight: .heavy, design: .monospaced))
-                .foregroundColor(.primary)
+                .font(RetroTheme.bodySmall)
+                .foregroundColor(RetroTheme.foreground)
         }
     }
 

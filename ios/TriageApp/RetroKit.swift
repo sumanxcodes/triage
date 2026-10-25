@@ -335,6 +335,43 @@ public struct RetroTheme {
     }
 }
 
+// MARK: - SwiftUI Native Convenience Extensions
+
+extension Font {
+    public static var headlineLarge: Font { UniversalFont.lgHeadline.font }
+    public static var headlineMedium: Font { UniversalFont.mdHeadline.font }
+    public static var headlineSmall: Font { UniversalFont.smHeadline.font }
+
+    public static var bodyLarge: Font { UniversalFont.lgBody.font }
+    public static var bodyMedium: Font { UniversalFont.mdBody.font }
+    public static var bodySmall: Font { UniversalFont.smBody.font }
+
+    public static var buttonLarge: Font { UniversalFont.lgButton.font }
+    public static var buttonMedium: Font { UniversalFont.mdButton.font }
+    public static var buttonSmall: Font { UniversalFont.smButton.font }
+
+    public static var captionLarge: Font { UniversalFont.lgCaption.font }
+    public static var captionMedium: Font { UniversalFont.mdCaption.font }
+    public static var captionSmall: Font { UniversalFont.smCaption.font }
+}
+
+extension Color {
+    public static var appBackground: Color { UniversalColor.background.color }
+    public static var appSecondaryBackground: Color { UniversalColor.secondaryBackground.color }
+    public static var appForeground: Color { UniversalColor.foreground.color }
+    public static var appSecondaryForeground: Color { UniversalColor.secondaryForeground.color }
+    public static var appDivider: Color { UniversalColor.divider.color }
+    public static var appContent1: Color { UniversalColor.content1.color }
+    public static var appContent2: Color { UniversalColor.content2.color }
+    public static var appPrimary: Color { UniversalColor.primary.color }
+    public static var appPrimaryContrast: Color { UniversalColor.primaryContrast.color }
+    public static var appAccent: Color { UniversalColor.accent.color }
+    public static var appAccentBackground: Color { UniversalColor.accentBackground.color }
+    public static var appSuccess: Color { UniversalColor.success.color }
+    public static var appWarning: Color { UniversalColor.warning.color }
+    public static var appDanger: Color { UniversalColor.danger.color }
+}
+
 // MARK: - ComponentsKit Card Model Presets
 
 extension CardVM {
@@ -487,7 +524,25 @@ public struct RetroCard<Content: View>: View {
     public let content: () -> Content
 
     public init(
-        cornerRadius: CGFloat = 16,
+        isTappable: Bool = false,
+        padding: CGFloat = 16,
+        cornerRadius: ContainerRadius = .medium,
+        backgroundColor: UniversalColor? = .secondaryBackground,
+        onTap: @escaping () -> Void = {},
+        @ViewBuilder content: @escaping () -> Content
+    ) {
+        self.model = CardVM.configured(
+            isTappable: isTappable,
+            padding: padding,
+            cornerRadius: cornerRadius,
+            backgroundColor: backgroundColor
+        )
+        self.onTap = onTap
+        self.content = content
+    }
+
+    public init(
+        cornerRadius: CGFloat,
         padding: CGFloat = 16,
         isTappable: Bool = false,
         backgroundColor: UniversalColor? = .secondaryBackground,
