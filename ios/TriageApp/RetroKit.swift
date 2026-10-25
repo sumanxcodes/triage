@@ -2,22 +2,22 @@ import SwiftUI
 import UIKit
 import ComponentsKit
 
-// MARK: - ComponentsKit Official Retro Theme Engine
+// MARK: - ComponentsKit Official Theme Engine
 
 public struct RetroTheme {
-    /// Canvas Background: Vintage CRT Dark in Dark Mode, Retro Computer Beige/Paper in Light Mode
+    /// Canvas Background: Soft retro canvas #F3F1EB in Light Mode, #0C0D0E in Dark Mode
     public static var background: Color { UniversalColor.background.color }
 
-    /// Card Surface: Deep Terminal Slate in Dark, Crisp Card White in Light
-    public static var surface: Color { UniversalColor.secondaryBackground.color }
+    /// Card Surface: Exact warm retro cream #FEF3E0 in Light Mode, #25221B in Dark Mode
+    public static var surface: Color { UniversalColor.accentBackground.color }
 
     /// Elevated Surface for sub-components, inputs, and chips
     public static var elevatedSurface: Color { UniversalColor.content1.color }
 
-    /// Retro Solid Line Border: high-contrast outline
+    /// Retro Solid Line Border / Divider: #E2D8C6 in Light Mode, #38342C in Dark Mode
     public static var border: Color { UniversalColor.divider.color }
 
-    /// Retro Hard Offset Drop Shadow (unblurred mechanical drop shadow)
+    /// Soft ambient drop shadow matching the ComponentsKit Medium shadow preset
     public static var shadow: Color { Theme.current.layout.shadow.medium.color.color }
 
     /// Phosphor Cyber Volt Accent (#D4FF3A / #19E58C)
@@ -35,44 +35,61 @@ public struct RetroTheme {
     /// Phosphor Red: destructive/critical alert accent
     public static var red: Color { UniversalColor.danger.color }
 
-    /// Configures ComponentsKit's global theme engine to match the Retro Theme
+    /// Configures ComponentsKit's global theme engine with the exact attributes and colors
     public static func configureComponentsKit() {
         var palette = Theme.Palette()
-        // Canvas Background: #F4F2EC in Light Mode, #0C0D0E in Dark Mode
+
+        // Canvas Background: #F3F1EB (Light) / #0C0D0E (Dark)
         palette.background = .themed(
-            light: .hex("#F4F2EC"),
+            light: .hex("#F3F1EB"),
             dark: .hex("#0C0D0E")
         )
-        // Card Surface: Pure Crisp White in Light Mode, Terminal Dark #16181B in Dark Mode
+
+        // Card Surface / Secondary Background: #FEF3E0 (Light) / #25221B (Dark)
         palette.secondaryBackground = .themed(
-            light: .hex("#FFFFFF"),
-            dark: .hex("#16181B")
+            light: .hex("#FEF3E0"),
+            dark: .hex("#25221B")
         )
+
+        // Accent with warm cream background as displayed in ComponentsKit demo
+        palette.accent = .init(
+            main: .universal(.hex("#E29A38")),
+            contrast: .universal(.hex("#000000")),
+            background: .themed(
+                light: .hex("#FEF3E0"),
+                dark: .hex("#25221B")
+            )
+        )
+
         // Sub-elements / elevated chips
         palette.content1 = .themed(
-            light: .hex("#EBE7DC"),
-            dark: .hex("#202327")
+            light: .hex("#F3E6D0"),
+            dark: .hex("#2E2920")
         )
         palette.content2 = .themed(
-            light: .hex("#D9D5CA"),
-            dark: .hex("#2A2E34")
+            light: .hex("#E8D8BF"),
+            dark: .hex("#3B3428")
         )
-        // Primary Text: High-contrast Dark #141414 in Light Mode, Crisp #EDEDED in Dark Mode
+
+        // Primary Text: High-contrast #141414 in Light Mode, Crisp #EDEDED in Dark Mode
         palette.foreground = .themed(
             light: .hex("#141414"),
             dark: .hex("#EDEDED")
         )
-        // Secondary Text
+
+        // Secondary Text: Muted warm gray #595959 in Light Mode, #A0A0A0 in Dark Mode
         palette.secondaryForeground = .themed(
-            light: .hex("#555555"),
+            light: .hex("#595959"),
             dark: .hex("#A0A0A0")
         )
-        // Mechanical Divider & Borders
+
+        // Border & Divider: #E2D8C6 in Light Mode, #38342C in Dark Mode
         palette.divider = .themed(
-            light: .hex("#141414"),
-            dark: .hex("#EBEBEB")
+            light: .hex("#E2D8C6"),
+            dark: .hex("#38342C")
         )
-        // Phosphor Volt Brand Accent
+
+        // Phosphor Volt Brand Accent (#19E58C)
         palette.primary = .init(
             main: .universal(.hex("#19E58C")),
             contrast: .universal(.hex("#000000")),
@@ -81,15 +98,7 @@ public struct RetroTheme {
                 dark: .hex("#202327")
             )
         )
-        // Sky Blue Accent
-        palette.accent = .init(
-            main: .universal(.hex("#38BDF8")),
-            contrast: .universal(.hex("#000000")),
-            background: .themed(
-                light: .hex("#E0F2FE"),
-                dark: .hex("#1E293B")
-            )
-        )
+
         // Success Emerald
         palette.success = .init(
             main: .universal(.hex("#22C55E")),
@@ -99,6 +108,7 @@ public struct RetroTheme {
                 dark: .hex("#14532D")
             )
         )
+
         // Terminal Amber Warning
         palette.warning = .init(
             main: .universal(.hex("#FFA000")),
@@ -108,6 +118,7 @@ public struct RetroTheme {
                 dark: .hex("#451A03")
             )
         )
+
         // Phosphor Red Destructive
         palette.danger = .init(
             main: .universal(.hex("#FF3B30")),
@@ -121,32 +132,32 @@ public struct RetroTheme {
         var layout = Theme.Layout()
         layout.containerRadius = .init(small: 8, medium: 10, large: 14)
         layout.componentRadius = .init(small: 6, medium: 8, large: 10)
-        layout.borderWidth = .init(small: 1.0, medium: 2.0, large: 2.5)
+        layout.borderWidth = .init(small: 0.5, medium: 1.0, large: 2.0)
 
-        // Physical 3D retro drop shadows: 0 blur radius, unblurred mechanical offset
+        // Medium shadow configured with subtle natural elevation matching the preview
         layout.shadow = .init(
             small: .init(
-                radius: 0,
-                offset: CGSize(width: 2, height: 2),
+                radius: 4,
+                offset: CGSize(width: 0, height: 2),
                 color: .themed(
-                    light: .rgba(r: 20, g: 20, b: 20, a: 1.0),
-                    dark: .rgba(r: 235, g: 235, b: 235, a: 0.95)
+                    light: .rgba(r: 180, g: 160, b: 130, a: 0.18),
+                    dark: .rgba(r: 0, g: 0, b: 0, a: 0.35)
                 )
             ),
             medium: .init(
-                radius: 0,
-                offset: CGSize(width: 3, height: 3),
+                radius: 6,
+                offset: CGSize(width: 0, height: 3),
                 color: .themed(
-                    light: .rgba(r: 20, g: 20, b: 20, a: 1.0),
-                    dark: .rgba(r: 235, g: 235, b: 235, a: 0.95)
+                    light: .rgba(r: 180, g: 160, b: 130, a: 0.25),
+                    dark: .rgba(r: 0, g: 0, b: 0, a: 0.45)
                 )
             ),
             large: .init(
-                radius: 0,
-                offset: CGSize(width: 5, height: 5),
+                radius: 12,
+                offset: CGSize(width: 0, height: 6),
                 color: .themed(
-                    light: .rgba(r: 20, g: 20, b: 20, a: 1.0),
-                    dark: .rgba(r: 235, g: 235, b: 235, a: 0.95)
+                    light: .rgba(r: 180, g: 160, b: 130, a: 0.35),
+                    dark: .rgba(r: 0, g: 0, b: 0, a: 0.55)
                 )
             )
         )
@@ -156,31 +167,79 @@ public struct RetroTheme {
     }
 }
 
+// MARK: - ComponentsKit Card Model Presets
+
+extension CardVM {
+    /// CardVM configured with the EXACT attributes from the ComponentsKit Card demo:
+    /// - Animation Scale: Medium
+    /// - Background Color: Accent Background
+    /// - Background Style: Solid
+    /// - Border Color: Divider
+    /// - Border Width: Medium
+    /// - Content Padding: 16px
+    /// - Corner Radius: Medium
+    /// - Shadow: Medium
+    /// - Tappable: false
+    public static var configured: CardVM {
+        CardVM {
+            $0.animationScale = .medium
+            $0.backgroundColor = .accentBackground
+            $0.backgroundStyle = .solid
+            $0.borderColor = .divider
+            $0.borderWidth = .medium
+            $0.contentPaddings = .init(padding: 16)
+            $0.cornerRadius = .medium
+            $0.shadow = .medium
+            $0.isTappable = false
+        }
+    }
+
+    /// CardVM configured with the exact attributes, with optional tap interactivity
+    public static func configured(
+        isTappable: Bool = false,
+        padding: CGFloat = 16,
+        cornerRadius: ContainerRadius = .medium
+    ) -> CardVM {
+        CardVM {
+            $0.animationScale = .medium
+            $0.backgroundColor = .accentBackground
+            $0.backgroundStyle = .solid
+            $0.borderColor = .divider
+            $0.borderWidth = .medium
+            $0.contentPaddings = .init(padding: padding)
+            $0.cornerRadius = cornerRadius
+            $0.shadow = .medium
+            $0.isTappable = isTappable
+        }
+    }
+}
+
 // MARK: - ComponentsKit Official SwiftUI Component Extensions
 
 extension SUCard {
-    /// Convenience initializer using ComponentsKit's Theme engine
+    /// Initializer using the exact Card attributes:
+    /// - Animation Scale: Medium
+    /// - Background Color: Accent Background
+    /// - Background Style: Solid
+    /// - Border Color: Divider
+    /// - Border Width: Medium
+    /// - Content Padding: 16px
+    /// - Corner Radius: Medium
+    /// - Shadow: Medium
+    /// - Tappable: false (or specified)
     public init(
-        cornerRadius: ContainerRadius = .medium,
-        padding: CGFloat = 16,
         isTappable: Bool = false,
-        backgroundColor: UniversalColor? = .secondaryBackground,
-        borderColor: UniversalColor = .divider,
-        borderWidth: BorderWidth = .medium,
-        shadow: Shadow = .medium,
+        padding: CGFloat = 16,
+        cornerRadius: ContainerRadius = .medium,
         onTap: @escaping () -> Void = {},
         @ViewBuilder content: @escaping () -> Content
     ) {
         self.init(
-            model: CardVM {
-                $0.cornerRadius = cornerRadius
-                $0.contentPaddings = .init(padding: padding)
-                $0.backgroundColor = backgroundColor
-                $0.borderColor = borderColor
-                $0.borderWidth = borderWidth
-                $0.shadow = shadow
-                $0.isTappable = isTappable
-            },
+            model: CardVM.configured(
+                isTappable: isTappable,
+                padding: padding,
+                cornerRadius: cornerRadius
+            ),
             content: content,
             onTap: onTap
         )
@@ -252,11 +311,9 @@ extension SUProgressBar {
 
 // MARK: - ComponentsKit Official Transition Adapters
 
-/// RetroCard powered by ComponentsKit SUCard
+/// RetroCard powered by ComponentsKit SUCard with the exact attributes
 public struct RetroCard<Content: View>: View {
-    public let cornerRadius: ContainerRadius
-    public let padding: CGFloat
-    public let isTappable: Bool
+    public let model: CardVM
     public let onTap: () -> Void
     public let content: () -> Content
 
@@ -267,27 +324,27 @@ public struct RetroCard<Content: View>: View {
         onTap: @escaping () -> Void = {},
         @ViewBuilder content: @escaping () -> Content
     ) {
-        self.cornerRadius = .custom(cornerRadius)
-        self.padding = padding
-        self.isTappable = isTappable
+        self.model = CardVM.configured(
+            isTappable: isTappable,
+            padding: padding,
+            cornerRadius: .custom(cornerRadius)
+        )
+        self.onTap = onTap
+        self.content = content
+    }
+
+    public init(
+        model: CardVM = .configured,
+        onTap: @escaping () -> Void = {},
+        @ViewBuilder content: @escaping () -> Content
+    ) {
+        self.model = model
         self.onTap = onTap
         self.content = content
     }
 
     public var body: some View {
-        SUCard(
-            model: CardVM {
-                $0.cornerRadius = cornerRadius
-                $0.contentPaddings = .init(padding: padding)
-                $0.backgroundColor = .secondaryBackground
-                $0.borderColor = .divider
-                $0.borderWidth = .medium
-                $0.shadow = .medium
-                $0.isTappable = isTappable
-            },
-            content: content,
-            onTap: onTap
-        )
+        SUCard(model: model, content: content, onTap: onTap)
     }
 }
 
@@ -381,11 +438,11 @@ public struct RetroButtonStyle: SwiftUI.ButtonStyle {
             )
             .shadow(
                 color: Theme.current.layout.shadow.medium.color.color,
-                radius: 0,
-                x: configuration.isPressed ? 0 : 3,
-                y: configuration.isPressed ? 0 : 3
+                radius: 4,
+                x: 0,
+                y: 2
             )
-            .offset(x: configuration.isPressed ? 3 : 0, y: configuration.isPressed ? 3 : 0)
+            .offset(x: configuration.isPressed ? 1 : 0, y: configuration.isPressed ? 1 : 0)
             .animation(.easeInOut(duration: 0.08), value: configuration.isPressed)
     }
 }
