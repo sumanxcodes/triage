@@ -47,7 +47,7 @@ public struct PaywallView: View {
 
                         featureRow(
                             icon: "bolt.shield.fill",
-                            color: .green,
+                            color: .triageVolt,
                             title: "Priority SMS Normalization",
                             subtitle: "Deep multi-layer canonicalization against evasive Punycode & IP obfuscations."
                         )
@@ -106,28 +106,25 @@ public struct PaywallView: View {
                     // Primary Purchase Button
                     VStack(spacing: 12) {
                         Button(action: handlePurchase) {
-                            HStack {
+                            HStack(spacing: 8) {
                                 if subscriptionManager.isPurchasing {
                                     ProgressView()
-                                        .tint(.white)
+                                        .tint(.black)
                                 } else {
                                     Text(purchaseButtonTitle)
-                                        .font(.headline)
-                                        .fontWeight(.bold)
+                                        .font(.system(size: 15, weight: .heavy, design: .monospaced))
+                                        .tracking(0.5)
+
+                                    Image(systemName: "arrow.right")
+                                        .font(.subheadline.weight(.heavy))
                                 }
                             }
                             .frame(maxWidth: .infinity)
-                            .padding()
-                            .background(
-                                LinearGradient(
-                                    colors: [.blue, .indigo],
-                                    startPoint: .leading,
-                                    endPoint: .trailing
-                                )
-                            )
-                            .foregroundColor(.white)
-                            .cornerRadius(14)
-                            .shadow(color: .blue.opacity(0.3), radius: 8, y: 4)
+                            .padding(.vertical, 16)
+                            .background(Color.triageVoltRaw)
+                            .foregroundColor(.black)
+                            .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+                            .shadow(color: Color.triageVolt.opacity(0.3), radius: 8, y: 4)
                         }
                         .disabled(subscriptionManager.isPurchasing)
 
@@ -218,12 +215,12 @@ public struct PaywallView: View {
 
                         if isAnnual {
                             Text("SAVE 33%")
-                                .font(.system(size: 10, weight: .bold))
+                                .font(.system(size: 10, weight: .heavy, design: .monospaced))
                                 .padding(.horizontal, 6)
                                 .padding(.vertical, 2)
-                                .background(Color.green)
-                                .foregroundColor(.white)
-                                .cornerRadius(4)
+                                .background(Color.triageVoltRaw)
+                                .foregroundColor(.black)
+                                .clipShape(RoundedRectangle(cornerRadius: 4, style: .continuous))
                         }
                     }
 
@@ -246,15 +243,15 @@ public struct PaywallView: View {
                 }
 
                 Image(systemName: isSelected ? "checkmark.circle.fill" : "circle")
-                    .foregroundColor(isSelected ? .blue : Color(.tertiaryLabel))
+                    .foregroundColor(isSelected ? .triageVolt : Color(.tertiaryLabel))
                     .font(.title3)
                     .padding(.leading, 8)
             }
             .padding()
             .background(Color(.secondarySystemBackground))
             .overlay(
-                RoundedRectangle(cornerRadius: 14)
-                    .stroke(isSelected ? Color.blue : Color.clear, lineWidth: 2)
+                RoundedRectangle(cornerRadius: 14, style: .continuous)
+                    .stroke(isSelected ? Color.triageVolt : Color.triageCardBorder, lineWidth: 2)
             )
             .cornerRadius(14)
         }
@@ -274,12 +271,12 @@ public struct PaywallView: View {
 
                         if let badge = badge {
                             Text(badge)
-                                .font(.system(size: 10, weight: .bold))
+                                .font(.system(size: 10, weight: .heavy, design: .monospaced))
                                 .padding(.horizontal, 6)
                                 .padding(.vertical, 2)
-                                .background(Color.green)
-                                .foregroundColor(.white)
-                                .cornerRadius(4)
+                                .background(Color.triageVoltRaw)
+                                .foregroundColor(.black)
+                                .clipShape(RoundedRectangle(cornerRadius: 4, style: .continuous))
                         }
                     }
 
@@ -298,15 +295,15 @@ public struct PaywallView: View {
                 }
 
                 Image(systemName: isSelected ? "checkmark.circle.fill" : "circle")
-                    .foregroundColor(isSelected ? .blue : Color(.tertiaryLabel))
+                    .foregroundColor(isSelected ? .triageVolt : Color(.tertiaryLabel))
                     .font(.title3)
                     .padding(.leading, 8)
             }
             .padding()
             .background(Color(.secondarySystemBackground))
             .overlay(
-                RoundedRectangle(cornerRadius: 14)
-                    .stroke(isSelected ? Color.blue : Color.clear, lineWidth: 2)
+                RoundedRectangle(cornerRadius: 14, style: .continuous)
+                    .stroke(isSelected ? Color.triageVolt : Color.triageCardBorder, lineWidth: 2)
             )
             .cornerRadius(14)
         }

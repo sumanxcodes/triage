@@ -302,7 +302,7 @@ struct ContentView: View {
         .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
         .overlay(
             RoundedRectangle(cornerRadius: 18, style: .continuous)
-                .stroke(Color.white.opacity(0.06), lineWidth: 1)
+                .stroke(Color.triageCardBorder, lineWidth: 1)
         )
     }
 
@@ -350,7 +350,7 @@ struct ContentView: View {
             .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
             .overlay(
                 RoundedRectangle(cornerRadius: 18, style: .continuous)
-                    .stroke(Color.white.opacity(0.06), lineWidth: 1)
+                    .stroke(Color.triageCardBorder, lineWidth: 1)
             )
         }
     }
@@ -374,7 +374,7 @@ struct ContentView: View {
                         .frame(width: 40, height: 40)
                         .overlay(
                             RoundedRectangle(cornerRadius: 10, style: .continuous)
-                                .stroke(Color.white.opacity(0.08), lineWidth: 1)
+                                .stroke(Color.triageCardBorder, lineWidth: 1)
                         )
 
                     Image(systemName: icon)
@@ -478,7 +478,7 @@ struct ContentView: View {
                         .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
                         .overlay(
                             RoundedRectangle(cornerRadius: 8, style: .continuous)
-                                .stroke(Color.white.opacity(0.12), lineWidth: 1)
+                                .stroke(Color.triageCardBorder, lineWidth: 1)
                         )
                     }
                     .disabled(isSyncing)
@@ -488,7 +488,7 @@ struct ContentView: View {
                 GeometryReader { geo in
                     ZStack(alignment: .leading) {
                         RoundedRectangle(cornerRadius: 3, style: .continuous)
-                            .fill(Color.white.opacity(0.08))
+                            .fill(Color.primary.opacity(0.08))
                             .frame(height: 5)
 
                         RoundedRectangle(cornerRadius: 3, style: .continuous)
@@ -534,7 +534,7 @@ struct ContentView: View {
             .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
             .overlay(
                 RoundedRectangle(cornerRadius: 18, style: .continuous)
-                    .stroke(Color.white.opacity(0.06), lineWidth: 1)
+                    .stroke(Color.triageCardBorder, lineWidth: 1)
             )
         }
     }
@@ -567,7 +567,7 @@ struct ContentView: View {
                             .frame(width: 40, height: 40)
                             .overlay(
                                 RoundedRectangle(cornerRadius: 10, style: .continuous)
-                                    .stroke(Color.white.opacity(0.08), lineWidth: 1)
+                                    .stroke(Color.triageCardBorder, lineWidth: 1)
                             )
 
                         Image(systemName: "terminal.fill")
@@ -596,7 +596,7 @@ struct ContentView: View {
                 .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
                 .overlay(
                     RoundedRectangle(cornerRadius: 18, style: .continuous)
-                        .stroke(Color.white.opacity(0.06), lineWidth: 1)
+                        .stroke(Color.triageCardBorder, lineWidth: 1)
                 )
             }
             .buttonStyle(.plain)
@@ -613,7 +613,7 @@ struct ContentView: View {
                     HStack(spacing: 14) {
                         ZStack {
                             RoundedRectangle(cornerRadius: 10, style: .continuous)
-                                .fill(Color.triageVolt.opacity(0.16))
+                                .fill(Color.triageVoltSubtle)
                                 .frame(width: 40, height: 40)
 
                             Image(systemName: "sparkles")
@@ -631,7 +631,7 @@ struct ContentView: View {
                                     .font(.system(size: 9, weight: .heavy, design: .monospaced))
                                     .padding(.horizontal, 5)
                                     .padding(.vertical, 2)
-                                    .background(Color.triageVolt)
+                                    .background(Color.triageVoltRaw)
                                     .foregroundColor(.black)
                                     .clipShape(RoundedRectangle(cornerRadius: 4, style: .continuous))
                             }
@@ -652,7 +652,7 @@ struct ContentView: View {
                     .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
                     .overlay(
                         RoundedRectangle(cornerRadius: 18, style: .continuous)
-                            .stroke(Color.triageVolt.opacity(0.18), lineWidth: 1)
+                            .stroke(Color.triageVolt.opacity(0.2), lineWidth: 1)
                     )
                 }
                 .buttonStyle(.plain)
@@ -793,7 +793,7 @@ struct ModuleDetailSheet: View {
 
     private var moduleColor: Color {
         switch moduleType {
-        case .sms: return .green
+        case .sms: return .triageVolt
         case .safari: return .blue
         }
     }
@@ -934,7 +934,7 @@ struct ModuleDetailSheet: View {
                     Divider()
                     stepRow(
                         icon: "switch.2",
-                        iconColor: .green,
+                        iconColor: .triageVolt,
                         text: "Turn ON **Filter Unknown Senders**"
                     )
                     Divider()
@@ -958,7 +958,7 @@ struct ModuleDetailSheet: View {
                     Divider()
                     stepRow(
                         icon: "switch.2",
-                        iconColor: .green,
+                        iconColor: .triageVolt,
                         text: "Turn ON **Triage Security**"
                     )
                     Divider()
@@ -1145,7 +1145,7 @@ struct SMSSimulatorSheet: View {
         AttackPreset(
             title: "Clean SMS",
             icon: "bubble.left.and.bubble.right.fill",
-            color: .green,
+            color: .triageVolt,
             sender: "+61 491 570 006",
             message: "Hey! Are you still free for coffee at 2pm today? Let me know!"
         )
@@ -1170,7 +1170,7 @@ struct SMSSimulatorSheet: View {
                     HStack(spacing: 12) {
                         Image(systemName: "shield.lefthalf.filled")
                             .font(.system(size: 24))
-                            .foregroundColor(.green)
+                            .foregroundColor(.triageVolt)
                         VStack(alignment: .leading, spacing: 2) {
                             Text("IdentityLookup Evaluation Engine")
                                 .font(.subheadline.weight(.semibold))
@@ -1345,12 +1345,12 @@ struct SMSSimulatorSheet: View {
                 HStack(spacing: 12) {
                     Image(systemName: "checkmark.shield.fill")
                         .font(.title2)
-                        .foregroundColor(.green)
+                        .foregroundColor(.triageVolt)
 
                     VStack(alignment: .leading, spacing: 2) {
                         Text("Legitimate Message")
                             .font(.headline)
-                            .foregroundColor(.green)
+                            .foregroundColor(.triageVolt)
                         Text("Action: Allowed to Inbox (.none)")
                             .font(.caption.weight(.semibold))
                             .foregroundColor(.secondary)
@@ -1362,8 +1362,8 @@ struct SMSSimulatorSheet: View {
                         .font(.caption2.weight(.bold))
                         .padding(.horizontal, 8)
                         .padding(.vertical, 4)
-                        .background(Color.green.opacity(0.15))
-                        .foregroundColor(.green)
+                        .background(Color.triageVoltSubtle)
+                        .foregroundColor(.triageVolt)
                         .cornerRadius(6)
                 }
 

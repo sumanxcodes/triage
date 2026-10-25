@@ -81,8 +81,8 @@ public struct ThreatEventDetailSheet: View {
                             .font(.subheadline.weight(.semibold))
                             .frame(maxWidth: .infinity)
                             .frame(height: 44)
-                            .background(copiedURL ? Color.green.opacity(0.12) : Color.blue.opacity(0.1))
-                            .foregroundColor(copiedURL ? .green : .blue)
+                            .background(copiedURL ? Color.triageVoltSubtle : Color.blue.opacity(0.1))
+                            .foregroundColor(copiedURL ? .triageVolt : .blue)
                             .cornerRadius(10)
                         }
 

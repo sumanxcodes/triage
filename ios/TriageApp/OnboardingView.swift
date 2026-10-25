@@ -105,7 +105,7 @@ public struct OnboardingView: View {
                         .foregroundColor(.black)
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 15)
-                        .background(Color.triageVolt)
+                        .background(Color.triageVoltRaw)
                         .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
                     }
 
@@ -162,7 +162,7 @@ public struct OnboardingView: View {
                     .frame(width: 38, height: 38)
                     .overlay(
                         RoundedRectangle(cornerRadius: 10, style: .continuous)
-                            .stroke(Color.white.opacity(0.08), lineWidth: 1)
+                            .stroke(Color.triageCardBorder, lineWidth: 1)
                     )
 
                 Image(systemName: icon)

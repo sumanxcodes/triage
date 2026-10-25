@@ -98,14 +98,14 @@ public struct ThreatHistoryView: View {
 
             ZStack {
                 Circle()
-                    .fill(Color.green.opacity(0.12))
+                    .fill(Color.triageVoltSubtle)
                     .frame(width: 80, height: 80)
 
                 Image(systemName: "checkmark.shield.fill")
                     .resizable()
                     .scaledToFit()
                     .frame(width: 40, height: 40)
-                    .foregroundColor(.green)
+                    .foregroundColor(.triageVolt)
             }
 
             VStack(spacing: 6) {
@@ -133,12 +133,12 @@ public struct ThreatHistoryView: View {
             // Source Icon Badge
             ZStack {
                 RoundedRectangle(cornerRadius: 10)
-                    .fill((event.source == "sms" ? Color.green : Color.blue).opacity(0.15))
+                    .fill((event.source == "sms" ? Color.triageVoltSubtle : Color.blue.opacity(0.15)))
                     .frame(width: 38, height: 38)
 
                 Image(systemName: event.source == "sms" ? "message.badge.filled.fill" : "safari.fill")
                     .font(.system(size: 17))
-                    .foregroundColor(event.source == "sms" ? .green : .blue)
+                    .foregroundColor(event.source == "sms" ? .triageVolt : .blue)
             }
 
             // Content

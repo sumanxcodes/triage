@@ -49,7 +49,7 @@ public struct SettingsView: View {
                             HStack {
                                 Label("Upgrade to Triage Pro", systemImage: "sparkles")
                                     .fontWeight(.semibold)
-                                    .foregroundColor(.purple)
+                                    .foregroundColor(.triageVolt)
                                 Spacer()
                                 Image(systemName: "chevron.right")
                                     .font(.caption2)
@@ -334,11 +334,11 @@ struct PrivacyPolicySheet: View {
                     HStack(spacing: 12) {
                         ZStack {
                             Circle()
-                                .fill(Color.green.opacity(0.15))
+                                .fill(Color.triageVoltSubtle)
                                 .frame(width: 48, height: 48)
                             Image(systemName: "lock.shield.fill")
                                 .font(.system(size: 22, weight: .bold))
-                                .foregroundColor(.green)
+                                .foregroundColor(.triageVolt)
                         }
 
                         VStack(alignment: .leading, spacing: 2) {
