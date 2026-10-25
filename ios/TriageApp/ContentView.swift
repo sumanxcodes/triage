@@ -23,7 +23,7 @@ enum ModuleStatus {
         switch self {
         case .active: return "Active"
         case .ready: return "Ready"
-        case .setupNeeded: return "Setup Needed"
+        case .setupNeeded: return "Setup Required"
         }
     }
 
@@ -97,16 +97,19 @@ struct ContentView: View {
         }
     }
 
+    private var activeLayersCount: Int {
+        var count = 0
+        if isModuleProtected(smsStatus) { count += 1 }
+        if isModuleProtected(safariStatus) { count += 1 }
+        return count
+    }
+
     private var isFullyProtected: Bool {
-        let smsOk = isModuleProtected(smsStatus)
-        let safariOk = isModuleProtected(safariStatus)
-        return smsOk && safariOk
+        activeLayersCount == 2
     }
 
     private var isPartiallyProtected: Bool {
-        let smsOk = isModuleProtected(smsStatus)
-        let safariOk = isModuleProtected(safariStatus)
-        return (smsOk && !safariOk) || (!smsOk && safariOk)
+        activeLayersCount == 1
     }
 
     private func isModuleProtected(_ status: ModuleStatus) -> Bool {
@@ -116,50 +119,52 @@ struct ContentView: View {
         }
     }
 
-    private var heroTitle: String {
+    private var heroCardTitle: String {
         if isFullyProtected {
-            return "Protection Active"
-        } else if isPartiallyProtected {
-            return "Partial Protection"
+            return "Complete protection active"
+        } else if activeLayersCount == 1 {
+            return "1 step to full protection"
         } else {
-            return "Setup Required"
+            return "2 steps to full protection"
         }
     }
 
-    private var heroSubtitle: String {
+    private var heroCardSubtitle: String {
         if isFullyProtected {
-            return "Dual-layer on-device SMS & Safari link inspection active."
-        } else if isPartiallyProtected {
-            return "One or more security shields require configuration."
+            return "Your threat engine is running. SMS smishing and Safari link inspection are actively guarding your iPhone."
         } else {
-            return "Enable SMS & Safari shields in iPhone Settings to start."
+            return "Your threat engine is ready. Enable both shields in iOS Settings to complete setup."
         }
     }
 
-    private var heroStatusColor: Color {
-        if isFullyProtected {
-            return .triageVolt
-        } else if isPartiallyProtected {
-            return .orange
-        } else {
-            return .red
-        }
+    private var heroAccentColor: Color {
+        isFullyProtected ? .triageVolt : .orange
     }
 
-    private var heroIcon: String {
-        if isFullyProtected {
-            return subscriptionManager.isProUser ? "shield.checkered" : "shield.lefthalf.filled.badge.checkmark"
-        } else if isPartiallyProtected {
-            return "shield.lefthalf.filled"
+    private var formattedThreatCount: String {
+        let formatter = NumberFormatter()
+        formatter.numberStyle = .decimal
+        return formatter.string(from: NSNumber(value: threatCount)) ?? "\(threatCount)"
+    }
+
+    private var greetingEyebrow: String {
+        let hour = Calendar.current.component(.hour, from: Date())
+        if hour < 12 {
+            return "/ GOOD MORNING"
+        } else if hour < 18 {
+            return "/ GOOD AFTERNOON"
         } else {
-            return "shield.slash.fill"
+            return "/ GOOD EVENING"
         }
     }
 
     var body: some View {
         NavigationStack {
-            ScrollView {
+            ScrollView(showsIndicators: false) {
                 VStack(spacing: 20) {
+                    // MARK: - 0. Cyber Header
+                    headerSection
+
                     // MARK: - 1. Hero Security Status Card
                     heroStatusCard
 
@@ -169,22 +174,17 @@ struct ContentView: View {
                     // MARK: - 3. Threat Intelligence Telemetry
                     threatIntelligenceSection
 
-                    // MARK: - 4. Diagnostics & Testing
+                    // MARK: - 4. Diagnostics & Sandbox Testing
                     simulatorSection
 
                     // MARK: - 5. Membership Banner
                     membershipSection
                 }
                 .padding(.horizontal, 16)
-                .padding(.top, 10)
+                .padding(.top, 4)
                 .padding(.bottom, 96)
             }
-            .navigationTitle("Triage")
-            .toolbar {
-                ToolbarItem(placement: .topBarTrailing) {
-                    proBadgeToolbarItem
-                }
-            }
+            .toolbar(.hidden, for: .navigationBar)
             .sheet(isPresented: $showingPaywall) {
                 PaywallView()
             }
@@ -215,98 +215,113 @@ struct ContentView: View {
 
     // MARK: - Subviews
 
-    private var heroStatusCard: some View {
-        VStack(spacing: 16) {
-            HStack(spacing: 16) {
-                // High-Tech Squircle Security Crest / Logo
-                if isFullyProtected {
-                    TriageLogoView(size: 58, showsGlow: true)
-                } else {
-                    ZStack {
-                        RoundedRectangle(cornerRadius: 18, style: .continuous)
-                            .fill(heroStatusColor.opacity(0.14))
-                            .frame(width: 58, height: 58)
-                            .overlay(
-                                RoundedRectangle(cornerRadius: 18, style: .continuous)
-                                    .stroke(heroStatusColor.opacity(0.32), lineWidth: 1.5)
-                            )
+    private var headerSection: some View {
+        VStack(alignment: .leading, spacing: 6) {
+            Text(greetingEyebrow)
+                .font(.system(size: 11, weight: .bold, design: .monospaced))
+                .foregroundColor(.triageVolt)
+                .tracking(1.0)
 
-                        Image(systemName: heroIcon)
-                            .font(.system(size: 26, weight: .semibold))
-                            .foregroundColor(heroStatusColor)
-                    }
-                }
-
-                VStack(alignment: .leading, spacing: 4) {
-                    HStack(spacing: 6) {
-                        Text(heroTitle)
-                            .font(.title3.weight(.bold))
-                            .foregroundColor(.primary)
-
-                        if subscriptionManager.isProUser {
-                            Text("PRO")
-                                .font(.system(size: 9, weight: .heavy))
-                                .padding(.horizontal, 5)
-                                .padding(.vertical, 2)
-                                .background(Color.triageVolt.opacity(0.2))
-                                .foregroundColor(.triageVolt)
-                                .clipShape(Capsule())
-                        }
-                    }
-
-                    Text(heroSubtitle)
-                        .font(.subheadline)
-                        .foregroundColor(.secondary)
-                        .fixedSize(horizontal: false, vertical: true)
-                }
+            HStack(alignment: .center) {
+                Text("Protection")
+                    .font(.system(size: 34, weight: .heavy, design: .default))
+                    .foregroundColor(.primary)
 
                 Spacer()
+
+                proBadgeToolbarItem
             }
 
             Divider()
-
-            // Privacy Assurance Footer
-            HStack(spacing: 6) {
-                Image(systemName: "lock.shield.fill")
-                    .font(.caption.weight(.semibold))
-                    .foregroundColor(isFullyProtected ? .triageVolt : .secondary)
-
-                Text("100% On-Device • Zero Telemetry")
-                    .font(.caption.weight(.medium))
-                    .foregroundColor(.secondary)
-
-                Spacer()
-
-                HStack(spacing: 4) {
-                    Circle()
-                        .fill(heroStatusColor)
-                        .frame(width: 6, height: 6)
-                    Text(isFullyProtected ? "Secured" : "Attention")
-                        .font(.caption2.weight(.semibold))
-                        .foregroundColor(heroStatusColor)
-                }
-                .padding(.horizontal, 8)
-                .padding(.vertical, 3)
-                .background(heroStatusColor.opacity(0.12))
-                .clipShape(Capsule())
-            }
+                .padding(.top, 4)
         }
-        .padding(18)
+        .padding(.horizontal, 2)
+    }
+
+    private var heroStatusCard: some View {
+        HStack(spacing: 0) {
+            // Left Accent Pillar
+            Rectangle()
+                .fill(heroAccentColor)
+                .frame(width: 4)
+
+            VStack(alignment: .leading, spacing: 14) {
+                // Top status tag + Triage Emblem
+                HStack(alignment: .top) {
+                    HStack(spacing: 6) {
+                        Rectangle()
+                            .fill(heroAccentColor)
+                            .frame(width: 7, height: 7)
+
+                        Text(isFullyProtected ? "FULLY PROTECTED" : "SETUP NEEDED")
+                            .font(.system(size: 11, weight: .bold, design: .monospaced))
+                            .foregroundColor(heroAccentColor)
+                            .tracking(0.8)
+                    }
+
+                    Spacer()
+
+                    TriageLogoView(size: 32, showsGlow: isFullyProtected)
+                }
+
+                // Headline
+                Text(heroCardTitle)
+                    .font(.system(size: 24, weight: .heavy, design: .default))
+                    .foregroundColor(.primary)
+                    .lineSpacing(-1)
+
+                // Subtitle
+                Text(heroCardSubtitle)
+                    .font(.subheadline)
+                    .foregroundColor(.secondary)
+                    .fixedSize(horizontal: false, vertical: true)
+
+                // Bottom metrics row
+                HStack(alignment: .firstTextBaseline) {
+                    HStack(alignment: .firstTextBaseline, spacing: 6) {
+                        Text("\(activeLayersCount)")
+                            .font(.system(size: 28, weight: .heavy, design: .monospaced))
+                            .foregroundColor(heroAccentColor)
+
+                        Text("of 2")
+                            .font(.system(size: 20, weight: .bold, design: .monospaced))
+                            .foregroundColor(heroAccentColor)
+                    }
+
+                    Spacer()
+
+                    Text("LAYERS ACTIVE")
+                        .font(.system(size: 11, weight: .bold, design: .monospaced))
+                        .foregroundColor(.secondary)
+                        .tracking(0.8)
+                }
+            }
+            .padding(18)
+        }
         .background(Color(.secondarySystemBackground))
-        .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
+        .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
         .overlay(
-            RoundedRectangle(cornerRadius: 20, style: .continuous)
-                .stroke(heroStatusColor.opacity(0.16), lineWidth: 1)
+            RoundedRectangle(cornerRadius: 18, style: .continuous)
+                .stroke(Color.white.opacity(0.06), lineWidth: 1)
         )
     }
 
     private var modulesSection: some View {
         VStack(alignment: .leading, spacing: 8) {
-            Text("Active Protection Layers")
-                .font(.footnote.weight(.semibold))
-                .foregroundColor(.secondary)
-                .textCase(.uppercase)
-                .padding(.horizontal, 4)
+            HStack {
+                Text("PROTECTION LAYERS")
+                    .font(.system(size: 11, weight: .bold, design: .monospaced))
+                    .foregroundColor(.secondary)
+                    .tracking(0.8)
+
+                Spacer()
+
+                Text(isFullyProtected ? "2 OF 2 ACTIVE" : "BOTH REQUIRED")
+                    .font(.system(size: 11, weight: .bold, design: .monospaced))
+                    .foregroundColor(isFullyProtected ? .triageVolt : .secondary)
+                    .tracking(0.8)
+            }
+            .padding(.horizontal, 4)
 
             VStack(spacing: 0) {
                 moduleRow(
@@ -320,6 +335,7 @@ struct ContentView: View {
 
                 Divider()
                     .padding(.leading, 64)
+                    .opacity(0.5)
 
                 moduleRow(
                     type: .safari,
@@ -332,6 +348,10 @@ struct ContentView: View {
             }
             .background(Color(.secondarySystemBackground))
             .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
+            .overlay(
+                RoundedRectangle(cornerRadius: 18, style: .continuous)
+                    .stroke(Color.white.opacity(0.06), lineWidth: 1)
+            )
         }
     }
 
@@ -349,18 +369,22 @@ struct ContentView: View {
         }) {
             HStack(spacing: 14) {
                 ZStack {
-                    RoundedRectangle(cornerRadius: 11, style: .continuous)
-                        .fill(iconColor.opacity(0.14))
+                    RoundedRectangle(cornerRadius: 10, style: .continuous)
+                        .fill(Color(.tertiarySystemBackground))
                         .frame(width: 40, height: 40)
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 10, style: .continuous)
+                                .stroke(Color.white.opacity(0.08), lineWidth: 1)
+                        )
 
                     Image(systemName: icon)
-                        .font(.system(size: 19, weight: .semibold))
+                        .font(.system(size: 18, weight: .semibold))
                         .foregroundColor(iconColor)
                 }
 
                 VStack(alignment: .leading, spacing: 3) {
                     Text(title)
-                        .font(.body.weight(.semibold))
+                        .font(.body.weight(.bold))
                         .foregroundColor(.primary)
 
                     Text(subtitle)
@@ -372,17 +396,15 @@ struct ContentView: View {
                 Spacer()
 
                 HStack(spacing: 5) {
-                    Circle()
+                    Rectangle()
                         .fill(status.badgeColor)
                         .frame(width: 6, height: 6)
-                    Text(status.badgeText)
-                        .font(.caption.weight(.semibold))
+
+                    Text(status.badgeText.uppercased())
+                        .font(.system(size: 11, weight: .bold, design: .monospaced))
                         .foregroundColor(status.badgeColor)
+                        .tracking(0.5)
                 }
-                .padding(.horizontal, 9)
-                .padding(.vertical, 4)
-                .background(status.badgeColor.opacity(0.12))
-                .clipShape(Capsule())
 
                 Image(systemName: "chevron.right")
                     .font(.caption2.weight(.semibold))
@@ -397,73 +419,39 @@ struct ContentView: View {
 
     private var threatIntelligenceSection: some View {
         VStack(alignment: .leading, spacing: 8) {
-            Text("Threat Intelligence")
-                .font(.footnote.weight(.semibold))
-                .foregroundColor(.secondary)
-                .textCase(.uppercase)
-                .padding(.horizontal, 4)
+            HStack {
+                Text("THREAT INTELLIGENCE")
+                    .font(.system(size: 11, weight: .bold, design: .monospaced))
+                    .foregroundColor(.secondary)
+                    .tracking(0.8)
 
-            VStack(spacing: 14) {
-                // Telemetry 2-Column Grid
-                HStack(spacing: 12) {
-                    VStack(alignment: .leading, spacing: 4) {
-                        Text("SIGNATURES")
-                            .font(.system(size: 10, weight: .bold))
-                            .foregroundColor(.secondary)
-                            .tracking(0.5)
+                Spacer()
 
-                        Text("\(threatCount)")
-                            .font(.title2.weight(.bold))
-                            .monospacedDigit()
-                            .foregroundColor(.primary)
+                HStack(spacing: 5) {
+                    Rectangle()
+                        .fill(Color.triageVolt)
+                        .frame(width: 6, height: 6)
 
-                        Text("On-device hash database")
-                            .font(.caption2)
-                            .foregroundColor(.secondary)
-                    }
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .padding(12)
-                    .background(Color(.tertiarySystemBackground))
-                    .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
-
-                    VStack(alignment: .leading, spacing: 4) {
-                        Text("DETECTION ENGINE")
-                            .font(.system(size: 10, weight: .bold))
-                            .foregroundColor(.secondary)
-                            .tracking(0.5)
-
-                        Text("O(1) SQLite")
-                            .font(.title2.weight(.bold))
-                            .foregroundColor(.primary)
-
-                        Text("Zero network latency")
-                            .font(.caption2)
-                            .foregroundColor(.secondary)
-                    }
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .padding(12)
-                    .background(Color(.tertiarySystemBackground))
-                    .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+                    Text("ENGINE READY")
+                        .font(.system(size: 11, weight: .bold, design: .monospaced))
+                        .foregroundColor(.triageVolt)
+                        .tracking(0.8)
                 }
+            }
+            .padding(.horizontal, 4)
 
-                Divider()
+            VStack(alignment: .leading, spacing: 14) {
+                // Top Row: Label & Big Numeral + UPDATE Button
+                HStack(alignment: .center) {
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text("ACTIVE SIGNATURES")
+                            .font(.system(size: 10, weight: .bold, design: .monospaced))
+                            .foregroundColor(.secondary)
+                            .tracking(0.8)
 
-                // Sync Bar
-                HStack {
-                    VStack(alignment: .leading, spacing: 2) {
-                        Text("Signature Updates")
-                            .font(.caption.weight(.semibold))
+                        Text(formattedThreatCount)
+                            .font(.system(size: 34, weight: .heavy, design: .monospaced))
                             .foregroundColor(.primary)
-
-                        if let lastSync = ThreatSyncManager.shared.lastSyncDate {
-                            Text("Updated \(lastSync, style: .relative) ago")
-                                .font(.caption2)
-                                .foregroundColor(.secondary)
-                        } else {
-                            Text("Initial signature seed")
-                                .font(.caption2)
-                                .foregroundColor(.secondary)
-                        }
                     }
 
                     Spacer()
@@ -473,48 +461,100 @@ struct ContentView: View {
                             if isSyncing {
                                 ProgressView()
                                     .scaleEffect(0.7)
+                                    .tint(.primary)
                             } else {
                                 Image(systemName: "arrow.triangle.2.circlepath")
-                                    .font(.caption.weight(.bold))
-                                Text("Sync")
-                                    .font(.caption.weight(.bold))
+                                    .font(.system(size: 11, weight: .bold))
                             }
+
+                            Text("UPDATE")
+                                .font(.system(size: 11, weight: .heavy, design: .monospaced))
+                                .tracking(0.5)
                         }
-                        .padding(.horizontal, 14)
-                        .padding(.vertical, 7)
-                        .background(Color.triageVolt.opacity(0.18))
-                        .foregroundColor(.triageVolt)
-                        .clipShape(Capsule())
+                        .foregroundColor(.primary)
+                        .padding(.horizontal, 12)
+                        .padding(.vertical, 8)
+                        .background(Color(.tertiarySystemBackground))
+                        .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 8, style: .continuous)
+                                .stroke(Color.white.opacity(0.12), lineWidth: 1)
+                        )
                     }
                     .disabled(isSyncing)
+                }
+
+                // Database Visual Readiness Bar
+                GeometryReader { geo in
+                    ZStack(alignment: .leading) {
+                        RoundedRectangle(cornerRadius: 3, style: .continuous)
+                            .fill(Color.white.opacity(0.08))
+                            .frame(height: 5)
+
+                        RoundedRectangle(cornerRadius: 3, style: .continuous)
+                            .fill(Color.triageVolt)
+                            .frame(width: geo.size.width * 0.76, height: 5)
+                    }
+                }
+                .frame(height: 5)
+
+                // Metadata Footer
+                HStack {
+                    Text("O(1) SQLite • Zero Latency")
+                        .font(.system(size: 10, weight: .medium, design: .monospaced))
+                        .foregroundColor(.secondary)
+
+                    Spacer()
+
+                    if let lastSync = ThreatSyncManager.shared.lastSyncDate {
+                        Text("Updated \(lastSync, style: .relative) ago")
+                            .font(.system(size: 10, weight: .medium, design: .monospaced))
+                            .foregroundColor(.secondary)
+                    } else {
+                        Text("Seed Database")
+                            .font(.system(size: 10, weight: .medium, design: .monospaced))
+                            .foregroundColor(.secondary)
+                    }
                 }
 
                 if let msg = syncStatusMessage {
                     HStack(spacing: 6) {
                         Image(systemName: "checkmark.circle.fill")
                             .foregroundColor(.triageVolt)
-                            .font(.caption)
-                        Text(msg)
                             .font(.caption2)
+                        Text(msg)
+                            .font(.system(size: 10, weight: .medium, design: .monospaced))
                             .foregroundColor(.secondary)
-                        Spacer()
                     }
-                    .padding(.top, -4)
+                    .padding(.top, 2)
                 }
             }
-            .padding(16)
+            .padding(18)
             .background(Color(.secondarySystemBackground))
             .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
+            .overlay(
+                RoundedRectangle(cornerRadius: 18, style: .continuous)
+                    .stroke(Color.white.opacity(0.06), lineWidth: 1)
+            )
         }
     }
 
     private var simulatorSection: some View {
         VStack(alignment: .leading, spacing: 8) {
-            Text("Diagnostics & Testing")
-                .font(.footnote.weight(.semibold))
-                .foregroundColor(.secondary)
-                .textCase(.uppercase)
-                .padding(.horizontal, 4)
+            HStack {
+                Text("DIAGNOSTICS")
+                    .font(.system(size: 11, weight: .bold, design: .monospaced))
+                    .foregroundColor(.secondary)
+                    .tracking(0.8)
+
+                Spacer()
+
+                Text("OFFLINE SANDBOX")
+                    .font(.system(size: 11, weight: .bold, design: .monospaced))
+                    .foregroundColor(.secondary)
+                    .tracking(0.8)
+            }
+            .padding(.horizontal, 4)
 
             Button(action: {
                 UIImpactFeedbackGenerator(style: .medium).impactOccurred()
@@ -522,18 +562,22 @@ struct ContentView: View {
             }) {
                 HStack(spacing: 14) {
                     ZStack {
-                        RoundedRectangle(cornerRadius: 11, style: .continuous)
-                            .fill(Color.triageVolt.opacity(0.14))
+                        RoundedRectangle(cornerRadius: 10, style: .continuous)
+                            .fill(Color(.tertiarySystemBackground))
                             .frame(width: 40, height: 40)
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 10, style: .continuous)
+                                    .stroke(Color.white.opacity(0.08), lineWidth: 1)
+                            )
 
-                        Image(systemName: "waveform.badge.magnifyingglass")
-                            .font(.system(size: 18, weight: .semibold))
+                        Image(systemName: "terminal.fill")
+                            .font(.system(size: 17, weight: .semibold))
                             .foregroundColor(.triageVolt)
                     }
 
-                    VStack(alignment: .leading, spacing: 2) {
+                    VStack(alignment: .leading, spacing: 3) {
                         Text("Simulate Threat Detection")
-                            .font(.body.weight(.semibold))
+                            .font(.body.weight(.bold))
                             .foregroundColor(.primary)
 
                         Text("Evaluate test smishing payloads against local engine")
@@ -547,9 +591,13 @@ struct ContentView: View {
                         .font(.caption2.weight(.semibold))
                         .foregroundColor(Color(.tertiaryLabel))
                 }
-                .padding(14)
+                .padding(16)
                 .background(Color(.secondarySystemBackground))
                 .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
+                .overlay(
+                    RoundedRectangle(cornerRadius: 18, style: .continuous)
+                        .stroke(Color.white.opacity(0.06), lineWidth: 1)
+                )
             }
             .buttonStyle(.plain)
         }
@@ -564,12 +612,12 @@ struct ContentView: View {
                 }) {
                     HStack(spacing: 14) {
                         ZStack {
-                            RoundedRectangle(cornerRadius: 12, style: .continuous)
+                            RoundedRectangle(cornerRadius: 10, style: .continuous)
                                 .fill(Color.triageVolt.opacity(0.16))
-                                .frame(width: 42, height: 42)
+                                .frame(width: 40, height: 40)
 
                             Image(systemName: "sparkles")
-                                .font(.system(size: 20, weight: .semibold))
+                                .font(.system(size: 18, weight: .semibold))
                                 .foregroundColor(.triageVolt)
                         }
 
@@ -580,12 +628,12 @@ struct ContentView: View {
                                     .foregroundColor(.primary)
 
                                 Text("PRO")
-                                    .font(.system(size: 9, weight: .heavy))
+                                    .font(.system(size: 9, weight: .heavy, design: .monospaced))
                                     .padding(.horizontal, 5)
                                     .padding(.vertical, 2)
                                     .background(Color.triageVolt)
                                     .foregroundColor(.black)
-                                    .clipShape(Capsule())
+                                    .clipShape(RoundedRectangle(cornerRadius: 4, style: .continuous))
                             }
 
                             Text("Zero-Day Gemini AI Analysis & hourly delta sync")
@@ -599,12 +647,12 @@ struct ContentView: View {
                             .font(.caption2.weight(.semibold))
                             .foregroundColor(Color(.tertiaryLabel))
                     }
-                    .padding(14)
+                    .padding(16)
                     .background(Color(.secondarySystemBackground))
                     .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
                     .overlay(
                         RoundedRectangle(cornerRadius: 18, style: .continuous)
-                            .stroke(Color.triageVolt.opacity(0.15), lineWidth: 1)
+                            .stroke(Color.triageVolt.opacity(0.18), lineWidth: 1)
                     )
                 }
                 .buttonStyle(.plain)
@@ -624,7 +672,7 @@ struct ContentView: View {
                     }
                     Spacer()
                 }
-                .padding(14)
+                .padding(16)
                 .background(Color(.secondarySystemBackground))
                 .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
             }
@@ -635,28 +683,36 @@ struct ContentView: View {
     private var proBadgeToolbarItem: some View {
         if subscriptionManager.isProUser {
             Text("PRO")
-                .font(.system(size: 11, weight: .heavy))
+                .font(.system(size: 10, weight: .heavy, design: .monospaced))
                 .padding(.horizontal, 8)
-                .padding(.vertical, 3)
+                .padding(.vertical, 4)
                 .background(Color.triageVolt.opacity(0.18))
                 .foregroundColor(.triageVolt)
-                .clipShape(Capsule())
+                .clipShape(RoundedRectangle(cornerRadius: 6, style: .continuous))
+                .overlay(
+                    RoundedRectangle(cornerRadius: 6, style: .continuous)
+                        .stroke(Color.triageVolt.opacity(0.35), lineWidth: 1)
+                )
         } else {
             Button(action: {
                 UIImpactFeedbackGenerator(style: .light).impactOccurred()
                 showingPaywall = true
             }) {
-                HStack(spacing: 4) {
+                HStack(spacing: 5) {
                     Image(systemName: "sparkles")
-                        .font(.caption2.weight(.bold))
+                        .font(.system(size: 10, weight: .bold))
                     Text("PRO")
-                        .font(.caption2.weight(.heavy))
+                        .font(.system(size: 10, weight: .heavy, design: .monospaced))
                 }
                 .padding(.horizontal, 9)
                 .padding(.vertical, 4)
                 .background(Color.triageVolt.opacity(0.15))
                 .foregroundColor(.triageVolt)
-                .clipShape(Capsule())
+                .clipShape(RoundedRectangle(cornerRadius: 6, style: .continuous))
+                .overlay(
+                    RoundedRectangle(cornerRadius: 6, style: .continuous)
+                        .stroke(Color.triageVolt.opacity(0.3), lineWidth: 1)
+                )
             }
         }
     }
