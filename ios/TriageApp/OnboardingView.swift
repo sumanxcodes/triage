@@ -1,114 +1,132 @@
 import SwiftUI
 
-struct OnboardingView: View {
+public struct OnboardingView: View {
     @Environment(\.dismiss) private var dismiss
+    public var onComplete: (() -> Void)?
 
-    var body: some View {
-        NavigationStack {
-            ScrollView(showsIndicators: false) {
-                VStack(alignment: .leading, spacing: 20) {
-                    // Top Logo Badge
-                    TriageLogoView(size: 64, showsGlow: true)
-                        .padding(.top, 12)
+    public init(onComplete: (() -> Void)? = nil) {
+        self.onComplete = onComplete
+    }
 
-                    // Eyebrow & Hero Headline
-                    VStack(alignment: .leading, spacing: 6) {
-                        Text("// PRIVATE BY DESIGN")
-                            .font(.system(size: 11, weight: .bold, design: .monospaced))
-                            .foregroundColor(.triageVolt)
-                            .tracking(1.0)
+    public var body: some View {
+        ZStack {
+            Color(.systemBackground)
+                .ignoresSafeArea()
 
-                        VStack(alignment: .leading, spacing: 0) {
-                            Text("Your messages.")
-                                .foregroundColor(.primary)
-                            Text("Your browsing.")
-                                .foregroundColor(.primary)
-                            Text("Protected.")
+            VStack(spacing: 0) {
+                ScrollView(showsIndicators: false) {
+                    VStack(alignment: .leading, spacing: 22) {
+                        // Top Logo Badge
+                        TriageLogoView(size: 64, showsGlow: true)
+                            .padding(.top, 16)
+
+                        // Eyebrow & Hero Headline
+                        VStack(alignment: .leading, spacing: 6) {
+                            Text("// PRIVATE BY DESIGN")
+                                .font(.system(size: 11, weight: .bold, design: .monospaced))
                                 .foregroundColor(.triageVolt)
-                        }
-                        .font(.system(size: 34, weight: .heavy, design: .rounded))
-                        .lineSpacing(-2)
+                                .tracking(1.0)
 
-                        Text("Dual-layer protection from scam texts and malicious links, entirely on your iPhone.")
-                            .font(.subheadline)
-                            .foregroundColor(.secondary)
-                            .padding(.top, 4)
-                    }
-
-                    Divider()
-                        .padding(.vertical, 4)
-
-                    // Feature Rows
-                    VStack(spacing: 16) {
-                        onboardingRow(
-                            stepNumber: "01",
-                            title: "SMS Smishing Filter",
-                            subtitle: "Silently moves scam texts to Junk.",
-                            icon: "message.badge.filled.fill",
-                            iconColor: .triageVolt
-                        )
-
-                        Divider()
-                            .padding(.leading, 32)
-
-                        onboardingRow(
-                            stepNumber: "02",
-                            title: "Safari Web Shield",
-                            subtitle: "Checks dangerous links before they load.",
-                            icon: "safari.fill",
-                            iconColor: .blue
-                        )
-
-                        Divider()
-                            .padding(.leading, 32)
-
-                        onboardingRow(
-                            stepNumber: "03",
-                            title: "Zero Telemetry",
-                            subtitle: "Nothing personal ever leaves your device.",
-                            icon: "lock.shield.fill",
-                            iconColor: .purple
-                        )
-                    }
-
-                    Spacer(minLength: 24)
-
-                    // Primary Action Button & Footer
-                    VStack(spacing: 12) {
-                        Button(action: {
-                            UIImpactFeedbackGenerator(style: .medium).impactOccurred()
-                            dismiss()
-                        }) {
-                            HStack(spacing: 8) {
-                                Text("SET UP PROTECTION")
-                                    .font(.system(size: 15, weight: .heavy, design: .monospaced))
-                                    .tracking(0.5)
-
-                                Image(systemName: "arrow.right")
-                                    .font(.subheadline.weight(.heavy))
+                            VStack(alignment: .leading, spacing: 0) {
+                                Text("Your messages.")
+                                    .foregroundColor(.primary)
+                                Text("Your browsing.")
+                                    .foregroundColor(.primary)
+                                Text("Protected.")
+                                    .foregroundColor(.triageVolt)
                             }
-                            .foregroundColor(.black)
-                            .frame(maxWidth: .infinity)
-                            .frame(minHeight: 28)
-                            .padding(.vertical, 14)
-                            .background(Color.triageVolt)
-                            .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+                            .font(.system(size: 34, weight: .heavy, design: .rounded))
+                            .lineSpacing(-2)
+
+                            Text("Dual-layer protection from scam texts and malicious links, entirely on your iPhone.")
+                                .font(.subheadline)
+                                .foregroundColor(.secondary)
+                                .padding(.top, 4)
                         }
 
-                        HStack(spacing: 6) {
-                            Image(systemName: "shield.lefthalf.filled")
-                                .font(.caption2.weight(.semibold))
-                                .foregroundColor(.secondary)
+                        Divider()
+                            .padding(.vertical, 4)
 
-                            Text("On-device processing • No account required")
-                                .font(.system(size: 11, weight: .medium, design: .monospaced))
-                                .foregroundColor(.secondary)
+                        // Feature Rows
+                        VStack(spacing: 16) {
+                            onboardingRow(
+                                stepNumber: "01",
+                                title: "SMS Smishing Filter",
+                                subtitle: "Silently moves scam texts to Junk.",
+                                icon: "message.badge.filled.fill",
+                                iconColor: .triageVolt
+                            )
+
+                            Divider()
+                                .padding(.leading, 32)
+
+                            onboardingRow(
+                                stepNumber: "02",
+                                title: "Safari Web Shield",
+                                subtitle: "Checks dangerous links before they load.",
+                                icon: "safari.fill",
+                                iconColor: .blue
+                            )
+
+                            Divider()
+                                .padding(.leading, 32)
+
+                            onboardingRow(
+                                stepNumber: "03",
+                                title: "Zero Telemetry",
+                                subtitle: "Nothing personal ever leaves your device.",
+                                icon: "lock.shield.fill",
+                                iconColor: .purple
+                            )
                         }
-                        .frame(maxWidth: .infinity)
                     }
-                    .padding(.bottom, 20)
+                    .padding(.horizontal, 24)
+                    .padding(.bottom, 24)
+                }
+
+                // Sticky Bottom Action Bar
+                VStack(spacing: 12) {
+                    Button(action: {
+                        UIImpactFeedbackGenerator(style: .medium).impactOccurred()
+                        if let onComplete = onComplete {
+                            onComplete()
+                        } else {
+                            dismiss()
+                        }
+                    }) {
+                        HStack(spacing: 8) {
+                            Text("SET UP PROTECTION")
+                                .font(.system(size: 15, weight: .heavy, design: .monospaced))
+                                .tracking(0.5)
+
+                            Image(systemName: "arrow.right")
+                                .font(.subheadline.weight(.heavy))
+                        }
+                        .foregroundColor(.black)
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 15)
+                        .background(Color.triageVolt)
+                        .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+                    }
+
+                    HStack(spacing: 6) {
+                        Image(systemName: "shield.lefthalf.filled")
+                            .font(.caption2.weight(.semibold))
+                            .foregroundColor(.secondary)
+
+                        Text("On-device processing • No account required")
+                            .font(.system(size: 11, weight: .medium, design: .monospaced))
+                            .foregroundColor(.secondary)
+                    }
+                    .frame(maxWidth: .infinity)
                 }
                 .padding(.horizontal, 24)
+                .padding(.top, 12)
+                .padding(.bottom, 16)
+                .background(
+                    Color(.systemBackground)
+                        .shadow(color: Color.black.opacity(0.04), radius: 6, x: 0, y: -3)
+                )
             }
         }
     }

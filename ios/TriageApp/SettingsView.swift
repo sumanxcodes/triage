@@ -3,6 +3,7 @@ import StoreKit
 
 public struct SettingsView: View {
     @ObservedObject private var subscriptionManager = SubscriptionManager.shared
+    @AppStorage("triage_has_completed_onboarding_v2") private var hasCompletedOnboarding: Bool = true
 
     @State private var showingPaywall = false
     @State private var showingPrivacyPolicy = false
@@ -126,6 +127,21 @@ public struct SettingsView: View {
                                 .foregroundColor(.primary)
                             Spacer()
                             Image(systemName: "chevron.right")
+                                .font(.caption2)
+                                .foregroundColor(Color(.tertiaryLabel))
+                        }
+                    }
+
+                    Button(action: {
+                        withAnimation(.spring(response: 0.45, dampingFraction: 0.85)) {
+                            hasCompletedOnboarding = false
+                        }
+                    }) {
+                        HStack {
+                            Label("Replay Welcome Tour", systemImage: "sparkles")
+                                .foregroundColor(.primary)
+                            Spacer()
+                            Image(systemName: "arrow.counterclockwise")
                                 .font(.caption2)
                                 .foregroundColor(Color(.tertiaryLabel))
                         }
