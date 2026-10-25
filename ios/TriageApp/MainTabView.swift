@@ -24,20 +24,20 @@ public struct MainTabView: View {
                 TabView(selection: $selectedTab) {
                     ContentView()
                         .tabItem {
-                            Label("Protection", systemImage: "shield.fill")
+                            Label("Protection", systemImage: selectedTab == 0 ? "shield.fill" : "shield")
                         }
                         .tag(0)
 
                     ThreatHistoryView()
                         .tabItem {
-                            Label("History", systemImage: "clock.arrow.circlepath")
+                            Label("History", systemImage: selectedTab == 1 ? "clock.fill" : "clock")
                         }
                         .badge(unreadCount > 0 ? unreadCount : 0)
                         .tag(1)
 
                     SettingsView()
                         .tabItem {
-                            Label("Settings", systemImage: "gearshape.fill")
+                            Label("Settings", systemImage: selectedTab == 2 ? "gearshape.fill" : "gearshape")
                         }
                         .tag(2)
                 }
