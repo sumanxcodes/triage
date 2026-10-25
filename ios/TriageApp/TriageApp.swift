@@ -67,7 +67,7 @@ public struct TriageLogoView: View {
             .resizable()
             .scaledToFit()
             .frame(width: size, height: size)
-            .shadow(color: showsGlow ? Color.triageVolt.opacity(0.35) : Color.clear, radius: 10, x: 0, y: 0)
+            .shadow(color: showsGlow ? RetroTheme.accent.opacity(0.35) : Color.clear, radius: 10, x: 0, y: 0)
     }
 }
 
@@ -80,7 +80,7 @@ struct TriageApp: App {
     var body: some Scene {
         WindowGroup {
             MainTabView()
-                .tint(.triageAccent)
+                .tint(RetroTheme.accent)
         }
     }
 }

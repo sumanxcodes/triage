@@ -41,7 +41,7 @@ public struct MainTabView: View {
                         }
                         .tag(2)
                 }
-                .tint(RetroTheme.textAccent)
+                .tint(RetroTheme.accent)
                 .transition(.opacity)
                 .onAppear {
                     refreshBadge()
