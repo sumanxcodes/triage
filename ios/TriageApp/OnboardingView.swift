@@ -10,19 +10,8 @@ struct OnboardingView: View {
 
                 // Hero Crest
                 VStack(spacing: 14) {
-                    ZStack {
-                        Circle()
-                            .fill(LinearGradient(
-                                colors: [.blue, .cyan],
-                                startPoint: .topLeading,
-                                endPoint: .bottomTrailing
-                            ))
-                            .frame(width: 88, height: 88)
-
-                        Image(systemName: "shield.lefthalf.filled.badge.checkmark")
-                            .font(.system(size: 44, weight: .bold))
-                            .foregroundColor(.white)
-                    }
+                    TriageLogoView(size: 92, showsGlow: true)
+                        .padding(.top, 8)
 
                     Text("Welcome to Triage")
                         .font(.system(.largeTitle, design: .rounded).weight(.heavy))

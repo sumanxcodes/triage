@@ -218,19 +218,23 @@ struct ContentView: View {
     private var heroStatusCard: some View {
         VStack(spacing: 16) {
             HStack(spacing: 16) {
-                // High-Tech Squircle Security Crest
-                ZStack {
-                    RoundedRectangle(cornerRadius: 18, style: .continuous)
-                        .fill(heroStatusColor.opacity(0.14))
-                        .frame(width: 58, height: 58)
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 18, style: .continuous)
-                                .stroke(heroStatusColor.opacity(0.32), lineWidth: 1.5)
-                        )
+                // High-Tech Squircle Security Crest / Logo
+                if isFullyProtected {
+                    TriageLogoView(size: 58, showsGlow: true)
+                } else {
+                    ZStack {
+                        RoundedRectangle(cornerRadius: 18, style: .continuous)
+                            .fill(heroStatusColor.opacity(0.14))
+                            .frame(width: 58, height: 58)
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 18, style: .continuous)
+                                    .stroke(heroStatusColor.opacity(0.32), lineWidth: 1.5)
+                            )
 
-                    Image(systemName: heroIcon)
-                        .font(.system(size: 26, weight: .semibold))
-                        .foregroundColor(heroStatusColor)
+                        Image(systemName: heroIcon)
+                            .font(.system(size: 26, weight: .semibold))
+                            .foregroundColor(heroStatusColor)
+                    }
                 }
 
                 VStack(alignment: .leading, spacing: 4) {

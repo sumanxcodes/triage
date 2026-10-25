@@ -18,17 +18,7 @@ public struct SettingsView: View {
                 // MARK: - 1. Subscription & Plan
                 Section {
                     HStack(spacing: 14) {
-                        ZStack {
-                            Circle()
-                                .fill(subscriptionManager.isProUser ?
-                                      LinearGradient(colors: [.purple, .indigo], startPoint: .topLeading, endPoint: .bottomTrailing) :
-                                      LinearGradient(colors: [.blue, .cyan], startPoint: .topLeading, endPoint: .bottomTrailing))
-                                .frame(width: 44, height: 44)
-
-                            Image(systemName: subscriptionManager.isProUser ? "shield.checkered" : "shield.lefthalf.filled.badge.checkmark")
-                                .font(.system(size: 22, weight: .bold))
-                                .foregroundColor(.white)
-                        }
+                        TriageLogoView(size: 44, showsGlow: subscriptionManager.isProUser)
 
                         VStack(alignment: .leading, spacing: 3) {
                             HStack(spacing: 6) {
@@ -39,8 +29,8 @@ public struct SettingsView: View {
                                     .font(.system(size: 9, weight: .heavy))
                                     .padding(.horizontal, 6)
                                     .padding(.vertical, 2)
-                                    .background(subscriptionManager.isProUser ? Color.purple : Color.secondary.opacity(0.2))
-                                    .foregroundColor(subscriptionManager.isProUser ? .white : .secondary)
+                                    .background(subscriptionManager.isProUser ? Color.triageVolt.opacity(0.2) : Color.secondary.opacity(0.2))
+                                    .foregroundColor(subscriptionManager.isProUser ? .triageVolt : .secondary)
                                     .cornerRadius(4)
                             }
 
@@ -173,6 +163,18 @@ public struct SettingsView: View {
 
                 // MARK: - 4. About Triage
                 Section {
+                    HStack(spacing: 14) {
+                        TriageLogoView(size: 38)
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text("Triage")
+                                .font(.headline)
+                            Text("Privacy-First Threat Defense")
+                                .font(.caption)
+                                .foregroundColor(.secondary)
+                        }
+                    }
+                    .padding(.vertical, 4)
+
                     HStack {
                         Text("Version")
                         Spacer()

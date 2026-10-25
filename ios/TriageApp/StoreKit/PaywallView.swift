@@ -15,20 +15,8 @@ public struct PaywallView: View {
                 VStack(spacing: 28) {
                     // Header Badge
                     VStack(spacing: 12) {
-                        ZStack {
-                            Circle()
-                                .fill(LinearGradient(
-                                    colors: [.indigo, .blue, .cyan],
-                                    startPoint: .topLeading,
-                                    endPoint: .bottomTrailing
-                                ))
-                                .frame(width: 90, height: 90)
-
-                            Image(systemName: "shield.checkered")
-                                .font(.system(size: 44, weight: .bold))
-                                .foregroundColor(.white)
-                        }
-                        .padding(.top, 16)
+                        TriageLogoView(size: 88, showsGlow: true)
+                            .padding(.top, 16)
 
                         Text("Triage Pro")
                             .font(.system(.largeTitle, design: .rounded))
