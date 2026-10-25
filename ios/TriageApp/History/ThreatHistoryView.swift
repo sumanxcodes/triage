@@ -32,7 +32,7 @@ public struct ThreatHistoryView: View {
                         .padding(.bottom, 10)
 
                     // Search Input
-                    searchBar
+                    AppSearchField("Filter links, brands, senders...", text: $searchText)
                         .padding(.horizontal, 16)
                         .padding(.bottom, 12)
 
@@ -74,7 +74,7 @@ public struct ThreatHistoryView: View {
                 ToolbarItem(placement: .topBarTrailing) {
                     if !events.isEmpty {
                         Button(action: { showingClearConfirmation = true }) {
-                            RetroBadge("CLEAR", color: .danger, isFilled: false)
+                            AppBadge("CLEAR", color: .danger, isFilled: false)
                         }
                     }
                 }
@@ -129,78 +129,20 @@ public struct ThreatHistoryView: View {
         }
     }
 
-    private var searchBar: some View {
-        HStack(spacing: 8) {
-            Image(systemName: "magnifyingglass")
-                .font(RetroTheme.captionLarge)
-                .foregroundColor(RetroTheme.secondaryForeground)
-
-            TextField("Filter links, brands, senders...", text: $searchText)
-                .font(RetroTheme.bodySmall)
-                .foregroundColor(RetroTheme.foreground)
-                .autocorrectionDisabled()
-                .textInputAutocapitalization(.never)
-
-            if !searchText.isEmpty {
-                Button(action: { searchText = "" }) {
-                    Image(systemName: "xmark.circle.fill")
-                        .font(RetroTheme.captionLarge)
-                        .foregroundColor(RetroTheme.secondaryForeground)
-                }
-            }
-        }
-        .padding(.horizontal, 12)
-        .padding(.vertical, 9)
-        .background(RetroTheme.content1)
-        .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
-        .overlay(
-            RoundedRectangle(cornerRadius: 10, style: .continuous)
-                .stroke(RetroTheme.border, lineWidth: 1)
+    private var emptyStateView: some View {
+        AppEmptyState(
+            icon: "shield.lefthalf.filled",
+            title: searchText.isEmpty ? "0 Threats Logged" : "No Matching Records",
+            subtitle: searchText.isEmpty ?
+                 "On-device SQLite filter active. Blocked scam texts and malicious Safari links will be cataloged here." :
+                 "Try searching with an alternate keyword or domain query.",
+            badgeText: "SYSTEM SECURED",
+            badgeColor: .success
         )
     }
 
-    private var emptyStateView: some View {
-        VStack(spacing: 16) {
-            Spacer()
-
-            RetroCard {
-                VStack(spacing: 14) {
-                    ZStack {
-                        RoundedRectangle(cornerRadius: 14, style: .continuous)
-                            .fill(RetroTheme.content1)
-                            .frame(width: 52, height: 52)
-
-                        Image(systemName: "shield.lefthalf.filled")
-                            .font(RetroTheme.headlineLarge)
-                            .foregroundColor(RetroTheme.success)
-                    }
-
-                    VStack(spacing: 6) {
-                        Text(searchText.isEmpty ? "0 Threats Logged" : "No Matching Records")
-                            .font(RetroTheme.headlineSmall)
-                            .foregroundColor(RetroTheme.foreground)
-
-                        Text(searchText.isEmpty ?
-                             "On-device SQLite filter active. Blocked scam texts and malicious Safari links will be cataloged here." :
-                             "Try searching with an alternate keyword or domain query.")
-                            .font(RetroTheme.bodySmall)
-                            .foregroundColor(RetroTheme.secondaryForeground)
-                            .multilineTextAlignment(.center)
-                            .padding(.horizontal, 12)
-                    }
-
-                    RetroBadge("SYSTEM SECURED", color: .success, isFilled: true)
-                }
-                .padding(20)
-            }
-            .padding(.horizontal, 24)
-
-            Spacer()
-        }
-    }
-
     private func eventCard(for event: ThreatEventRecord) -> some View {
-        RetroCard {
+        AppCard {
             VStack(alignment: .leading, spacing: 10) {
                 HStack(alignment: .top) {
                     HStack(spacing: 6) {
@@ -216,7 +158,7 @@ public struct ThreatHistoryView: View {
 
                     Spacer()
 
-                    RetroBadge(badgeTitle(for: event), color: .danger, isFilled: true)
+                    AppBadge(badgeTitle(for: event), color: .danger, isFilled: true)
                 }
 
                 if let sender = event.sender, !sender.isEmpty {

@@ -24,12 +24,9 @@ public struct SettingsView: View {
                     VStack(spacing: 20) {
                         // MARK: - 1. Subscription & Plan
                         VStack(alignment: .leading, spacing: 8) {
-                            Text("MEMBERSHIP & ACCESS")
-                                .font(RetroTheme.captionSmall)
-                                .foregroundColor(RetroTheme.secondaryForeground)
-                                .padding(.horizontal, 4)
+                            AppSectionHeader("MEMBERSHIP & ACCESS")
 
-                            RetroCard {
+                            AppCard {
                                 VStack(spacing: 12) {
                                     HStack(spacing: 14) {
                                         TriageLogoView(size: 44, showsGlow: subscriptionManager.isProUser)
@@ -40,7 +37,7 @@ public struct SettingsView: View {
                                                     .font(RetroTheme.headlineSmall)
                                                     .foregroundColor(RetroTheme.foreground)
 
-                                                RetroBadge(
+                                                AppBadge(
                                                     subscriptionManager.isProUser ? "PRO ACTIVE" : "STANDARD",
                                                     color: subscriptionManager.isProUser ? .accent : .primary,
                                                     isFilled: true
@@ -115,12 +112,9 @@ public struct SettingsView: View {
 
                         // MARK: - 2. Help & Support
                         VStack(alignment: .leading, spacing: 8) {
-                            Text("KNOWLEDGE & SUPPORT")
-                                .font(RetroTheme.captionSmall)
-                                .foregroundColor(RetroTheme.secondaryForeground)
-                                .padding(.horizontal, 4)
+                            AppSectionHeader("KNOWLEDGE & SUPPORT")
 
-                            RetroCard {
+                            AppCard {
                                 VStack(spacing: 0) {
                                     NavigationLink(destination: FAQView()) {
                                         menuRow(title: "FAQ & ARCHITECTURE", icon: "questionmark.circle.fill", iconColor: RetroTheme.accent)
@@ -155,12 +149,9 @@ public struct SettingsView: View {
 
                         // MARK: - 3. Privacy & Legal
                         VStack(alignment: .leading, spacing: 8) {
-                            Text("COMPLIANCE & PRIVACY")
-                                .font(RetroTheme.captionSmall)
-                                .foregroundColor(RetroTheme.secondaryForeground)
-                                .padding(.horizontal, 4)
+                            AppSectionHeader("COMPLIANCE & PRIVACY")
 
-                            RetroCard {
+                            AppCard {
                                 VStack(spacing: 0) {
                                     Button(action: { showingPrivacyPolicy = true }) {
                                         menuRow(title: "PRIVACY POLICY & ZERO-LOGGING", icon: "lock.shield.fill", iconColor: RetroTheme.success)
@@ -179,19 +170,16 @@ public struct SettingsView: View {
 
                         // MARK: - 4. About & Engine Metrics
                         VStack(alignment: .leading, spacing: 8) {
-                            Text("ENGINE SPECIFICATION")
-                                .font(RetroTheme.captionSmall)
-                                .foregroundColor(RetroTheme.secondaryForeground)
-                                .padding(.horizontal, 4)
+                            AppSectionHeader("ENGINE SPECIFICATION")
 
-                            RetroCard {
+                            AppCard {
                                 VStack(spacing: 12) {
                                     HStack {
                                         Text("CORE ENGINE")
                                             .font(RetroTheme.captionLarge)
                                             .foregroundColor(RetroTheme.secondaryForeground)
                                         Spacer()
-                                        RetroBadge("SQLITE 3.45 WAL", color: .accent, isFilled: true)
+                                        AppBadge("SQLITE 3.45 WAL", color: .accent, isFilled: true)
                                     }
 
                                     SUDivider()
@@ -213,7 +201,7 @@ public struct SettingsView: View {
                                             .font(RetroTheme.captionLarge)
                                             .foregroundColor(RetroTheme.secondaryForeground)
                                         Spacer()
-                                        RetroBadge("IDENTITYLOOKUP / WEBKIT", color: .primary, isFilled: false)
+                                        AppBadge("IDENTITYLOOKUP / WEBKIT", color: .primary, isFilled: false)
                                     }
                                 }
                                 .padding(16)
@@ -338,7 +326,7 @@ struct FAQView: View {
             ScrollView {
                 VStack(spacing: 14) {
                     ForEach(faqs) { item in
-                        RetroCard {
+                        AppCard {
                             VStack(alignment: .leading, spacing: 8) {
                                 Text(item.question)
                                     .font(RetroTheme.bodyMedium)
@@ -375,15 +363,13 @@ struct PrivacyPolicySheet: View {
                 ScrollView {
                     VStack(alignment: .leading, spacing: 16) {
                         HStack(spacing: 12) {
-                            ZStack {
-                                RoundedRectangle(cornerRadius: 12, style: .continuous)
-                                    .fill(RetroTheme.content1)
-                                    .frame(width: 44, height: 44)
-
-                                Image(systemName: "lock.shield.fill")
-                                    .font(RetroTheme.headlineSmall)
-                                    .foregroundColor(RetroTheme.success)
-                            }
+                            AppIconWell(
+                                icon: "lock.shield.fill",
+                                iconColor: RetroTheme.success,
+                                backgroundColor: RetroTheme.content1,
+                                size: 44,
+                                iconSize: 20
+                            )
 
                             VStack(alignment: .leading, spacing: 2) {
                                 Text("PRIVACY POLICY")
@@ -429,7 +415,7 @@ struct PrivacyPolicySheet: View {
             .toolbar {
                 ToolbarItem(placement: .confirmationAction) {
                     Button(action: { dismiss() }) {
-                        RetroBadge("DONE", color: .primary, isFilled: false)
+                        AppBadge("DONE", color: .primary, isFilled: false)
                     }
                 }
             }
@@ -437,7 +423,7 @@ struct PrivacyPolicySheet: View {
     }
 
     private func policyBlock(title: String, body: String) -> some View {
-        RetroCard {
+        AppCard {
             VStack(alignment: .leading, spacing: 6) {
                 Text(title)
                     .font(RetroTheme.bodyMedium)
@@ -507,7 +493,7 @@ struct TermsOfServiceSheet: View {
             .toolbar {
                 ToolbarItem(placement: .confirmationAction) {
                     Button(action: { dismiss() }) {
-                        RetroBadge("DONE", color: .primary, isFilled: false)
+                        AppBadge("DONE", color: .primary, isFilled: false)
                     }
                 }
             }
@@ -515,7 +501,7 @@ struct TermsOfServiceSheet: View {
     }
 
     private func termsBlock(title: String, body: String) -> some View {
-        RetroCard {
+        AppCard {
             VStack(alignment: .leading, spacing: 6) {
                 Text(title)
                     .font(RetroTheme.bodyMedium)

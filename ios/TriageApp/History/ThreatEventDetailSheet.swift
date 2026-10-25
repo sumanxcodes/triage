@@ -20,19 +20,13 @@ public struct ThreatEventDetailSheet: View {
                     VStack(spacing: 18) {
                         // Header Status
                         VStack(spacing: 10) {
-                            ZStack {
-                                RoundedRectangle(cornerRadius: 14, style: .continuous)
-                                    .fill(RetroTheme.dangerBackground)
-                                    .frame(width: 58, height: 58)
-                                    .overlay(
-                                        RoundedRectangle(cornerRadius: 14, style: .continuous)
-                                            .stroke(RetroTheme.border, lineWidth: 1)
-                                    )
-
-                                Image(systemName: "exclamationmark.shield.fill")
-                                    .font(RetroTheme.headlineLarge)
-                                    .foregroundColor(RetroTheme.danger)
-                            }
+                            AppIconWell(
+                                icon: "exclamationmark.shield.fill",
+                                iconColor: RetroTheme.danger,
+                                backgroundColor: RetroTheme.dangerBackground,
+                                size: 58,
+                                iconSize: 26
+                            )
                             .padding(.top, 8)
 
                             Text(event.targetBrand ?? (event.source == "sms" ? "SMS Threat" : "Safari Threat"))
@@ -40,27 +34,23 @@ public struct ThreatEventDetailSheet: View {
                                 .foregroundColor(RetroTheme.foreground)
 
                             HStack(spacing: 6) {
-                                RetroBadge(event.source == "sms" ? "SMS PHISHING" : "WEB PHISHING", color: .danger, isFilled: true)
-                                RetroBadge(event.actionTaken == "blocked" ? "BLOCKED" : "JUNKED", color: .danger, isFilled: false)
+                                AppBadge(event.source == "sms" ? "SMS PHISHING" : "WEB PHISHING", color: .danger, isFilled: true)
+                                AppBadge(event.actionTaken == "blocked" ? "BLOCKED" : "JUNKED", color: .danger, isFilled: false)
                             }
                         }
 
                         // Threat Target Details Card
-                        RetroCard {
+                        AppCard {
                             VStack(alignment: .leading, spacing: 14) {
-                                Text("THREAT TELEMETRY")
-                                    .font(RetroTheme.captionSmall)
-                                    .foregroundColor(RetroTheme.secondaryForeground)
+                                AppSectionHeader("THREAT TELEMETRY")
 
                                 if let sender = event.sender, !sender.isEmpty {
-                                    detailRow(label: "SENDER", value: sender)
+                                    AppDetailRow(label: "SENDER", value: sender)
                                     Divider()
                                 }
 
                                 VStack(alignment: .leading, spacing: 6) {
-                                    Text("TARGET PAYLOAD")
-                                        .font(RetroTheme.captionSmall)
-                                        .foregroundColor(RetroTheme.secondaryForeground)
+                                    AppSectionHeader("TARGET PAYLOAD")
 
                                     Text(event.target)
                                         .font(RetroTheme.captionMedium)
@@ -88,20 +78,24 @@ public struct ThreatEventDetailSheet: View {
 
                                 SUDivider()
 
-                                detailRow(label: "CATEGORY", value: event.category.capitalized)
+                                AppDetailRow(label: "CATEGORY", value: event.category.capitalized)
                                 SUDivider()
-                                detailRow(label: "TIMESTAMP", value: event.timestamp.formatted(date: .numeric, time: .standard))
+                                AppDetailRow(label: "TIMESTAMP", value: event.timestamp.formatted(date: .numeric, time: .standard))
                             }
                             .padding(16)
                         }
                         .padding(.horizontal, 16)
 
                         // On-Device Guarantee Card
-                        RetroCard {
+                        AppCard {
                             HStack(alignment: .top, spacing: 12) {
-                                Image(systemName: "lock.shield.fill")
-                                    .foregroundColor(RetroTheme.success)
-                                    .font(RetroTheme.headlineSmall)
+                                AppIconWell(
+                                    icon: "lock.shield.fill",
+                                    iconColor: RetroTheme.success,
+                                    backgroundColor: RetroTheme.content1,
+                                    size: 40,
+                                    iconSize: 18
+                                )
 
                                 VStack(alignment: .leading, spacing: 4) {
                                     Text("LOCAL AUDIT VERIFIED")
@@ -137,22 +131,10 @@ public struct ThreatEventDetailSheet: View {
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
                     Button(action: { dismiss() }) {
-                        RetroBadge("CLOSE", color: .secondary, isFilled: false)
+                        AppBadge("CLOSE", color: .secondary, isFilled: false)
                     }
                 }
             }
-        }
-    }
-
-    private func detailRow(label: String, value: String) -> some View {
-        HStack {
-            Text(label)
-                .font(RetroTheme.captionSmall)
-                .foregroundColor(RetroTheme.secondaryForeground)
-            Spacer()
-            Text(value)
-                .font(RetroTheme.bodySmall)
-                .foregroundColor(RetroTheme.foreground)
         }
     }
 

@@ -678,3 +678,256 @@ public struct RetroButtonStyle: SwiftUI.ButtonStyle {
             .animation(.easeInOut(duration: 0.1), value: configuration.isPressed)
     }
 }
+
+// MARK: - Reusable Molecular UI Component Suite
+
+public typealias AppCard = RetroCard
+public typealias AppBadge = RetroBadge
+public typealias AppBlockMeter = RetroBlockMeter
+
+/// Standardized Icon Well with continuous rounded corners and semantic token colors
+public struct AppIconWell: View {
+    public var icon: String
+    public var iconColor: Color
+    public var backgroundColor: Color
+    public var size: CGFloat
+    public var iconSize: CGFloat
+
+    public init(
+        icon: String,
+        iconColor: Color = RetroTheme.accent,
+        backgroundColor: Color = RetroTheme.content1,
+        size: CGFloat = 44,
+        iconSize: CGFloat = 18
+    ) {
+        self.icon = icon
+        self.iconColor = iconColor
+        self.backgroundColor = backgroundColor
+        self.size = size
+        self.iconSize = iconSize
+    }
+
+    public var body: some View {
+        ZStack {
+            RoundedRectangle(cornerRadius: size > 40 ? 12 : 10, style: .continuous)
+                .fill(backgroundColor)
+                .frame(width: size, height: size)
+
+            Image(systemName: icon)
+                .font(RetroTheme.urbanist(size: iconSize, weight: .bold))
+                .foregroundColor(iconColor)
+        }
+    }
+}
+
+/// Standardized Section Header with small uppercase caption font and letter-tracking
+public struct AppSectionHeader: View {
+    public var title: String
+
+    public init(_ title: String) {
+        self.title = title
+    }
+
+    public var body: some View {
+        Text(title.uppercased())
+            .font(RetroTheme.captionSmall)
+            .foregroundColor(RetroTheme.secondaryForeground)
+            .padding(.horizontal, 4)
+            .tracking(0.5)
+    }
+}
+
+/// Standardized List / Menu Row with leading icon, title, subtitle, optional badge, and chevron
+public struct AppNavigationRow: View {
+    public var icon: String
+    public var iconColor: Color
+    public var backgroundColor: Color
+    public var title: String
+    public var subtitle: String?
+    public var badge: String?
+    public var badgeColor: ComponentColor
+    public var showChevron: Bool
+
+    public init(
+        icon: String,
+        iconColor: Color = RetroTheme.accent,
+        backgroundColor: Color = RetroTheme.content1,
+        title: String,
+        subtitle: String? = nil,
+        badge: String? = nil,
+        badgeColor: ComponentColor = .primary,
+        showChevron: Bool = true
+    ) {
+        self.icon = icon
+        self.iconColor = iconColor
+        self.backgroundColor = backgroundColor
+        self.title = title
+        self.subtitle = subtitle
+        self.badge = badge
+        self.badgeColor = badgeColor
+        self.showChevron = showChevron
+    }
+
+    public var body: some View {
+        HStack(spacing: 14) {
+            AppIconWell(
+                icon: icon,
+                iconColor: iconColor,
+                backgroundColor: backgroundColor,
+                size: 44,
+                iconSize: 18
+            )
+
+            VStack(alignment: .leading, spacing: 3) {
+                Text(title)
+                    .font(RetroTheme.headlineSmall)
+                    .foregroundColor(RetroTheme.foreground)
+
+                if let subtitle = subtitle {
+                    Text(subtitle)
+                        .font(RetroTheme.captionMedium)
+                        .foregroundColor(RetroTheme.secondaryForeground)
+                }
+            }
+
+            Spacer()
+
+            if let badge = badge {
+                AppBadge(badge, color: badgeColor, isFilled: true)
+            }
+
+            if showChevron {
+                Image(systemName: "chevron.right")
+                    .font(RetroTheme.captionSmall)
+                    .foregroundColor(RetroTheme.secondaryForeground)
+            }
+        }
+    }
+}
+
+/// Standardized Key-Value Metadata Detail Row
+public struct AppDetailRow: View {
+    public var label: String
+    public var value: String
+
+    public init(label: String, value: String) {
+        self.label = label
+        self.value = value
+    }
+
+    public var body: some View {
+        HStack(alignment: .top) {
+            Text(label.uppercased() + ":")
+                .font(RetroTheme.captionSmall)
+                .foregroundColor(RetroTheme.secondaryForeground)
+            Spacer()
+            Text(value)
+                .font(RetroTheme.captionLarge)
+                .foregroundColor(RetroTheme.foreground)
+                .multilineTextAlignment(.trailing)
+        }
+    }
+}
+
+/// Standardized Search Field with high-performance responsive input and clear button
+public struct AppSearchField: View {
+    public var placeholder: String
+    @Binding public var text: String
+
+    public init(_ placeholder: String = "Search...", text: Binding<String>) {
+        self.placeholder = placeholder
+        self._text = text
+    }
+
+    public var body: some View {
+        HStack(spacing: 8) {
+            Image(systemName: "magnifyingglass")
+                .font(RetroTheme.captionLarge)
+                .foregroundColor(RetroTheme.secondaryForeground)
+
+            TextField(placeholder, text: $text)
+                .font(RetroTheme.bodySmall)
+                .foregroundColor(RetroTheme.foreground)
+                .autocorrectionDisabled()
+                .textInputAutocapitalization(.never)
+
+            if !text.isEmpty {
+                Button(action: { text = "" }) {
+                    Image(systemName: "xmark.circle.fill")
+                        .font(RetroTheme.captionLarge)
+                        .foregroundColor(RetroTheme.secondaryForeground)
+                }
+                .buttonStyle(.plain)
+            }
+        }
+        .padding(.horizontal, 12)
+        .padding(.vertical, 9)
+        .background(RetroTheme.content1)
+        .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
+        .overlay(
+            RoundedRectangle(cornerRadius: 10, style: .continuous)
+                .stroke(RetroTheme.border, lineWidth: 1)
+        )
+    }
+}
+
+/// Standardized Empty State Component
+public struct AppEmptyState: View {
+    public var icon: String
+    public var title: String
+    public var subtitle: String
+    public var badgeText: String?
+    public var badgeColor: ComponentColor
+
+    public init(
+        icon: String = "shield.lefthalf.filled",
+        title: String,
+        subtitle: String,
+        badgeText: String? = nil,
+        badgeColor: ComponentColor = .success
+    ) {
+        self.icon = icon
+        self.title = title
+        self.subtitle = subtitle
+        self.badgeText = badgeText
+        self.badgeColor = badgeColor
+    }
+
+    public var body: some View {
+        VStack(spacing: 16) {
+            Spacer()
+
+            AppCard {
+                VStack(spacing: 14) {
+                    AppIconWell(
+                        icon: icon,
+                        iconColor: RetroTheme.success,
+                        backgroundColor: RetroTheme.content1,
+                        size: 56,
+                        iconSize: 24
+                    )
+
+                    VStack(spacing: 6) {
+                        Text(title)
+                            .font(RetroTheme.headlineSmall)
+                            .foregroundColor(RetroTheme.foreground)
+
+                        Text(subtitle)
+                            .font(RetroTheme.bodySmall)
+                            .foregroundColor(RetroTheme.secondaryForeground)
+                            .multilineTextAlignment(.center)
+                            .padding(.horizontal, 12)
+                    }
+
+                    if let badge = badgeText {
+                        AppBadge(badge, color: badgeColor, isFilled: true)
+                    }
+                }
+                .padding(20)
+            }
+            .padding(.horizontal, 24)
+
+            Spacer()
+        }
+    }
+}

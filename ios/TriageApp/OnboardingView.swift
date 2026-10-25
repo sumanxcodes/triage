@@ -23,7 +23,7 @@ public struct OnboardingView: View {
 
                         // Eyebrow & Hero Headline
                         VStack(alignment: .leading, spacing: 8) {
-                            RetroBadge("PRIVATE BY DESIGN // SYSTEM INIT", color: .accent, isFilled: true)
+                            AppBadge("PRIVATE BY DESIGN // SYSTEM INIT", color: .accent, isFilled: true)
 
                             VStack(alignment: .leading, spacing: 2) {
                                 Text("Your Messages.")
@@ -115,21 +115,15 @@ public struct OnboardingView: View {
         icon: String,
         iconColor: Color
     ) -> some View {
-        RetroCard {
+        AppCard {
             HStack(alignment: .top, spacing: 12) {
-                ZStack {
-                    RoundedRectangle(cornerRadius: 10, style: .continuous)
-                        .fill(RetroTheme.content1)
-                        .frame(width: 38, height: 38)
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 10, style: .continuous)
-                                .stroke(RetroTheme.border, lineWidth: 1)
-                        )
-
-                    Image(systemName: icon)
-                        .font(RetroTheme.headlineSmall)
-                        .foregroundColor(iconColor)
-                }
+                AppIconWell(
+                    icon: icon,
+                    iconColor: iconColor,
+                    backgroundColor: RetroTheme.content1,
+                    size: 38,
+                    iconSize: 16
+                )
 
                 VStack(alignment: .leading, spacing: 3) {
                     HStack {

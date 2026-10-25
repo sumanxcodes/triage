@@ -27,7 +27,7 @@ public struct PaywallView: View {
                                 .font(RetroTheme.headlineLarge)
                                 .foregroundColor(RetroTheme.foreground)
 
-                            RetroBadge("ZERO-DAY CYBER DEFENSE", color: .accent, isFilled: true)
+                            AppBadge("ZERO-DAY CYBER DEFENSE", color: .accent, isFilled: true)
 
                             Text("Advanced threat intelligence powered by on-device SQLite lookups and Gemini zero-day heuristics.")
                                 .font(RetroTheme.bodySmall)
@@ -37,11 +37,9 @@ public struct PaywallView: View {
                         }
 
                         // Feature Card
-                        RetroCard {
+                        AppCard {
                             VStack(alignment: .leading, spacing: 14) {
-                                Text("// PRO CAPABILITIES")
-                                    .font(RetroTheme.captionSmall)
-                                    .foregroundColor(RetroTheme.secondaryForeground)
+                                AppSectionHeader("PRO CAPABILITIES")
 
                                 featureRow(
                                     tag: "GEMINI AI",
@@ -176,7 +174,7 @@ public struct PaywallView: View {
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
                     Button(action: { dismiss() }) {
-                        RetroBadge("CLOSE", color: .primary, isFilled: false)
+                        AppBadge("CLOSE", color: .primary, isFilled: false)
                     }
                 }
             }
@@ -187,7 +185,7 @@ public struct PaywallView: View {
 
     private func featureRow(tag: String, title: String, subtitle: String) -> some View {
         HStack(alignment: .top, spacing: 12) {
-            RetroBadge(tag, color: .accent, isFilled: true)
+            AppBadge(tag, color: .accent, isFilled: true)
 
             VStack(alignment: .leading, spacing: 2) {
                 Text(title)
@@ -210,7 +208,7 @@ public struct PaywallView: View {
             UIImpactFeedbackGenerator(style: .light).impactOccurred()
             selectedProductID = product.id
         }) {
-            RetroCard(cornerRadius: 12) {
+            AppCard(cornerRadius: 12) {
                 HStack {
                     VStack(alignment: .leading, spacing: 4) {
                         HStack {
@@ -219,7 +217,7 @@ public struct PaywallView: View {
                                 .foregroundColor(RetroTheme.foreground)
 
                             if isAnnual {
-                                RetroBadge("SAVE 33%", color: .accent, isFilled: true)
+                                AppBadge("SAVE 33%", color: .accent, isFilled: true)
                             }
                         }
 
@@ -266,7 +264,7 @@ public struct PaywallView: View {
             UIImpactFeedbackGenerator(style: .light).impactOccurred()
             selectedProductID = id
         }) {
-            RetroCard(cornerRadius: 12) {
+            AppCard(cornerRadius: 12) {
                 HStack {
                     VStack(alignment: .leading, spacing: 4) {
                         HStack {
@@ -275,7 +273,7 @@ public struct PaywallView: View {
                                 .foregroundColor(RetroTheme.foreground)
 
                             if let badge = badge {
-                                RetroBadge(badge, color: .accent, isFilled: true)
+                                AppBadge(badge, color: .accent, isFilled: true)
                             }
                         }
 

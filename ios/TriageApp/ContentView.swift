@@ -297,47 +297,23 @@ struct ContentView: View {
             UIImpactFeedbackGenerator(style: .light).impactOccurred()
             selectedModule = type
         }) {
-            RetroCard(isTappable: true) {
-                HStack(spacing: 14) {
-                    ZStack {
-                        RoundedRectangle(cornerRadius: 12, style: .continuous)
-                            .fill(RetroTheme.content1)
-                            .frame(width: 44, height: 44)
-
-                        Image(systemName: icon)
-                            .font(RetroTheme.headlineSmall)
-                            .foregroundColor(RetroTheme.accent)
-                    }
-
-                    VStack(alignment: .leading, spacing: 3) {
-                        Text(title)
-                            .font(RetroTheme.headlineSmall)
-                            .foregroundColor(RetroTheme.foreground)
-
-                        Text(subtitle)
-                            .font(RetroTheme.captionMedium)
-                            .foregroundColor(RetroTheme.secondaryForeground)
-                    }
-
-                    Spacer()
-
-                    RetroBadge(
-                        status.badgeText,
-                        color: isModuleProtected(status) ? .success : .warning,
-                        isFilled: true
-                    )
-
-                    Image(systemName: "chevron.right")
-                        .font(RetroTheme.captionSmall)
-                        .foregroundColor(RetroTheme.secondaryForeground)
-                }
+            AppCard(isTappable: true) {
+                AppNavigationRow(
+                    icon: icon,
+                    iconColor: RetroTheme.accent,
+                    title: title,
+                    subtitle: subtitle,
+                    badge: status.badgeText,
+                    badgeColor: isModuleProtected(status) ? .success : .warning,
+                    showChevron: true
+                )
             }
         }
         .buttonStyle(.plain)
     }
 
     private var telemetrySection: some View {
-        RetroCard {
+        AppCard {
             HStack(alignment: .center) {
                 VStack(alignment: .leading, spacing: 3) {
                     HStack(spacing: 6) {
@@ -395,36 +371,16 @@ struct ContentView: View {
             UIImpactFeedbackGenerator(style: .medium).impactOccurred()
             showThreatSimulator = true
         }) {
-            RetroCard(isTappable: true) {
-                HStack(spacing: 12) {
-                    ZStack {
-                        RoundedRectangle(cornerRadius: 10, style: .continuous)
-                            .fill(RetroTheme.content1)
-                            .frame(width: 36, height: 36)
-
-                        Image(systemName: "shield.lefthalf.filled")
-                            .font(RetroTheme.bodyMedium)
-                            .foregroundColor(RetroTheme.accent)
-                    }
-
-                    VStack(alignment: .leading, spacing: 2) {
-                        Text("Test Threat Detection")
-                            .font(RetroTheme.bodyMedium)
-                            .foregroundColor(RetroTheme.foreground)
-
-                        Text("Simulate live attacks on-device")
-                            .font(RetroTheme.captionMedium)
-                            .foregroundColor(RetroTheme.secondaryForeground)
-                    }
-
-                    Spacer()
-
-                    RetroBadge("SIM", color: .accent, isFilled: false)
-
-                    Image(systemName: "chevron.right")
-                        .font(RetroTheme.captionSmall)
-                        .foregroundColor(RetroTheme.secondaryForeground)
-                }
+            AppCard(isTappable: true) {
+                AppNavigationRow(
+                    icon: "shield.lefthalf.filled",
+                    iconColor: RetroTheme.accent,
+                    title: "Test Threat Detection",
+                    subtitle: "Simulate live attacks on-device",
+                    badge: "SIM",
+                    badgeColor: .accent,
+                    showChevron: true
+                )
             }
         }
         .buttonStyle(.plain)
@@ -435,32 +391,16 @@ struct ContentView: View {
             UIImpactFeedbackGenerator(style: .medium).impactOccurred()
             showingPaywall = true
         }) {
-            RetroCard(isTappable: true) {
-                HStack(spacing: 12) {
-                    ZStack {
-                        RoundedRectangle(cornerRadius: 10, style: .continuous)
-                            .fill(RetroTheme.accentBackground)
-                            .frame(width: 36, height: 36)
-
-                        Image(systemName: "sparkles")
-                            .font(RetroTheme.bodyMedium)
-                            .foregroundColor(RetroTheme.accent)
-                    }
-
-                    VStack(alignment: .leading, spacing: 2) {
-                        Text("Upgrade to Triage Pro")
-                            .font(RetroTheme.bodyMedium)
-                            .foregroundColor(RetroTheme.foreground)
-
-                        Text("Zero-day AI smishing heuristics & delta sync")
-                            .font(RetroTheme.captionMedium)
-                            .foregroundColor(RetroTheme.secondaryForeground)
-                    }
-
-                    Spacer()
-
-                    RetroBadge("PRO", color: .accent, isFilled: true)
-                }
+            AppCard(isTappable: true) {
+                AppNavigationRow(
+                    icon: "sparkles",
+                    iconColor: RetroTheme.accent,
+                    title: "Upgrade to Triage Pro",
+                    subtitle: "Zero-day AI smishing heuristics & delta sync",
+                    badge: "PRO",
+                    badgeColor: .accent,
+                    showChevron: false
+                )
             }
         }
         .buttonStyle(.plain)
@@ -596,7 +536,7 @@ struct ModuleDetailSheet: View {
                         onDismiss?()
                         dismiss()
                     }) {
-                        RetroBadge("DONE", color: .secondary, isFilled: false)
+                        AppBadge("DONE", color: .secondary, isFilled: false)
                     }
                 }
             }
@@ -622,17 +562,15 @@ struct ModuleDetailSheet: View {
     // MARK: - Subviews
 
     private var statusCard: some View {
-        RetroCard {
+        AppCard {
             HStack(spacing: 14) {
-                ZStack {
-                    RoundedRectangle(cornerRadius: 12, style: .continuous)
-                        .fill(moduleType == .sms ? RetroTheme.accentBackground : RetroTheme.content1)
-                        .frame(width: 44, height: 44)
-
-                    Image(systemName: moduleIcon)
-                        .font(RetroTheme.headlineSmall)
-                        .foregroundColor(moduleColor)
-                }
+                AppIconWell(
+                    icon: moduleIcon,
+                    iconColor: moduleColor,
+                    backgroundColor: moduleType == .sms ? RetroTheme.accentBackground : RetroTheme.content1,
+                    size: 44,
+                    iconSize: 18
+                )
 
                 VStack(alignment: .leading, spacing: 3) {
                     Text(moduleType == .sms ? "SMS Smishing Filter" : "Safari Web Shield")
@@ -646,7 +584,7 @@ struct ModuleDetailSheet: View {
 
                 Spacer()
 
-                RetroBadge(
+                AppBadge(
                     currentStatus.badgeText,
                     color: isModuleProtected(currentStatus) ? .success : .warning,
                     isFilled: true
@@ -657,12 +595,9 @@ struct ModuleDetailSheet: View {
 
     private var instructionsCard: some View {
         VStack(alignment: .leading, spacing: 8) {
-            Text("ACTIVATION INSTRUCTIONS")
-                .font(RetroTheme.captionSmall)
-                .foregroundColor(RetroTheme.secondaryForeground)
-                .padding(.horizontal, 4)
+            AppSectionHeader("ACTIVATION INSTRUCTIONS")
 
-            RetroCard {
+            AppCard {
                 VStack(alignment: .leading, spacing: 12) {
                     if moduleType == .sms {
                         retroStepRow(step: "01", text: "Open iPhone **Settings** > **Apps** > **Messages**")
@@ -872,11 +807,15 @@ struct SMSSimulatorSheet: View {
                 ScrollView {
                     VStack(spacing: 16) {
                         // Header Description
-                        RetroCard {
+                        AppCard {
                             HStack(spacing: 12) {
-                                Image(systemName: "shield.lefthalf.filled")
-                                    .font(RetroTheme.headlineSmall)
-                                    .foregroundColor(RetroTheme.accent)
+                                AppIconWell(
+                                    icon: "shield.lefthalf.filled",
+                                    iconColor: RetroTheme.accent,
+                                    backgroundColor: RetroTheme.content1,
+                                    size: 40,
+                                    iconSize: 18
+                                )
                                 VStack(alignment: .leading, spacing: 2) {
                                     Text("Threat Inspection Simulator")
                                         .font(RetroTheme.bodyMedium)
@@ -890,17 +829,14 @@ struct SMSSimulatorSheet: View {
 
                         // Attack Presets
                         VStack(alignment: .leading, spacing: 8) {
-                            Text("SAMPLE ATTACK SCENARIOS")
-                                .font(RetroTheme.captionSmall)
-                                .foregroundColor(RetroTheme.secondaryForeground)
-                                .padding(.horizontal, 4)
+                            AppSectionHeader("SAMPLE ATTACK SCENARIOS")
 
                             ScrollView(.horizontal, showsIndicators: false) {
                                 HStack(spacing: 8) {
                                     ForEach(Array(presets.enumerated()), id: \.element.id) { index, preset in
                                         let isSelected = selectedPresetIndex == index
                                         Button(action: {
-                                            selectPreset(index)
+                                             selectPreset(index)
                                         }) {
                                             HStack(spacing: 6) {
                                                 Image(systemName: preset.icon)
@@ -923,12 +859,9 @@ struct SMSSimulatorSheet: View {
 
                         // Simulated Message Editor
                         VStack(alignment: .leading, spacing: 8) {
-                            Text("INCOMING PAYLOAD BUFFER")
-                                .font(RetroTheme.captionSmall)
-                                .foregroundColor(RetroTheme.secondaryForeground)
-                                .padding(.horizontal, 4)
+                            AppSectionHeader("INCOMING PAYLOAD BUFFER")
 
-                            RetroCard {
+                            AppCard {
                                 VStack(alignment: .leading, spacing: 10) {
                                     HStack(spacing: 8) {
                                         Text("SENDER:")
@@ -983,7 +916,7 @@ struct SMSSimulatorSheet: View {
             .toolbar {
                 ToolbarItem(placement: .confirmationAction) {
                     Button(action: { dismiss() }) {
-                        RetroBadge("DONE", color: .primary, isFilled: false)
+                        AppBadge("DONE", color: .primary, isFilled: false)
                     }
                 }
             }
@@ -999,7 +932,7 @@ struct SMSSimulatorSheet: View {
 
     @ViewBuilder
     private func verdictCard(for verdict: SimulationVerdict) -> some View {
-        RetroCard {
+        AppCard {
             VStack(alignment: .leading, spacing: 12) {
                 switch verdict {
                 case .threat(let url, let brand, let category):
@@ -1019,19 +952,19 @@ struct SMSSimulatorSheet: View {
 
                         Spacer()
 
-                        RetroBadge("JUNKED", color: .danger, isFilled: true)
+                        AppBadge("JUNKED", color: .danger, isFilled: true)
                     }
 
                     Divider()
 
                     VStack(alignment: .leading, spacing: 6) {
                         if let b = brand {
-                            simDetailRow(label: "IMPERSONATING", value: b)
+                            AppDetailRow(label: "IMPERSONATING", value: b)
                         }
-                        simDetailRow(label: "CATEGORY", value: category.capitalized)
-                        simDetailRow(label: "EXTRACTED URL", value: url)
-                        simDetailRow(label: "ROUTING", value: "Messages > Junk folder")
-                        simDetailRow(label: "AUDIT LOG", value: "Recorded to local SQLite DB")
+                        AppDetailRow(label: "CATEGORY", value: category.capitalized)
+                        AppDetailRow(label: "EXTRACTED URL", value: url)
+                        AppDetailRow(label: "ROUTING", value: "Messages > Junk folder")
+                        AppDetailRow(label: "AUDIT LOG", value: "Recorded to local SQLite DB")
                     }
 
                 case .clean:
@@ -1051,7 +984,7 @@ struct SMSSimulatorSheet: View {
 
                         Spacer()
 
-                        RetroBadge("CLEAN", color: .success, isFilled: true)
+                        AppBadge("CLEAN", color: .success, isFilled: true)
                     }
 
                     Divider()
@@ -1077,31 +1010,18 @@ struct SMSSimulatorSheet: View {
 
                         Spacer()
 
-                        RetroBadge("DEFERRED", color: .warning, isFilled: true)
+                        AppBadge("DEFERRED", color: .warning, isFilled: true)
                     }
 
                     Divider()
 
                     VStack(alignment: .leading, spacing: 6) {
-                        simDetailRow(label: "EXTRACTED URL", value: url)
-                        simDetailRow(label: "CACHE STATUS", value: "Hash absent from offline DB")
-                        simDetailRow(label: "NEXT ACTION", value: "Query cloud threat lookup service")
+                        AppDetailRow(label: "EXTRACTED URL", value: url)
+                        AppDetailRow(label: "CACHE STATUS", value: "Hash absent from offline DB")
+                        AppDetailRow(label: "NEXT ACTION", value: "Query cloud threat lookup service")
                     }
                 }
             }
-        }
-    }
-
-    private func simDetailRow(label: String, value: String) -> some View {
-        HStack(alignment: .top) {
-            Text(label + ":")
-                .font(RetroTheme.captionSmall)
-                .foregroundColor(RetroTheme.secondaryForeground)
-            Spacer()
-            Text(value)
-                .font(RetroTheme.captionLarge)
-                .foregroundColor(RetroTheme.foreground)
-                .multilineTextAlignment(.trailing)
         }
     }
 
