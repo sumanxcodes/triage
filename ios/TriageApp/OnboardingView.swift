@@ -5,96 +5,151 @@ struct OnboardingView: View {
 
     var body: some View {
         NavigationStack {
-            VStack(spacing: 28) {
-                Spacer()
-
-                // Hero Crest
-                VStack(spacing: 14) {
-                    TriageLogoView(size: 92, showsGlow: true)
-                        .padding(.top, 8)
-
-                    Text("Welcome to Triage")
-                        .font(.system(.largeTitle, design: .rounded).weight(.heavy))
-
-                    Text("Dual-layer privacy protection against smishing and link phishing for iPhone.")
-                        .font(.subheadline)
-                        .foregroundColor(.secondary)
-                        .multilineTextAlignment(.center)
-                        .padding(.horizontal, 24)
-                }
-
-                Spacer()
-
-                // Feature Highlights
+            ScrollView(showsIndicators: false) {
                 VStack(alignment: .leading, spacing: 20) {
-                    featureRow(
-                        icon: "message.badge.filled.fill",
-                        color: .green,
-                        title: "SMS Threat Filter",
-                        description: "Identifies and filters deceptive smishing texts from unknown senders on-device."
-                    )
+                    // Top Logo Badge
+                    TriageLogoView(size: 64, showsGlow: true)
+                        .padding(.top, 12)
 
-                    featureRow(
-                        icon: "safari.fill",
-                        color: .blue,
-                        title: "Safari Web Shield",
-                        description: "Intercepts malicious web links in real time before fake login pages or malware load."
-                    )
+                    // Eyebrow & Hero Headline
+                    VStack(alignment: .leading, spacing: 6) {
+                        Text("// PRIVATE BY DESIGN")
+                            .font(.system(size: 11, weight: .bold, design: .monospaced))
+                            .foregroundColor(.triageVolt)
+                            .tracking(1.0)
 
-                    featureRow(
-                        icon: "hand.raised.fill",
-                        color: .indigo,
-                        title: "Zero-Telemetry Privacy",
-                        description: "100% on-device hash evaluation. No accounts, no data collection, no browsing logs."
-                    )
-                }
-                .padding(.horizontal, 24)
+                        VStack(alignment: .leading, spacing: 0) {
+                            Text("Your messages.")
+                                .foregroundColor(.primary)
+                            Text("Your browsing.")
+                                .foregroundColor(.primary)
+                            Text("Protected.")
+                                .foregroundColor(.triageVolt)
+                        }
+                        .font(.system(size: 34, weight: .heavy, design: .rounded))
+                        .lineSpacing(-2)
 
-                Spacer()
+                        Text("Dual-layer protection from scam texts and malicious links, entirely on your iPhone.")
+                            .font(.subheadline)
+                            .foregroundColor(.secondary)
+                            .padding(.top, 4)
+                    }
 
-                // Primary CTA Button
-                VStack(spacing: 12) {
-                    Button(action: { dismiss() }) {
-                        Text("Get Started")
-                            .font(.headline)
+                    Divider()
+                        .padding(.vertical, 4)
+
+                    // Feature Rows
+                    VStack(spacing: 16) {
+                        onboardingRow(
+                            stepNumber: "01",
+                            title: "SMS Smishing Filter",
+                            subtitle: "Silently moves scam texts to Junk.",
+                            icon: "message.badge.filled.fill",
+                            iconColor: .triageVolt
+                        )
+
+                        Divider()
+                            .padding(.leading, 32)
+
+                        onboardingRow(
+                            stepNumber: "02",
+                            title: "Safari Web Shield",
+                            subtitle: "Checks dangerous links before they load.",
+                            icon: "safari.fill",
+                            iconColor: .blue
+                        )
+
+                        Divider()
+                            .padding(.leading, 32)
+
+                        onboardingRow(
+                            stepNumber: "03",
+                            title: "Zero Telemetry",
+                            subtitle: "Nothing personal ever leaves your device.",
+                            icon: "lock.shield.fill",
+                            iconColor: .purple
+                        )
+                    }
+
+                    Spacer(minLength: 24)
+
+                    // Primary Action Button & Footer
+                    VStack(spacing: 12) {
+                        Button(action: {
+                            UIImpactFeedbackGenerator(style: .medium).impactOccurred()
+                            dismiss()
+                        }) {
+                            HStack(spacing: 8) {
+                                Text("SET UP PROTECTION")
+                                    .font(.system(size: 15, weight: .heavy, design: .monospaced))
+                                    .tracking(0.5)
+
+                                Image(systemName: "arrow.right")
+                                    .font(.subheadline.weight(.heavy))
+                            }
+                            .foregroundColor(.black)
                             .frame(maxWidth: .infinity)
                             .frame(minHeight: 28)
-                    }
-                    .buttonStyle(.borderedProminent)
-                    .controlSize(.large)
-                    .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+                            .padding(.vertical, 14)
+                            .background(Color.triageVolt)
+                            .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+                        }
 
-                    Text("Configure your extensions on the Protection dashboard.")
-                        .font(.caption2)
-                        .foregroundColor(.secondary)
+                        HStack(spacing: 6) {
+                            Image(systemName: "shield.lefthalf.filled")
+                                .font(.caption2.weight(.semibold))
+                                .foregroundColor(.secondary)
+
+                            Text("On-device processing • No account required")
+                                .font(.system(size: 11, weight: .medium, design: .monospaced))
+                                .foregroundColor(.secondary)
+                        }
+                        .frame(maxWidth: .infinity)
+                    }
+                    .padding(.bottom, 20)
                 }
                 .padding(.horizontal, 24)
-                .padding(.bottom, 16)
             }
         }
     }
 
-    private func featureRow(icon: String, color: Color, title: String, description: String) -> some View {
-        HStack(alignment: .top, spacing: 16) {
-            ZStack {
-                RoundedRectangle(cornerRadius: 12, style: .continuous)
-                    .fill(color.opacity(0.12))
-                    .frame(width: 44, height: 44)
+    private func onboardingRow(
+        stepNumber: String,
+        title: String,
+        subtitle: String,
+        icon: String,
+        iconColor: Color
+    ) -> some View {
+        HStack(alignment: .center, spacing: 14) {
+            Text(stepNumber)
+                .font(.system(size: 12, weight: .bold, design: .monospaced))
+                .foregroundColor(.secondary.opacity(0.7))
+                .frame(width: 22, alignment: .leading)
 
-                Image(systemName: icon)
-                    .font(.system(size: 20, weight: .semibold))
-                    .foregroundColor(color)
-            }
-
-            VStack(alignment: .leading, spacing: 3) {
+            VStack(alignment: .leading, spacing: 2) {
                 Text(title)
-                    .font(.subheadline.weight(.bold))
+                    .font(.body.weight(.bold))
                     .foregroundColor(.primary)
 
-                Text(description)
-                    .font(.caption)
+                Text(subtitle)
+                    .font(.subheadline)
                     .foregroundColor(.secondary)
-                    .fixedSize(horizontal: false, vertical: true)
+            }
+
+            Spacer()
+
+            ZStack {
+                RoundedRectangle(cornerRadius: 10, style: .continuous)
+                    .fill(Color(.secondarySystemBackground))
+                    .frame(width: 38, height: 38)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 10, style: .continuous)
+                            .stroke(Color.white.opacity(0.08), lineWidth: 1)
+                    )
+
+                Image(systemName: icon)
+                    .font(.system(size: 18, weight: .semibold))
+                    .foregroundColor(iconColor)
             }
         }
     }
