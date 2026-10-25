@@ -29,9 +29,9 @@ enum ModuleStatus {
 
     var badgeColor: Color {
         switch self {
-        case .active: return .triageVolt
+        case .active: return RetroTheme.textAccent
         case .ready: return .blue
-        case .setupNeeded: return .orange
+        case .setupNeeded: return RetroTheme.textAmber
         }
     }
 }
@@ -94,7 +94,7 @@ struct ContentView: View {
     }
 
     private var statusColor: Color {
-        isFullyProtected ? .triageVolt : .orange
+        isFullyProtected ? RetroTheme.textAccent : RetroTheme.textAmber
     }
 
     private var formattedThreatCount: String {
@@ -105,31 +105,36 @@ struct ContentView: View {
 
     var body: some View {
         NavigationStack {
-            ScrollView(showsIndicators: false) {
-                VStack(spacing: 28) {
-                    // MARK: - 1. Minimal Top Brand Header
-                    topBar
+            ZStack {
+                RetroTheme.background
+                    .ignoresSafeArea()
 
-                    // MARK: - 2. Hero Security Centerpiece
-                    heroStatusSection
+                ScrollView(showsIndicators: false) {
+                    VStack(spacing: 22) {
+                        // MARK: - 1. Retro Terminal Brand Header
+                        topBar
 
-                    // MARK: - 3. Minimal Dual Shield Cards
-                    modulesSection
+                        // MARK: - 2. Hero Security Centerpiece
+                        heroStatusSection
 
-                    // MARK: - 4. Unified Telemetry Dock
-                    telemetrySection
+                        // MARK: - 3. Retro Dual Shield Cards
+                        modulesSection
 
-                    // MARK: - 5. Minimal Threat Simulator Action
-                    simulatorButton
+                        // MARK: - 4. Unified Telemetry Dock
+                        telemetrySection
 
-                    // MARK: - 6. Pro Membership
-                    if !subscriptionManager.isProUser {
-                        proBanner
+                        // MARK: - 5. Threat Simulator Action
+                        simulatorButton
+
+                        // MARK: - 6. Pro Membership
+                        if !subscriptionManager.isProUser {
+                            proBanner
+                        }
                     }
+                    .padding(.horizontal, 20)
+                    .padding(.top, 8)
+                    .padding(.bottom, 96)
                 }
-                .padding(.horizontal, 20)
-                .padding(.top, 8)
-                .padding(.bottom, 96)
             }
             .toolbar(.hidden, for: .navigationBar)
             .sheet(isPresented: $showingPaywall) {
@@ -164,27 +169,21 @@ struct ContentView: View {
 
     private var topBar: some View {
         HStack {
-            HStack(spacing: 7) {
-                Circle()
+            HStack(spacing: 8) {
+                Rectangle()
                     .fill(statusColor)
-                    .frame(width: 7, height: 7)
+                    .frame(width: 8, height: 8)
 
-                Text("TRIAGE")
+                Text("TRIAGE // TERMINAL")
                     .font(.system(size: 13, weight: .heavy, design: .monospaced))
-                    .tracking(1.6)
+                    .tracking(1.4)
                     .foregroundColor(.primary)
             }
 
             Spacer()
 
             if subscriptionManager.isProUser {
-                Text("PRO")
-                    .font(.system(size: 10, weight: .heavy, design: .monospaced))
-                    .padding(.horizontal, 8)
-                    .padding(.vertical, 3)
-                    .background(Color.triageVoltSubtle)
-                    .foregroundColor(.triageVolt)
-                    .clipShape(Capsule())
+                RetroBadge("PRO", color: RetroTheme.textAccent, isFilled: true)
             } else {
                 Button(action: {
                     UIImpactFeedbackGenerator(style: .light).impactOccurred()
@@ -193,56 +192,98 @@ struct ContentView: View {
                     HStack(spacing: 4) {
                         Image(systemName: "sparkles")
                             .font(.system(size: 10, weight: .bold))
-                        Text("PRO")
+                        Text("UPGRADE")
                             .font(.system(size: 10, weight: .heavy, design: .monospaced))
                     }
                     .padding(.horizontal, 9)
-                    .padding(.vertical, 4)
-                    .background(Color.triageVoltSubtle)
-                    .foregroundColor(.triageVolt)
-                    .clipShape(Capsule())
+                    .padding(.vertical, 5)
+                    .background(RetroTheme.volt)
+                    .foregroundColor(.black)
+                    .clipShape(RoundedRectangle(cornerRadius: 6, style: .continuous))
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 6, style: .continuous)
+                            .stroke(RetroTheme.border, lineWidth: 1.5)
+                    )
+                    .background(
+                        RoundedRectangle(cornerRadius: 6, style: .continuous)
+                            .fill(RetroTheme.shadow)
+                            .offset(x: 2, y: 2)
+                    )
                 }
+                .buttonStyle(.plain)
             }
         }
-        .padding(.horizontal, 4)
+        .padding(.horizontal, 2)
     }
 
     private var heroStatusSection: some View {
-        VStack(spacing: 16) {
-            TriageLogoView(size: 80, showsGlow: isFullyProtected)
-                .padding(.top, 4)
+        RetroCard(cornerRadius: 12) {
+            VStack(spacing: 16) {
+                HStack {
+                    RetroBadge(
+                        isFullyProtected ? "SHIELD: ACTIVE" : "SHIELD: INCOMPLETE",
+                        color: isFullyProtected ? RetroTheme.textAccent : RetroTheme.textAmber,
+                        isFilled: true
+                    )
 
-            VStack(spacing: 6) {
-                Text(isFullyProtected ? "Protected" : "Action Needed")
-                    .font(.system(size: 36, weight: .heavy, design: .default))
-                    .foregroundColor(.primary)
+                    Spacer()
 
-                Text(isFullyProtected ? "// DUAL SHIELD ACTIVE" : "// SETUP INCOMPLETE (\(activeLayersCount)/2)")
-                    .font(.system(size: 11, weight: .bold, design: .monospaced))
-                    .foregroundColor(statusColor)
-                    .tracking(1.0)
+                    Text(isFullyProtected ? "[2/2 ONLINE]" : "[\(activeLayersCount)/2 READY]")
+                        .font(.system(size: 11, weight: .bold, design: .monospaced))
+                        .foregroundColor(.secondary)
+                }
 
-                Text(isFullyProtected ?
-                     "SMS smishing filter and Safari web shield are actively guarding your iPhone." :
-                     "Turn on your shields in iPhone Settings to enable live smishing and phishing protection.")
-                    .font(.subheadline)
-                    .foregroundColor(.secondary)
-                    .multilineTextAlignment(.center)
-                    .padding(.horizontal, 16)
-                    .padding(.top, 4)
+                HStack(spacing: 18) {
+                    TriageLogoView(size: 64, showsGlow: isFullyProtected)
+
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text(isFullyProtected ? "SYSTEM SECURED" : "ACTION NEEDED")
+                            .font(.system(size: 20, weight: .heavy, design: .monospaced))
+                            .foregroundColor(.primary)
+
+                        Text(isFullyProtected ?
+                             "SMS smishing filter & Safari web shield actively protecting." :
+                             "Turn on shields in iPhone Settings to guard messages & web.")
+                            .font(.system(size: 12, weight: .medium, design: .monospaced))
+                            .foregroundColor(.secondary)
+                            .lineLimit(2)
+                    }
+
+                    Spacer()
+                }
+
+                VStack(alignment: .leading, spacing: 5) {
+                    HStack {
+                        Text("DEFENSE INTEGRITY")
+                            .font(.system(size: 10, weight: .heavy, design: .monospaced))
+                            .foregroundColor(.secondary)
+
+                        Spacer()
+
+                        Text(isFullyProtected ? "100%" : "\(activeLayersCount * 50)%")
+                            .font(.system(size: 10, weight: .heavy, design: .monospaced))
+                            .foregroundColor(isFullyProtected ? RetroTheme.textAccent : RetroTheme.textAmber)
+                    }
+
+                    RetroBlockMeter(
+                        filled: isFullyProtected ? 16 : (activeLayersCount * 8),
+                        total: 16,
+                        color: isFullyProtected ? RetroTheme.textAccent : RetroTheme.textAmber
+                    )
+                }
             }
+            .padding(18)
         }
-        .frame(maxWidth: .infinity)
-        .padding(.vertical, 4)
     }
 
     private var modulesSection: some View {
-        VStack(spacing: 12) {
+        VStack(spacing: 14) {
             moduleCard(
                 type: .sms,
                 icon: "message.badge.filled.fill",
-                iconColor: .triageVolt,
-                title: "SMS Filter",
+                iconColor: RetroTheme.textAccent,
+                title: "SMS FILTER",
+                subtitle: "On-Device Message Guard",
                 status: smsStatus
             )
 
@@ -250,7 +291,8 @@ struct ContentView: View {
                 type: .safari,
                 icon: "safari.fill",
                 iconColor: .blue,
-                title: "Safari Shield",
+                title: "SAFARI SHIELD",
+                subtitle: "WebKit Phishing Blocker",
                 status: safariStatus
             )
         }
@@ -261,133 +303,105 @@ struct ContentView: View {
         icon: String,
         iconColor: Color,
         title: String,
+        subtitle: String,
         status: ModuleStatus
     ) -> some View {
         Button(action: {
             UIImpactFeedbackGenerator(style: .light).impactOccurred()
             selectedModule = type
         }) {
-            HStack(spacing: 14) {
-                ZStack {
-                    RoundedRectangle(cornerRadius: 12, style: .continuous)
-                        .fill(Color(.tertiarySystemBackground))
-                        .frame(width: 44, height: 44)
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 12, style: .continuous)
-                                .stroke(Color.triageCardBorder, lineWidth: 1)
-                        )
+            RetroCard(cornerRadius: 10) {
+                HStack(spacing: 14) {
+                    ZStack {
+                        Rectangle()
+                            .fill(RetroTheme.elevatedSurface)
+                            .frame(width: 44, height: 44)
+                            .overlay(
+                                Rectangle()
+                                    .stroke(RetroTheme.border, lineWidth: 1.5)
+                            )
 
-                    Image(systemName: icon)
-                        .font(.system(size: 20, weight: .semibold))
-                        .foregroundColor(iconColor)
-                }
+                        Image(systemName: icon)
+                            .font(.system(size: 18, weight: .semibold))
+                            .foregroundColor(iconColor)
+                    }
 
-                VStack(alignment: .leading, spacing: 3) {
-                    Text(title)
-                        .font(.body.weight(.bold))
-                        .foregroundColor(.primary)
+                    VStack(alignment: .leading, spacing: 3) {
+                        Text(title)
+                            .font(.system(size: 13, weight: .heavy, design: .monospaced))
+                            .foregroundColor(.primary)
 
-                    Text(type == .sms ? "On-Device Message Filter" : "WebKit Phishing Blocker")
-                        .font(.caption)
+                        Text(subtitle)
+                            .font(.system(size: 11, design: .monospaced))
+                            .foregroundColor(.secondary)
+                    }
+
+                    Spacer()
+
+                    RetroBadge(
+                        status.badgeText,
+                        color: isModuleProtected(status) ? RetroTheme.textAccent : RetroTheme.textAmber,
+                        isFilled: true
+                    )
+
+                    Image(systemName: "chevron.right")
+                        .font(.system(size: 11, weight: .bold))
                         .foregroundColor(.secondary)
                 }
-
-                Spacer()
-
-                HStack(spacing: 6) {
-                    Circle()
-                        .fill(status.badgeColor)
-                        .frame(width: 6, height: 6)
-
-                    Text(status.badgeText.uppercased())
-                        .font(.system(size: 11, weight: .bold, design: .monospaced))
-                        .foregroundColor(status.badgeColor)
-                }
-                .padding(.horizontal, 10)
-                .padding(.vertical, 5)
-                .background(Color(.tertiarySystemBackground))
-                .clipShape(Capsule())
-                .overlay(
-                    Capsule()
-                        .stroke(Color.triageCardBorder, lineWidth: 1)
-                )
-
-                Image(systemName: "chevron.right")
-                    .font(.caption2.weight(.semibold))
-                    .foregroundColor(Color(.tertiaryLabel))
+                .padding(14)
             }
-            .padding(16)
-            .background(Color(.secondarySystemBackground))
-            .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
-            .overlay(
-                RoundedRectangle(cornerRadius: 18, style: .continuous)
-                    .stroke(Color.triageCardBorder, lineWidth: 1)
-            )
         }
         .buttonStyle(.plain)
     }
 
     private var telemetrySection: some View {
-        HStack(alignment: .center) {
-            VStack(alignment: .leading, spacing: 3) {
-                HStack(spacing: 6) {
-                    Text(formattedThreatCount)
-                        .font(.system(size: 18, weight: .heavy, design: .monospaced))
-                        .foregroundColor(.primary)
+        RetroCard(cornerRadius: 10) {
+            HStack(alignment: .center) {
+                VStack(alignment: .leading, spacing: 3) {
+                    HStack(spacing: 6) {
+                        Text(formattedThreatCount)
+                            .font(.system(size: 18, weight: .heavy, design: .monospaced))
+                            .foregroundColor(.primary)
 
-                    Text("SIGNATURES")
-                        .font(.system(size: 10, weight: .bold, design: .monospaced))
-                        .foregroundColor(.secondary)
-                        .tracking(0.8)
-                }
-
-                if let lastSync = ThreatSyncManager.shared.lastSyncDate {
-                    Text("Synced \(lastSync, style: .relative) ago • O(1) SQLite")
-                        .font(.system(size: 11, design: .monospaced))
-                        .foregroundColor(.secondary)
-                } else {
-                    Text("Local SQLite database ready")
-                        .font(.system(size: 11, design: .monospaced))
-                        .foregroundColor(.secondary)
-                }
-            }
-
-            Spacer()
-
-            Button(action: triggerSync) {
-                HStack(spacing: 6) {
-                    if isSyncing {
-                        ProgressView()
-                            .scaleEffect(0.7)
-                            .tint(.primary)
-                    } else {
-                        Image(systemName: "arrow.triangle.2.circlepath")
-                            .font(.system(size: 11, weight: .bold))
+                        Text("SIGNATURES")
+                            .font(.system(size: 10, weight: .heavy, design: .monospaced))
+                            .foregroundColor(.secondary)
+                            .tracking(0.8)
                     }
 
-                    Text(isSyncing ? "SYNCING" : "SYNC")
-                        .font(.system(size: 11, weight: .heavy, design: .monospaced))
-                        .tracking(0.5)
+                    if let lastSync = ThreatSyncManager.shared.lastSyncDate {
+                        Text("SYNCED \(lastSync, style: .relative) AGO // O(1) SQLITE")
+                            .font(.system(size: 10, weight: .medium, design: .monospaced))
+                            .foregroundColor(.secondary)
+                    } else {
+                        Text("LOCAL SQLITE // CACHE READY")
+                            .font(.system(size: 10, weight: .medium, design: .monospaced))
+                            .foregroundColor(.secondary)
+                    }
                 }
-                .foregroundColor(.primary)
-                .padding(.horizontal, 12)
-                .padding(.vertical, 8)
-                .background(Color(.tertiarySystemBackground))
-                .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
-                .overlay(
-                    RoundedRectangle(cornerRadius: 10, style: .continuous)
-                        .stroke(Color.triageCardBorder, lineWidth: 1)
-                )
+
+                Spacer()
+
+                Button(action: triggerSync) {
+                    HStack(spacing: 6) {
+                        if isSyncing {
+                            ProgressView()
+                                .scaleEffect(0.7)
+                                .tint(.black)
+                        } else {
+                            Image(systemName: "arrow.triangle.2.circlepath")
+                                .font(.system(size: 11, weight: .bold))
+                        }
+
+                        Text(isSyncing ? "SYNCING" : "SYNC")
+                            .font(.system(size: 11, weight: .heavy, design: .monospaced))
+                    }
+                }
+                .buttonStyle(RetroButtonStyle(backgroundColor: RetroTheme.volt, foregroundColor: .black, cornerRadius: 6))
+                .disabled(isSyncing)
             }
-            .disabled(isSyncing)
+            .padding(14)
         }
-        .padding(16)
-        .background(Color(.secondarySystemBackground))
-        .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
-        .overlay(
-            RoundedRectangle(cornerRadius: 18, style: .continuous)
-                .stroke(Color.triageCardBorder, lineWidth: 1)
-        )
     }
 
     private var simulatorButton: some View {
@@ -395,30 +409,27 @@ struct ContentView: View {
             UIImpactFeedbackGenerator(style: .medium).impactOccurred()
             showThreatSimulator = true
         }) {
-            HStack(spacing: 8) {
-                Image(systemName: "terminal.fill")
-                    .font(.system(size: 12, weight: .semibold))
-                    .foregroundColor(.triageVolt)
+            RetroCard(cornerRadius: 10) {
+                HStack(spacing: 10) {
+                    Image(systemName: "terminal.fill")
+                        .font(.system(size: 13, weight: .bold))
+                        .foregroundColor(RetroTheme.textAccent)
 
-                Text("TEST THREAT DETECTION")
-                    .font(.system(size: 11, weight: .bold, design: .monospaced))
-                    .foregroundColor(.primary)
-                    .tracking(0.5)
+                    Text("> TEST THREAT DETECTION")
+                        .font(.system(size: 12, weight: .heavy, design: .monospaced))
+                        .foregroundColor(.primary)
+                        .tracking(0.5)
 
-                Spacer()
+                    Spacer()
 
-                Image(systemName: "chevron.right")
-                    .font(.caption2.weight(.bold))
-                    .foregroundColor(Color(.tertiaryLabel))
+                    RetroBadge("SIM", color: RetroTheme.textAccent, isFilled: false)
+
+                    Image(systemName: "chevron.right")
+                        .font(.system(size: 11, weight: .bold))
+                        .foregroundColor(.secondary)
+                }
+                .padding(14)
             }
-            .padding(.horizontal, 16)
-            .padding(.vertical, 12)
-            .background(Color(.secondarySystemBackground))
-            .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
-            .overlay(
-                RoundedRectangle(cornerRadius: 14, style: .continuous)
-                    .stroke(Color.triageCardBorder, lineWidth: 1)
-            )
         }
         .buttonStyle(.plain)
     }
@@ -428,33 +439,27 @@ struct ContentView: View {
             UIImpactFeedbackGenerator(style: .medium).impactOccurred()
             showingPaywall = true
         }) {
-            HStack(spacing: 12) {
-                Image(systemName: "sparkles")
-                    .font(.system(size: 16, weight: .semibold))
-                    .foregroundColor(.triageVolt)
+            RetroCard(cornerRadius: 10) {
+                HStack(spacing: 12) {
+                    Image(systemName: "sparkles")
+                        .font(.system(size: 16, weight: .bold))
+                        .foregroundColor(RetroTheme.textAccent)
 
-                VStack(alignment: .leading, spacing: 2) {
-                    Text("Upgrade to Triage Pro")
-                        .font(.subheadline.weight(.bold))
-                        .foregroundColor(.primary)
-                    Text("Zero-day Gemini AI analysis & hourly delta sync")
-                        .font(.caption2)
-                        .foregroundColor(.secondary)
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text("UPGRADE TO TRIAGE PRO")
+                            .font(.system(size: 12, weight: .heavy, design: .monospaced))
+                            .foregroundColor(.primary)
+                        Text("Zero-day AI smishing heuristics & delta sync")
+                            .font(.system(size: 10, weight: .medium, design: .monospaced))
+                            .foregroundColor(.secondary)
+                    }
+
+                    Spacer()
+
+                    RetroBadge("PRO", color: RetroTheme.textAccent, isFilled: true)
                 }
-
-                Spacer()
-
-                Image(systemName: "chevron.right")
-                    .font(.caption2.weight(.semibold))
-                    .foregroundColor(Color(.tertiaryLabel))
+                .padding(14)
             }
-            .padding(14)
-            .background(Color(.secondarySystemBackground))
-            .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
-            .overlay(
-                RoundedRectangle(cornerRadius: 16, style: .continuous)
-                    .stroke(Color.triageVolt.opacity(0.2), lineWidth: 1)
-            )
         }
         .buttonStyle(.plain)
     }

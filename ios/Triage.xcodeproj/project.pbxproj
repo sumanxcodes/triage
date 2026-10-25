@@ -47,6 +47,7 @@
 		DB139EFD310BE572F8DF279B /* AppGroup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D6718A1EB1F39E1522C6316 /* AppGroup.swift */; };
 		E3C8B7659F54484A942E81AF /* ThreatDatabase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92A7D0D806AD793BCC7E5E28 /* ThreatDatabase.swift */; };
 		EB5D3ACD7203AD8BDACBE472 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF1E59A10EBC6B5CA5788E27 /* ContentView.swift */; };
+		C22A23D456E789F012345678 /* RetroKit.swift in Sources */ = {isa = PBXBuildFile; fileRef = F22A23D456E789F012345678 /* RetroKit.swift */; };
 		F77F0893E82EA4F1C615F5A1 /* ThreatDatabase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92A7D0D806AD793BCC7E5E28 /* ThreatDatabase.swift */; };
 		F804372AC4EE4B7BC9E73753 /* manifest.json in Resources */ = {isa = PBXBuildFile; fileRef = 45F733B7A9614B0F5E4B6E47 /* manifest.json */; };
 		FFDE3A060AF451AED0E1B2A5 /* AppGroup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D6718A1EB1F39E1522C6316 /* AppGroup.swift */; };
@@ -120,6 +121,7 @@
 		F13643C92E27663F6D258F28 /* content.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = content.js; sourceTree = "<group>"; };
 		F45D764DB1A395F74585E666 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		FF1E59A10EBC6B5CA5788E27 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		F22A23D456E789F012345678 /* RetroKit.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RetroKit.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -235,6 +237,7 @@
 			children = (
 				F45D764DB1A395F74585E666 /* Assets.xcassets */,
 				FF1E59A10EBC6B5CA5788E27 /* ContentView.swift */,
+				F22A23D456E789F012345678 /* RetroKit.swift */,
 				58E01A2461F8138369AA1C50 /* Info.plist */,
 				F0EBCA6F7311AFCCB24D6C91 /* MainTabView.swift */,
 				F11A23D456E789F012345678 /* SettingsView.swift */,
@@ -418,6 +421,7 @@
 			files = (
 				DB139EFD310BE572F8DF279B /* AppGroup.swift in Sources */,
 				EB5D3ACD7203AD8BDACBE472 /* ContentView.swift in Sources */,
+				C22A23D456E789F012345678 /* RetroKit.swift in Sources */,
 				A1BBD58C852A3A3EBAEEB3BC /* MainTabView.swift in Sources */,
 				C11A23D456E789F012345678 /* SettingsView.swift in Sources */,
 				26109AC0AFC96AB3744D9B98 /* OnboardingView.swift in Sources */,
